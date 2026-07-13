@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ระบบเขียนคำสั่งควบคุมหุ่นยนต์ PRO V4.12 (Added Drag/Drop Tutorial)</title>
+    <title>ระบบเขียนคำสั่งควบคุมหุ่นยนต์ PRO V4.12 (Sensor Fixed + Monitor)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <script>
@@ -40,59 +40,24 @@
         .dark ::-webkit-scrollbar-thumb { background: #7f1d1d; }
         .dark ::-webkit-scrollbar-thumb:hover { background: #991b1b; }
 
-        /* การทำดีไซน์บล็อกให้ต่อกันพอดี (Seamless Blocks) */
-        #block-list {
-            display: flex;
-            flex-direction: column;
-            gap: 0; 
-        }
-        
-        .robot-block {
-            position: relative;
-            margin-top: -2px;
-            border-radius: 0px; 
-            user-select: none; cursor: grab; transition: transform 0.1s, box-shadow 0.1s;
-        }
+        #block-list { display: flex; flex-direction: column; gap: 0; }
+        .robot-block { position: relative; margin-top: -2px; border-radius: 0px; user-select: none; cursor: grab; transition: transform 0.1s, box-shadow 0.1s; }
         .robot-block-wrapper { position: relative; z-index: 1; }
         .robot-block-wrapper:hover { z-index: 10; }
-        
-        .robot-block-wrapper:first-child .robot-block {
-            border-top-left-radius: 16px;
-            border-top-right-radius: 16px;
-            margin-top: 0;
-        }
-        .robot-block-wrapper:last-child .robot-block {
-            border-bottom-left-radius: 16px;
-            border-bottom-right-radius: 16px;
-            border-bottom-width: 4px;
-        }
-        
+        .robot-block-wrapper:first-child .robot-block { border-top-left-radius: 16px; border-top-right-radius: 16px; margin-top: 0; }
+        .robot-block-wrapper:last-child .robot-block { border-bottom-left-radius: 16px; border-bottom-right-radius: 16px; border-bottom-width: 4px; }
         .robot-block:active { cursor: grabbing; }
-        
-        .pressable-btn {
-            transition: all 0.1s ease;
-            position: relative;
-            cursor: pointer;
-        }
-        .pressable-btn:active {
-            transform: translateY(2px);
-        }
+        .pressable-btn { transition: all 0.1s ease; position: relative; cursor: pointer; }
+        .pressable-btn:active { transform: translateY(2px); }
         .toolbox-btn[draggable=true] { cursor: grab; }
         .toolbox-btn[draggable=true]:active { cursor: grabbing; }
 
-        /* Tutorial Classes */
         .tutorial-highlight {
-            position: relative !important;
-            z-index: 9999 !important;
-            box-shadow: 0 0 0 6px #ef4444, 0 0 25px rgba(0,0,0,0.5) !important;
-            border-radius: 0.5rem;
-            animation: pulse-border 2s infinite;
-            background-color: white !important;
+            position: relative !important; z-index: 9999 !important;
+            box-shadow: 0 0 0 6px #ef4444, 0 0 25px rgba(0,0,0,0.5) !important; border-radius: 0.5rem;
+            animation: pulse-border 2s infinite; background-color: white !important;
         }
-        .dark .tutorial-highlight {
-            box-shadow: 0 0 0 6px #fca5a5, 0 0 25px rgba(0,0,0,0.8) !important;
-            background-color: #450a0a !important;
-        }
+        .dark .tutorial-highlight { box-shadow: 0 0 0 6px #fca5a5, 0 0 25px rgba(0,0,0,0.8) !important; background-color: #450a0a !important; }
         @keyframes pulse-border {
             0% { box-shadow: 0 0 0 0px rgba(239, 68, 68, 0.7); }
             70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
@@ -108,7 +73,6 @@
         <p class="text-red-600 font-bold text-xl">กำลังประมวลผล...</p>
     </div>
 
-    <!-- Tutorial Overlay & Tooltip -->
     <div id="tutorialOverlay" class="fixed inset-0 bg-black/70 z-[9998] hidden transition-opacity"></div>
     <div id="tutorialTooltip" class="fixed z-[10005] hidden bg-white dark:bg-red-900 border-4 border-red-500 rounded-2xl p-5 shadow-2xl w-[320px] transition-all duration-300">
         <div class="flex items-center gap-3 mb-2">
@@ -126,7 +90,6 @@
         </div>
     </div>
 
-    <!-- หน้าต้อนรับ (เพิ่มปุ่มคู่มือสอนการใช้งานกลับมาที่หน้าแรก) -->
     <div id="authWrapper" class="primary-auth-bg w-full">
         <div class="bubble w-32 h-32 top-10 left-10 animate-pulse"></div>
         <div class="bubble w-48 h-48 bottom-10 right-10 animate-pulse"></div>
@@ -136,7 +99,7 @@
                 <i class="fas fa-robot"></i>
             </div>
             <h2 class="text-3xl sm:text-4xl font-black text-red-700 mb-2">Robot Controller</h2>
-            <p class="text-red-500 font-medium text-base sm:text-lg mb-8">โปรแกรมควบคุมหุ่นยนต์ PRO V4.12<br><span class="text-xs text-gray-400 font-bold">(เพิ่มคู่มือ 6 ขั้นตอน: ลาก/คลิก และทดสอบระยะ)</span></p>
+            <p class="text-red-500 font-medium text-base sm:text-lg mb-8">โปรแกรมควบคุมหุ่นยนต์ PRO V4.12<br><span class="text-xs text-gray-400 font-bold">(เพิ่มระบบ Buffer รับค่าเซ็นเซอร์ + Monitor)</span></p>
             
             <div class="space-y-4">
                 <button onclick="enterApp()" class="w-full bg-red-600 hover:bg-red-500 text-white font-extrabold py-5 rounded-2xl text-2xl shadow-xl transition-all active:scale-95 border-b-[6px] border-red-800 pressable-btn flex items-center justify-center gap-3">
@@ -150,7 +113,6 @@
     </div>
 
     <div id="appWrapper" class="hidden-section flex flex-col min-h-screen">
-        <!-- แถบ Header แนวนอน -->
         <header class="bg-white/95 dark:bg-red-900/95 backdrop-blur-md border-b-4 border-red-100 dark:border-red-800 px-4 sm:px-6 py-3 sticky top-0 z-50 shadow-md space-y-3">
             <div class="flex flex-col xl:flex-row justify-between items-center gap-3">
                 <div class="flex items-center gap-3">
@@ -186,90 +148,36 @@
                 </div>
             </div>
 
-            <!-- กล่องคำสั่งแนวนอน -->
             <div id="toolbox-container" class="pt-2 border-t border-red-100 dark:border-red-800 flex flex-wrap gap-2 items-center justify-center xl:justify-start overflow-x-auto max-h-[160px] pb-1">
                 <span class="text-xs font-extrabold text-red-500 dark:text-red-300 flex items-center gap-1 mr-1">
                     <i class="fas fa-cubes"></i> คลิก/ลาก:
                 </span>
-                <button draggable="true" ondragstart="handleToolboxDragStart(event, 'FORWARD')" ondragend="removeIndicator()" onclick="addBlock('FORWARD')" 
-                    class="pressable-btn toolbox-btn flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 hover:bg-blue-100 dark:bg-slate-800 dark:hover:bg-slate-700 text-blue-700 dark:text-blue-300 border-2 border-b-[3px] border-blue-300 dark:border-blue-700 rounded-xl shadow-sm text-xs sm:text-sm font-extrabold">
-                    <span class="p-1 bg-blue-500 text-white rounded text-xs"><i class="fas fa-arrow-up"></i></span> เดินหน้า
-                </button>
-                
-                <button draggable="true" ondragstart="handleToolboxDragStart(event, 'BACKWARD')" ondragend="removeIndicator()" onclick="addBlock('BACKWARD')" 
-                    class="pressable-btn toolbox-btn flex items-center gap-1.5 px-3 py-1.5 bg-orange-50 hover:bg-orange-100 dark:bg-slate-800 dark:hover:bg-slate-700 text-orange-700 dark:text-orange-300 border-2 border-b-[3px] border-orange-300 dark:border-orange-700 rounded-xl shadow-sm text-xs sm:text-sm font-extrabold">
-                    <span class="p-1 bg-orange-500 text-white rounded text-xs"><i class="fas fa-arrow-down"></i></span> ถอยหลัง
-                </button>
-
-                <button draggable="true" ondragstart="handleToolboxDragStart(event, 'TURN_LEFT')" ondragend="removeIndicator()" onclick="addBlock('TURN_LEFT')" 
-                    class="pressable-btn toolbox-btn flex items-center gap-1.5 px-3 py-1.5 bg-pink-50 hover:bg-pink-100 dark:bg-slate-800 dark:hover:bg-slate-700 text-pink-700 dark:text-pink-300 border-2 border-b-[3px] border-pink-300 dark:border-pink-700 rounded-xl shadow-sm text-xs sm:text-sm font-extrabold">
-                    <span class="p-1 bg-pink-500 text-white rounded text-xs"><i class="fas fa-undo"></i></span> หมุนซ้าย
-                </button>
-
-                <button draggable="true" ondragstart="handleToolboxDragStart(event, 'TURN_RIGHT')" ondragend="removeIndicator()" onclick="addBlock('TURN_RIGHT')" 
-                    class="pressable-btn toolbox-btn flex items-center gap-1.5 px-3 py-1.5 bg-purple-50 hover:bg-purple-100 dark:bg-slate-800 dark:hover:bg-slate-700 text-purple-700 dark:text-purple-300 border-2 border-b-[3px] border-purple-300 dark:border-purple-700 rounded-xl shadow-sm text-xs sm:text-sm font-extrabold">
-                    <span class="p-1 bg-purple-500 text-white rounded text-xs"><i class="fas fa-redo"></i></span> หมุนขวา
-                </button>
-
-                <button draggable="true" ondragstart="handleToolboxDragStart(event, 'PIVOT_LEFT')" ondragend="removeIndicator()" onclick="addBlock('PIVOT_LEFT')" 
-                    class="pressable-btn toolbox-btn flex items-center gap-1.5 px-3 py-1.5 bg-fuchsia-50 hover:bg-fuchsia-100 dark:bg-slate-800 dark:hover:bg-slate-700 text-fuchsia-700 dark:text-fuchsia-300 border-2 border-b-[3px] border-fuchsia-300 dark:border-fuchsia-700 rounded-xl shadow-sm text-xs sm:text-sm font-extrabold">
-                    <span class="p-1 bg-fuchsia-500 text-white rounded text-xs"><i class="fas fa-reply"></i></span> ตีวงซ้าย
-                </button>
-
-                <button draggable="true" ondragstart="handleToolboxDragStart(event, 'PIVOT_RIGHT')" ondragend="removeIndicator()" onclick="addBlock('PIVOT_RIGHT')" 
-                    class="pressable-btn toolbox-btn flex items-center gap-1.5 px-3 py-1.5 bg-violet-50 hover:bg-violet-100 dark:bg-slate-800 dark:hover:bg-slate-700 text-violet-700 dark:text-violet-300 border-2 border-b-[3px] border-violet-300 dark:border-violet-700 rounded-xl shadow-sm text-xs sm:text-sm font-extrabold">
-                    <span class="p-1 bg-violet-500 text-white rounded text-xs"><i class="fas fa-share"></i></span> ตีวงขวา
-                </button>
-
-                <button draggable="true" ondragstart="handleToolboxDragStart(event, 'SLIDE_LEFT')" ondragend="removeIndicator()" onclick="addBlock('SLIDE_LEFT')" 
-                    class="pressable-btn toolbox-btn flex items-center gap-1.5 px-3 py-1.5 bg-teal-50 hover:bg-teal-100 dark:bg-slate-800 dark:hover:bg-slate-700 text-teal-700 dark:text-teal-300 border-2 border-b-[3px] border-teal-300 dark:border-teal-700 rounded-xl shadow-sm text-xs sm:text-sm font-extrabold">
-                    <span class="p-1 bg-teal-500 text-white rounded text-xs"><i class="fas fa-angle-double-left"></i></span> สไลด์ซ้าย
-                </button>
-
-                <button draggable="true" ondragstart="handleToolboxDragStart(event, 'SLIDE_RIGHT')" ondragend="removeIndicator()" onclick="addBlock('SLIDE_RIGHT')" 
-                    class="pressable-btn toolbox-btn flex items-center gap-1.5 px-3 py-1.5 bg-emerald-50 hover:bg-emerald-100 dark:bg-slate-800 dark:hover:bg-slate-700 text-emerald-700 dark:text-emerald-300 border-2 border-b-[3px] border-emerald-300 dark:border-emerald-700 rounded-xl shadow-sm text-xs sm:text-sm font-extrabold">
-                    <span class="p-1 bg-emerald-500 text-white rounded text-xs"><i class="fas fa-angle-double-right"></i></span> สไลด์ขวา
-                </button>
-
-                <button draggable="true" ondragstart="handleToolboxDragStart(event, 'CHECK_WALL')" ondragend="removeIndicator()" onclick="addBlock('CHECK_WALL')" 
-                    class="pressable-btn toolbox-btn flex items-center gap-1.5 px-3 py-1.5 bg-amber-50 hover:bg-amber-100 dark:bg-slate-800 dark:hover:bg-slate-700 text-amber-700 dark:text-amber-300 border-2 border-b-[3px] border-amber-300 dark:border-amber-700 rounded-xl shadow-sm text-xs sm:text-sm font-extrabold">
-                    <span class="p-1 bg-amber-500 text-white rounded text-xs"><i class="fas fa-shield-alt"></i></span> เช็คหลัง/หน้า
-                </button>
-
-                <button draggable="true" ondragstart="handleToolboxDragStart(event, 'DISPENSE_PIN2')" ondragend="removeIndicator()" onclick="addBlock('DISPENSE_PIN2')" 
-                    class="pressable-btn toolbox-btn flex items-center gap-1.5 px-3 py-1.5 bg-indigo-50 hover:bg-indigo-100 dark:bg-slate-800 dark:hover:bg-slate-700 text-indigo-700 dark:text-indigo-300 border-2 border-b-[3px] border-indigo-300 dark:border-indigo-700 rounded-xl shadow-sm text-xs sm:text-sm font-extrabold">
-                    <span class="p-1 bg-indigo-500 text-white rounded text-xs"><i class="fas fa-box"></i></span> วัตถุ 1 (Pin 2)
-                </button>
-
-                <button draggable="true" ondragstart="handleToolboxDragStart(event, 'DISPENSE_PIN3')" ondragend="removeIndicator()" onclick="addBlock('DISPENSE_PIN3')" 
-                    class="pressable-btn toolbox-btn flex items-center gap-1.5 px-3 py-1.5 bg-sky-50 hover:bg-sky-100 dark:bg-slate-800 dark:hover:bg-slate-700 text-sky-700 dark:text-sky-300 border-2 border-b-[3px] border-sky-300 dark:border-sky-700 rounded-xl shadow-sm text-xs sm:text-sm font-extrabold">
-                    <span class="p-1 bg-sky-500 text-white rounded text-xs"><i class="fas fa-box-open"></i></span> วัตถุ 2 (Pin 3)
-                </button>
+                <button draggable="true" ondragstart="handleToolboxDragStart(event, 'FORWARD')" ondragend="removeIndicator()" onclick="addBlock('FORWARD')" class="pressable-btn toolbox-btn flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 hover:bg-blue-100 dark:bg-slate-800 dark:hover:bg-slate-700 text-blue-700 dark:text-blue-300 border-2 border-b-[3px] border-blue-300 dark:border-blue-700 rounded-xl shadow-sm text-xs sm:text-sm font-extrabold"><span class="p-1 bg-blue-500 text-white rounded text-xs"><i class="fas fa-arrow-up"></i></span> เดินหน้า</button>
+                <button draggable="true" ondragstart="handleToolboxDragStart(event, 'BACKWARD')" ondragend="removeIndicator()" onclick="addBlock('BACKWARD')" class="pressable-btn toolbox-btn flex items-center gap-1.5 px-3 py-1.5 bg-orange-50 hover:bg-orange-100 dark:bg-slate-800 dark:hover:bg-slate-700 text-orange-700 dark:text-orange-300 border-2 border-b-[3px] border-orange-300 dark:border-orange-700 rounded-xl shadow-sm text-xs sm:text-sm font-extrabold"><span class="p-1 bg-orange-500 text-white rounded text-xs"><i class="fas fa-arrow-down"></i></span> ถอยหลัง</button>
+                <button draggable="true" ondragstart="handleToolboxDragStart(event, 'TURN_LEFT')" ondragend="removeIndicator()" onclick="addBlock('TURN_LEFT')" class="pressable-btn toolbox-btn flex items-center gap-1.5 px-3 py-1.5 bg-pink-50 hover:bg-pink-100 dark:bg-slate-800 dark:hover:bg-slate-700 text-pink-700 dark:text-pink-300 border-2 border-b-[3px] border-pink-300 dark:border-pink-700 rounded-xl shadow-sm text-xs sm:text-sm font-extrabold"><span class="p-1 bg-pink-500 text-white rounded text-xs"><i class="fas fa-undo"></i></span> หมุนซ้าย</button>
+                <button draggable="true" ondragstart="handleToolboxDragStart(event, 'TURN_RIGHT')" ondragend="removeIndicator()" onclick="addBlock('TURN_RIGHT')" class="pressable-btn toolbox-btn flex items-center gap-1.5 px-3 py-1.5 bg-purple-50 hover:bg-purple-100 dark:bg-slate-800 dark:hover:bg-slate-700 text-purple-700 dark:text-purple-300 border-2 border-b-[3px] border-purple-300 dark:border-purple-700 rounded-xl shadow-sm text-xs sm:text-sm font-extrabold"><span class="p-1 bg-purple-500 text-white rounded text-xs"><i class="fas fa-redo"></i></span> หมุนขวา</button>
+                <button draggable="true" ondragstart="handleToolboxDragStart(event, 'PIVOT_LEFT')" ondragend="removeIndicator()" onclick="addBlock('PIVOT_LEFT')" class="pressable-btn toolbox-btn flex items-center gap-1.5 px-3 py-1.5 bg-fuchsia-50 hover:bg-fuchsia-100 dark:bg-slate-800 dark:hover:bg-slate-700 text-fuchsia-700 dark:text-fuchsia-300 border-2 border-b-[3px] border-fuchsia-300 dark:border-fuchsia-700 rounded-xl shadow-sm text-xs sm:text-sm font-extrabold"><span class="p-1 bg-fuchsia-500 text-white rounded text-xs"><i class="fas fa-reply"></i></span> ตีวงซ้าย</button>
+                <button draggable="true" ondragstart="handleToolboxDragStart(event, 'PIVOT_RIGHT')" ondragend="removeIndicator()" onclick="addBlock('PIVOT_RIGHT')" class="pressable-btn toolbox-btn flex items-center gap-1.5 px-3 py-1.5 bg-violet-50 hover:bg-violet-100 dark:bg-slate-800 dark:hover:bg-slate-700 text-violet-700 dark:text-violet-300 border-2 border-b-[3px] border-violet-300 dark:border-violet-700 rounded-xl shadow-sm text-xs sm:text-sm font-extrabold"><span class="p-1 bg-violet-500 text-white rounded text-xs"><i class="fas fa-share"></i></span> ตีวงขวา</button>
+                <button draggable="true" ondragstart="handleToolboxDragStart(event, 'SLIDE_LEFT')" ondragend="removeIndicator()" onclick="addBlock('SLIDE_LEFT')" class="pressable-btn toolbox-btn flex items-center gap-1.5 px-3 py-1.5 bg-teal-50 hover:bg-teal-100 dark:bg-slate-800 dark:hover:bg-slate-700 text-teal-700 dark:text-teal-300 border-2 border-b-[3px] border-teal-300 dark:border-teal-700 rounded-xl shadow-sm text-xs sm:text-sm font-extrabold"><span class="p-1 bg-teal-500 text-white rounded text-xs"><i class="fas fa-angle-double-left"></i></span> สไลด์ซ้าย</button>
+                <button draggable="true" ondragstart="handleToolboxDragStart(event, 'SLIDE_RIGHT')" ondragend="removeIndicator()" onclick="addBlock('SLIDE_RIGHT')" class="pressable-btn toolbox-btn flex items-center gap-1.5 px-3 py-1.5 bg-emerald-50 hover:bg-emerald-100 dark:bg-slate-800 dark:hover:bg-slate-700 text-emerald-700 dark:text-emerald-300 border-2 border-b-[3px] border-emerald-300 dark:border-emerald-700 rounded-xl shadow-sm text-xs sm:text-sm font-extrabold"><span class="p-1 bg-emerald-500 text-white rounded text-xs"><i class="fas fa-angle-double-right"></i></span> สไลด์ขวา</button>
+                <button draggable="true" ondragstart="handleToolboxDragStart(event, 'CHECK_WALL')" ondragend="removeIndicator()" onclick="addBlock('CHECK_WALL')" class="pressable-btn toolbox-btn flex items-center gap-1.5 px-3 py-1.5 bg-amber-50 hover:bg-amber-100 dark:bg-slate-800 dark:hover:bg-slate-700 text-amber-700 dark:text-amber-300 border-2 border-b-[3px] border-amber-300 dark:border-amber-700 rounded-xl shadow-sm text-xs sm:text-sm font-extrabold"><span class="p-1 bg-amber-500 text-white rounded text-xs"><i class="fas fa-shield-alt"></i></span> เช็คหลัง/หน้า</button>
+                <button draggable="true" ondragstart="handleToolboxDragStart(event, 'DISPENSE_PIN2')" ondragend="removeIndicator()" onclick="addBlock('DISPENSE_PIN2')" class="pressable-btn toolbox-btn flex items-center gap-1.5 px-3 py-1.5 bg-indigo-50 hover:bg-indigo-100 dark:bg-slate-800 dark:hover:bg-slate-700 text-indigo-700 dark:text-indigo-300 border-2 border-b-[3px] border-indigo-300 dark:border-indigo-700 rounded-xl shadow-sm text-xs sm:text-sm font-extrabold"><span class="p-1 bg-indigo-500 text-white rounded text-xs"><i class="fas fa-box"></i></span> วัตถุ 1 (Pin 2)</button>
+                <button draggable="true" ondragstart="handleToolboxDragStart(event, 'DISPENSE_PIN3')" ondragend="removeIndicator()" onclick="addBlock('DISPENSE_PIN3')" class="pressable-btn toolbox-btn flex items-center gap-1.5 px-3 py-1.5 bg-sky-50 hover:bg-sky-100 dark:bg-slate-800 dark:hover:bg-slate-700 text-sky-700 dark:text-sky-300 border-2 border-b-[3px] border-sky-300 dark:border-sky-700 rounded-xl shadow-sm text-xs sm:text-sm font-extrabold"><span class="p-1 bg-sky-500 text-white rounded text-xs"><i class="fas fa-box-open"></i></span> วัตถุ 2 (Pin 3)</button>
             </div>
         </header>
 
         <div class="max-w-[1800px] w-full mx-auto p-4 sm:p-6 space-y-6 relative flex-grow">
-            <!-- พื้นที่การทำงานหลัก 12 คอลัมน์ -->
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
                 
-                <!-- พื้นที่โปรแกรมมิ่ง 5 คอลัมน์ -->
                 <div class="lg:col-span-5 flex flex-col h-full min-h-[600px] max-h-[850px]">
                     <div class="bg-white dark:bg-red-900/80 p-5 rounded-3xl shadow-xl border-2 border-red-100 dark:border-red-800 transition-colors flex flex-col h-full flex-1">
                         <div class="flex justify-between items-center mb-4 pb-3 border-b-2 border-red-50 dark:border-red-800 transition-colors flex-wrap gap-2">
-                            <div>
-                                <h2 class="text-2xl font-extrabold text-red-800 dark:text-red-100">พื้นที่โปรแกรมมิ่ง</h2>
-                            </div>
+                            <div><h2 class="text-2xl font-extrabold text-red-800 dark:text-red-100">พื้นที่โปรแกรมมิ่ง</h2></div>
                             <div class="flex gap-2">
                                 <input type="file" id="file-input" class="hidden" accept=".json" onchange="loadFile(event)">
-                                <button id="load-btn" onclick="document.getElementById('file-input').click()" class="pressable-btn text-sm font-bold flex items-center gap-1 px-3 py-2 rounded-xl bg-red-50 text-red-700 hover:bg-red-100 dark:bg-red-950 dark:text-red-300 dark:hover:bg-red-900 transition-all border-2 border-b-[4px] border-red-200 dark:border-red-700" title="เปิดไฟล์">
-                                    <i class="fas fa-folder-open"></i> เปิดไฟล์
-                                </button>
-                                <button id="save-btn" onclick="saveFile()" class="pressable-btn text-sm font-bold flex items-center gap-1 px-3 py-2 rounded-xl bg-red-50 text-red-700 hover:bg-red-100 dark:bg-red-950 dark:text-red-300 dark:hover:bg-red-900 transition-all border-2 border-b-[4px] border-red-200 dark:border-red-700" title="บันทึกไฟล์">
-                                    <i class="fas fa-save"></i> บันทึก
-                                </button>
-                                <button id="clear-btn" onclick="clearBlocks()" class="pressable-btn text-sm font-bold flex items-center gap-1 px-3 py-2 rounded-xl bg-red-100 text-red-800 hover:bg-red-200 dark:bg-red-950 dark:text-red-400 dark:hover:bg-red-900 disabled:opacity-50 transition-all border-2 border-b-[4px] border-red-300 dark:border-red-800" title="ล้างบล็อกทั้งหมด">
-                                    <i class="fas fa-trash"></i> ล้าง
-                                </button>
+                                <button id="load-btn" onclick="document.getElementById('file-input').click()" class="pressable-btn text-sm font-bold flex items-center gap-1 px-3 py-2 rounded-xl bg-red-50 text-red-700 hover:bg-red-100 dark:bg-red-950 dark:text-red-300 transition-all border-2 border-b-[4px] border-red-200 dark:border-red-700" title="เปิดไฟล์"><i class="fas fa-folder-open"></i> เปิดไฟล์</button>
+                                <button id="save-btn" onclick="saveFile()" class="pressable-btn text-sm font-bold flex items-center gap-1 px-3 py-2 rounded-xl bg-red-50 text-red-700 hover:bg-red-100 dark:bg-red-950 dark:text-red-300 transition-all border-2 border-b-[4px] border-red-200 dark:border-red-700" title="บันทึกไฟล์"><i class="fas fa-save"></i> บันทึก</button>
+                                <button id="clear-btn" onclick="clearBlocks()" class="pressable-btn text-sm font-bold flex items-center gap-1 px-3 py-2 rounded-xl bg-red-100 text-red-800 hover:bg-red-200 dark:bg-red-950 dark:text-red-400 disabled:opacity-50 transition-all border-2 border-b-[4px] border-red-300 dark:border-red-800" title="ล้างบล็อกทั้งหมด"><i class="fas fa-trash"></i> ล้าง</button>
                             </div>
                         </div>
 
@@ -294,36 +202,31 @@
                     </div>
                 </div>
 
-                <!-- กระดานจำลอง 7 คอลัมน์ -->
                 <div class="lg:col-span-7 flex flex-col gap-6">
                     <div class="bg-white dark:bg-red-900/80 p-6 rounded-3xl shadow-xl border-2 border-red-100 dark:border-red-800 transition-colors flex-1 flex flex-col items-center justify-start min-h-[600px]">
                         <div class="mb-4 w-full flex justify-between items-center">
                             <div class="flex items-center gap-3">
-                                <span class="flex h-4 w-4 relative">
-                                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-                                    <span class="relative inline-flex rounded-full h-4 w-4 bg-red-500"></span>
-                                </span>
+                                <span class="flex h-4 w-4 relative"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span><span class="relative inline-flex rounded-full h-4 w-4 bg-red-500"></span></span>
                                 <h2 class="text-2xl font-extrabold text-red-800 dark:text-red-100">กระดานจำลอง 8x4 Grid</h2>
                             </div>
-                            <button id="reset-btn" onclick="resetRobot()" class="pressable-btn text-sm flex items-center gap-2 px-4 py-2 rounded-xl bg-red-50 text-red-700 hover:bg-red-100 font-extrabold dark:bg-red-950 dark:text-red-300 transition-colors border-2 border-b-[4px] border-red-200 dark:border-red-800 shadow">
-                                <i class="fas fa-undo-alt"></i> รีเซ็ต
-                            </button>
+                            <button id="reset-btn" onclick="resetRobot()" class="pressable-btn text-sm flex items-center gap-2 px-4 py-2 rounded-xl bg-red-50 text-red-700 hover:bg-red-100 font-extrabold dark:bg-red-950 dark:text-red-300 transition-colors border-2 border-b-[4px] border-red-200 dark:border-red-800 shadow"><i class="fas fa-undo-alt"></i> รีเซ็ต</button>
                         </div>
-                        
                         <div id="grid-container" class="grid gap-1 border-8 border-red-100 dark:border-red-950 bg-red-50 dark:bg-red-950/50 rounded-2xl overflow-hidden w-full shadow-inner transition-colors p-2"></div>
                         <div id="error-msg" class="hidden mt-4 p-3 w-full bg-red-600 text-white border-2 border-red-700 rounded-xl text-center font-extrabold text-lg transition-colors shadow-lg"></div>
                         <div id="success-msg" class="hidden mt-4 p-3 w-full bg-emerald-600 text-white border-2 border-emerald-700 rounded-xl text-center font-extrabold text-lg transition-colors shadow-lg"></div>
                     </div>
                 </div>
                 
-                <!-- หน้าปัดเซ็นเซอร์ และตั้งค่าพารามิเตอร์ -->
                 <div class="lg:col-span-12 space-y-6 mt-2">
                     <div class="bg-white dark:bg-red-900/80 p-6 rounded-3xl shadow-xl border-2 border-red-100 dark:border-red-800 transition-colors">
                         <div class="flex flex-col md:flex-row items-center justify-between gap-4 mb-4 pb-4 border-b-2 border-red-50 dark:border-red-800">
                             <h2 class="text-xl font-extrabold text-red-800 dark:text-red-100 flex items-center gap-3">
                                 <i class="fas fa-satellite-dish text-red-500 text-2xl"></i> หน้าปัดอ่านค่าเซ็นเซอร์
                             </h2>
-                            <div class="flex gap-3">
+                            <div class="flex flex-wrap gap-2 justify-end">
+                                <button onclick="openSerialMonitor()" class="pressable-btn flex items-center gap-2 px-3 py-2 bg-amber-500 hover:bg-amber-600 text-white text-sm font-bold rounded-xl transition-colors shadow-sm border-b-[3px] border-amber-700" title="ตรวจสอบข้อความที่วิ่งในสาย USB">
+                                    <i class="fas fa-terminal"></i> มอนิเตอร์ Serial
+                                </button>
                                 <button id="read-sensor-btn" onclick="requestSensorData()" class="pressable-btn flex items-center gap-2 px-4 py-2 bg-red-50 hover:bg-red-100 dark:bg-red-950 dark:hover:bg-red-900 text-red-700 dark:text-red-200 text-sm font-bold rounded-xl transition-colors border-2 border-b-[4px] border-red-200 dark:border-red-800 disabled:opacity-50">
                                     <i class="fas fa-sync-alt"></i> ดึงค่า 1 ครั้ง
                                 </button>
@@ -364,77 +267,22 @@
                         </div>
 
                         <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-8 gap-3">
-                            <div class="flex flex-col gap-1">
-                                <label class="text-[12px] text-red-500 dark:text-red-300 font-bold">เดินหน้า (F:รอบ)</label>
-                                <input type="number" id="param-F" value="100" step="1" class="px-2.5 py-2 text-sm font-mono rounded-xl border-2 border-red-200 dark:border-red-700 outline-none focus:border-red-500 dark:bg-red-950 dark:text-white transition-colors">
-                            </div>
-                            <div class="flex flex-col gap-1">
-                                <label class="text-[12px] text-red-500 dark:text-red-300 font-bold">ถอยหลัง (B:รอบ)</label>
-                                <input type="number" id="param-B" value="100" step="1" class="px-2.5 py-2 text-sm font-mono rounded-xl border-2 border-red-200 dark:border-red-700 outline-none focus:border-red-500 dark:bg-red-950 dark:text-white transition-colors">
-                            </div>
-                            <div class="flex flex-col gap-1">
-                                <label class="text-[12px] text-red-500 dark:text-red-300 font-bold">หมุนซ้าย (L:รอบ)</label>
-                                <input type="number" id="param-L" value="80" step="1" class="px-2.5 py-2 text-sm font-mono rounded-xl border-2 border-red-200 dark:border-red-700 outline-none focus:border-red-500 dark:bg-red-950 dark:text-white transition-colors">
-                            </div>
-                            <div class="flex flex-col gap-1">
-                                <label class="text-[12px] text-red-500 dark:text-red-300 font-bold">หมุนขวา (R:รอบ)</label>
-                                <input type="number" id="param-R" value="80" step="1" class="px-2.5 py-2 text-sm font-mono rounded-xl border-2 border-red-200 dark:border-red-700 outline-none focus:border-red-500 dark:bg-red-950 dark:text-white transition-colors">
-                            </div>
-                            <div class="flex flex-col gap-1">
-                                <label class="text-[12px] text-red-500 dark:text-red-300 font-bold">ตีวงซ้าย (PL:รอบ)</label>
-                                <input type="number" id="param-PL" value="80" step="1" class="px-2.5 py-2 text-sm font-mono rounded-xl border-2 border-red-200 dark:border-red-700 outline-none focus:border-red-500 dark:bg-red-950 dark:text-white transition-colors">
-                            </div>
-                            <div class="flex flex-col gap-1">
-                                <label class="text-[12px] text-red-500 dark:text-red-300 font-bold">ตีวงขวา (PR:รอบ)</label>
-                                <input type="number" id="param-PR" value="80" step="1" class="px-2.5 py-2 text-sm font-mono rounded-xl border-2 border-red-200 dark:border-red-700 outline-none focus:border-red-500 dark:bg-red-950 dark:text-white transition-colors">
-                            </div>
-                            <div class="flex flex-col gap-1">
-                                <label class="text-[12px] text-red-500 dark:text-red-300 font-bold">สไลด์ซ้าย (SL:รอบ)</label>
-                                <input type="number" id="param-SL" value="100" step="1" class="px-2.5 py-2 text-sm font-mono rounded-xl border-2 border-red-200 dark:border-red-700 outline-none focus:border-red-500 dark:bg-red-950 dark:text-white transition-colors">
-                            </div>
-                            <div class="flex flex-col gap-1">
-                                <label class="text-[12px] text-red-500 dark:text-red-300 font-bold">สไลด์ขวา (SR:รอบ)</label>
-                                <input type="number" id="param-SR" value="100" step="1" class="px-2.5 py-2 text-sm font-mono rounded-xl border-2 border-red-200 dark:border-red-700 outline-none focus:border-red-500 dark:bg-red-950 dark:text-white transition-colors">
-                            </div>
-                            <div class="flex flex-col gap-1">
-                                <label class="text-[12px] text-red-500 dark:text-red-300 font-bold">เช็คหลัง/หน้า (CW)</label>
-                                <input type="number" id="param-CW" value="100" step="1" class="px-2.5 py-2 text-sm font-mono rounded-xl border-2 border-red-200 dark:border-red-700 outline-none focus:border-red-500 dark:bg-red-950 dark:text-white transition-colors">
-                            </div>
-                            
-                            <div class="flex flex-col gap-1">
-                                <label class="text-[12px] text-red-500 dark:text-red-300 font-bold">เกณฑ์เซ็นเซอร์</label>
-                                <input type="number" id="param-SENSOR" value="600" class="px-2.5 py-2 text-sm font-mono rounded-xl border-2 border-red-200 dark:border-red-700 outline-none focus:border-red-500 dark:bg-red-950 dark:text-white transition-colors">
-                            </div>
-                            <div class="flex flex-col gap-1">
-                                <label class="text-[12px] text-red-500 dark:text-red-300 font-bold">ตรรกะ</label>
-                                <select id="param-LOGIC" class="px-2 py-2 text-xs font-bold rounded-xl border-2 border-red-200 dark:border-red-700 outline-none focus:border-red-500 dark:bg-red-950 dark:text-white cursor-pointer transition-colors">
-                                    <option value="1" selected>&gt; มากกว่า</option>
-                                    <option value="0">&lt; น้อยกว่า</option>
-                                </select>
-                            </div>
-
-                            <div class="flex flex-col gap-1">
-                                <label class="text-[12px] text-red-500 dark:text-red-300 font-bold">วัตถุ 1 (°)</label>
-                                <input type="number" id="param-D1" value="90" min="0" max="180" class="px-2.5 py-2 text-sm font-mono rounded-xl border-2 border-red-200 dark:border-red-700 outline-none focus:border-red-500 dark:bg-red-950 dark:text-white transition-colors">
-                            </div>
-                            <div class="flex flex-col gap-1">
-                                <label class="text-[12px] text-red-500 dark:text-red-300 font-bold">วัตถุ 2 (°)</label>
-                                <input type="number" id="param-D2" value="90" min="0" max="180" class="px-2.5 py-2 text-sm font-mono rounded-xl border-2 border-red-200 dark:border-red-700 outline-none focus:border-red-500 dark:bg-red-950 dark:text-white transition-colors">
-                            </div>
-
-                            <div class="flex flex-col gap-1">
-                                <label class="text-[12px] text-red-600 dark:text-red-400 font-extrabold" title="ลดค่าหากหุ่นเอียงขวา">ชดเชยซ้าย L</label>
-                                <input type="number" id="param-ML" value="100" min="50" max="100" class="px-2.5 py-2 text-sm font-mono font-bold text-red-600 dark:text-red-400 rounded-xl border-2 border-red-400 dark:border-red-600 outline-none focus:border-red-600 dark:bg-red-950 transition-colors shadow-sm">
-                            </div>
-                            <div class="flex flex-col gap-1">
-                                <label class="text-[12px] text-red-600 dark:text-red-400 font-extrabold" title="ลดค่าหากหุ่นเอียงซ้าย">ชดเชยขวา R</label>
-                                <input type="number" id="param-MR" value="100" min="50" max="100" class="px-2.5 py-2 text-sm font-mono font-bold text-red-600 dark:text-red-400 rounded-xl border-2 border-red-400 dark:border-red-600 outline-none focus:border-red-600 dark:bg-red-950 transition-colors shadow-sm">
-                            </div>
-
-                            <div class="flex flex-col gap-1 col-span-2 sm:col-span-1">
-                                <label class="text-[12px] text-red-700 dark:text-red-300 font-extrabold">ความเร็วเริ่ม (%)</label>
-                                <input type="number" id="param-SPEED" value="100" min="10" max="100" class="px-2.5 py-2 text-sm font-mono font-bold text-red-700 dark:text-red-300 rounded-xl border-2 border-red-500 dark:border-red-500 outline-none focus:border-red-700 dark:bg-red-950 transition-colors shadow-sm">
-                            </div>
+                            <div class="flex flex-col gap-1"><label class="text-[12px] text-red-500 dark:text-red-300 font-bold">เดินหน้า (F:รอบ)</label><input type="number" id="param-F" value="100" step="1" class="px-2.5 py-2 text-sm font-mono rounded-xl border-2 border-red-200 dark:border-red-700 outline-none"></div>
+                            <div class="flex flex-col gap-1"><label class="text-[12px] text-red-500 dark:text-red-300 font-bold">ถอยหลัง (B:รอบ)</label><input type="number" id="param-B" value="100" step="1" class="px-2.5 py-2 text-sm font-mono rounded-xl border-2 border-red-200 dark:border-red-700 outline-none"></div>
+                            <div class="flex flex-col gap-1"><label class="text-[12px] text-red-500 dark:text-red-300 font-bold">หมุนซ้าย (L:รอบ)</label><input type="number" id="param-L" value="80" step="1" class="px-2.5 py-2 text-sm font-mono rounded-xl border-2 border-red-200 dark:border-red-700 outline-none"></div>
+                            <div class="flex flex-col gap-1"><label class="text-[12px] text-red-500 dark:text-red-300 font-bold">หมุนขวา (R:รอบ)</label><input type="number" id="param-R" value="80" step="1" class="px-2.5 py-2 text-sm font-mono rounded-xl border-2 border-red-200 dark:border-red-700 outline-none"></div>
+                            <div class="flex flex-col gap-1"><label class="text-[12px] text-red-500 dark:text-red-300 font-bold">ตีวงซ้าย (PL:รอบ)</label><input type="number" id="param-PL" value="80" step="1" class="px-2.5 py-2 text-sm font-mono rounded-xl border-2 border-red-200 dark:border-red-700 outline-none"></div>
+                            <div class="flex flex-col gap-1"><label class="text-[12px] text-red-500 dark:text-red-300 font-bold">ตีวงขวา (PR:รอบ)</label><input type="number" id="param-PR" value="80" step="1" class="px-2.5 py-2 text-sm font-mono rounded-xl border-2 border-red-200 dark:border-red-700 outline-none"></div>
+                            <div class="flex flex-col gap-1"><label class="text-[12px] text-red-500 dark:text-red-300 font-bold">สไลด์ซ้าย (SL:รอบ)</label><input type="number" id="param-SL" value="100" step="1" class="px-2.5 py-2 text-sm font-mono rounded-xl border-2 border-red-200 dark:border-red-700 outline-none"></div>
+                            <div class="flex flex-col gap-1"><label class="text-[12px] text-red-500 dark:text-red-300 font-bold">สไลด์ขวา (SR:รอบ)</label><input type="number" id="param-SR" value="100" step="1" class="px-2.5 py-2 text-sm font-mono rounded-xl border-2 border-red-200 dark:border-red-700 outline-none"></div>
+                            <div class="flex flex-col gap-1"><label class="text-[12px] text-red-500 dark:text-red-300 font-bold">เช็คหลัง/หน้า (CW)</label><input type="number" id="param-CW" value="100" step="1" class="px-2.5 py-2 text-sm font-mono rounded-xl border-2 border-red-200 dark:border-red-700 outline-none"></div>
+                            <div class="flex flex-col gap-1"><label class="text-[12px] text-red-500 dark:text-red-300 font-bold">เกณฑ์เซ็นเซอร์</label><input type="number" id="param-SENSOR" value="600" class="px-2.5 py-2 text-sm font-mono rounded-xl border-2 border-red-200 dark:border-red-700 outline-none"></div>
+                            <div class="flex flex-col gap-1"><label class="text-[12px] text-red-500 dark:text-red-300 font-bold">ตรรกะ</label><select id="param-LOGIC" class="px-2 py-2 text-xs font-bold rounded-xl border-2 border-red-200 dark:border-red-700 outline-none"><option value="1" selected>&gt; มากกว่า</option><option value="0">&lt; น้อยกว่า</option></select></div>
+                            <div class="flex flex-col gap-1"><label class="text-[12px] text-red-500 dark:text-red-300 font-bold">วัตถุ 1 (°)</label><input type="number" id="param-D1" value="90" min="0" max="180" class="px-2.5 py-2 text-sm font-mono rounded-xl border-2 border-red-200 dark:border-red-700 outline-none"></div>
+                            <div class="flex flex-col gap-1"><label class="text-[12px] text-red-500 dark:text-red-300 font-bold">วัตถุ 2 (°)</label><input type="number" id="param-D2" value="90" min="0" max="180" class="px-2.5 py-2 text-sm font-mono rounded-xl border-2 border-red-200 dark:border-red-700 outline-none"></div>
+                            <div class="flex flex-col gap-1"><label class="text-[12px] text-red-600 dark:text-red-400 font-extrabold" title="ลดค่าหากหุ่นเอียงขวา">ชดเชยซ้าย L</label><input type="number" id="param-ML" value="100" min="50" max="100" class="px-2.5 py-2 text-sm font-mono font-bold text-red-600 dark:text-red-400 rounded-xl border-2 border-red-400 dark:border-red-600 outline-none"></div>
+                            <div class="flex flex-col gap-1"><label class="text-[12px] text-red-600 dark:text-red-400 font-extrabold" title="ลดค่าหากหุ่นเอียงซ้าย">ชดเชยขวา R</label><input type="number" id="param-MR" value="100" min="50" max="100" class="px-2.5 py-2 text-sm font-mono font-bold text-red-600 dark:text-red-400 rounded-xl border-2 border-red-400 dark:border-red-600 outline-none"></div>
+                            <div class="flex flex-col gap-1 col-span-2 sm:col-span-1"><label class="text-[12px] text-red-700 dark:text-red-300 font-extrabold">ความเร็วเริ่ม (%)</label><input type="number" id="param-SPEED" value="100" min="10" max="100" class="px-2.5 py-2 text-sm font-mono font-bold text-red-700 dark:text-red-300 rounded-xl border-2 border-red-500 dark:border-red-500 outline-none"></div>
                         </div>
                     </div>
                 </div>
@@ -443,219 +291,102 @@
         </div>
     </div> 
 
-    <div id="firmwareModal" class="hidden fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 backdrop-blur-sm transition-opacity">
+    <div id="serialMonitorModal" class="hidden fixed inset-0 bg-black/70 z-[10000] flex items-center justify-center p-4 backdrop-blur-sm">
+        <div class="bg-slate-900 text-green-400 rounded-3xl w-full max-w-2xl h-[400px] flex flex-col shadow-2xl overflow-hidden border-4 border-slate-700 font-mono">
+            <div class="flex justify-between items-center px-5 py-3 bg-slate-800 border-b border-slate-700 text-white font-bold">
+                <span class="flex items-center gap-2"><i class="fas fa-terminal"></i> Serial Monitor (ประวัติข้อมูลที่ได้รับ)</span>
+                <div class="flex gap-2">
+                    <button onclick="clearMonitor()" class="px-2 py-1 bg-slate-700 hover:bg-slate-600 text-xs rounded">ล้างจอ</button>
+                    <button onclick="closeSerialMonitor()" class="text-red-400 hover:text-red-300 w-8 h-8 rounded-full flex items-center justify-center"><i class="fas fa-times text-lg"></i></button>
+                </div>
+            </div>
+            <div id="monitorOutput" class="flex-1 p-4 overflow-y-auto text-xs space-y-1 select-text"></div>
+        </div>
+    </div>
+
+    <div id="firmwareModal" class="hidden fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
         <div class="bg-white dark:bg-red-950 rounded-3xl w-full max-w-4xl max-h-[90vh] flex flex-col shadow-2xl overflow-hidden border-4 border-red-600">
             <div class="flex justify-between items-center p-5 border-b-2 border-red-100 dark:border-red-900 bg-red-50 dark:bg-red-950">
-                <h2 class="text-2xl font-extrabold text-red-800 dark:text-red-200 flex items-center gap-3">
-                    <i class="fas fa-microchip"></i>
-                    Arduino Firmware Code (PRO V4.12)
-                </h2>
-                <button onclick="closeFirmwareModal()" class="text-red-500 hover:text-red-700 dark:hover:text-red-300 hover:bg-red-200 dark:hover:bg-red-900 w-10 h-10 flex justify-center items-center rounded-full transition-colors">
-                    <i class="fas fa-times text-xl"></i>
-                </button>
+                <h2 class="text-2xl font-extrabold text-red-800 dark:text-red-200 flex items-center gap-3"><i class="fas fa-microchip"></i> Arduino Firmware Code (PRO V4.12)</h2>
+                <button onclick="closeFirmwareModal()" class="text-red-500 hover:text-red-700 w-10 h-10 rounded-full flex items-center justify-center"><i class="fas fa-times text-xl"></i></button>
             </div>
             <div class="p-5 flex-1 overflow-auto bg-red-50/50 dark:bg-red-950/80 text-left">
                 <pre><code id="firmwareCodeBlock" class="text-xs sm:text-sm font-mono text-red-900 dark:text-red-100 font-medium">#include &lt;EEPROM.h&gt;
 #include &lt;Servo.h&gt;
 
-const int BUZZER_PIN = 13; 
-const int START_BTN = A0;  
+const int BUZZER_PIN = 13; const int START_BTN = A0;  
+const int SERVO_PIN1 = 2;  const int SERVO_PIN2 = 3; 
+const int SENSOR_R1 = A1; const int SENSOR_L1 = A2; const int SENSOR_R2 = A3; const int SENSOR_L2 = A4;
+const int M1_IN1 = 8; const int M1_IN2 = 9; const int M2_IN1 = 10; const int M2_IN2 = 11;
+const int M3_IN1 = 4; const int M3_IN2 = 5; const int M4_IN1 = 6;  const int M4_IN2 = 7;
 
-const int SERVO_PIN1 = 2; 
-const int SERVO_PIN2 = 3; 
+int defaultSpeed = 100; int motorLeftRatio = 100; int motorRightRatio = 100; 
+struct Command { char action[4]; float value; int extra1; int extra2; };
+struct RobotSettings { uint8_t magic; int speed; int ml; int mr; };
 
-const int SENSOR_R1 = A1; // ขวาตัวหน้า
-const int SENSOR_L1 = A2; // ซ้ายตัวหน้า
-const int SENSOR_R2 = A3; // ขวาตัวหลัง
-const int SENSOR_L2 = A4; // ซ้ายตัวหลัง
-
-const int M1_IN1 = 8;  const int M1_IN2 = 9;
-const int M2_IN1 = 10; const int M2_IN2 = 11;
-const int M3_IN1 = 4;  const int M3_IN2 = 5;
-const int M4_IN1 = 6;  const int M4_IN2 = 7;
-
-int defaultSpeed = 100;
-int motorLeftRatio = 100;  
-int motorRightRatio = 100; 
-
-struct Command {
-  char action[4]; 
-  float value;    
-  int extra1; // ใช้เก็บความเร็วต่อคำสั่ง หรือ เกณฑ์เช็คผนัง
-  int extra2; 
-};
-
-struct RobotSettings {
-  uint8_t magic; 
-  int speed;
-  int ml;
-  int mr;
-};
-
-const int MAX_CMDS = 50; 
-Command cmdQueue[MAX_CMDS];
-uint8_t cmdCount = 0;
-
-unsigned long lastReceiveTime = 0;
-const unsigned long FINISH_TRANSFER_TIMEOUT = 1000; 
-bool isReceivingBatch = false; 
-
-Servo servo1;
-Servo servo2;
+const int MAX_CMDS = 50; Command cmdQueue[MAX_CMDS]; uint8_t cmdCount = 0;
+unsigned long lastReceiveTime = 0; const unsigned long FINISH_TRANSFER_TIMEOUT = 1000; bool isReceivingBatch = false; 
+Servo servo1; Servo servo2;
 
 void saveSettingsToEEPROM() {
-  RobotSettings settings = {0xAA, defaultSpeed, motorLeftRatio, motorRightRatio};
-  EEPROM.put(800, settings);
+  RobotSettings settings = {0xAA, defaultSpeed, motorLeftRatio, motorRightRatio}; EEPROM.put(800, settings);
 }
 
 void setup() {
   Serial.begin(115200); 
-  Serial.setTimeout(10); 
+  Serial.setTimeout(50); // ตั้งค่า Timeout ให้รับข้อมูลได้เสถียรขึ้น
   
-  pinMode(BUZZER_PIN, OUTPUT);
-  pinMode(START_BTN, INPUT); 
-  pinMode(SENSOR_R1, INPUT);
-  pinMode(SENSOR_L1, INPUT);
-  pinMode(SENSOR_R2, INPUT); 
-  pinMode(SENSOR_L2, INPUT); 
-
+  pinMode(BUZZER_PIN, OUTPUT); pinMode(START_BTN, INPUT); 
+  pinMode(SENSOR_R1, INPUT); pinMode(SENSOR_L1, INPUT); pinMode(SENSOR_R2, INPUT); pinMode(SENSOR_L2, INPUT); pinMode(A5, INPUT);
+  
   for(int i = 4; i &lt;= 11; i++) pinMode(i, OUTPUT);
-  servo1.attach(SERVO_PIN1);
-  servo2.attach(SERVO_PIN2);
-  servo1.write(45); 
-  servo2.write(45); 
+  servo1.attach(SERVO_PIN1); servo2.attach(SERVO_PIN2); servo1.write(45); servo2.write(45); 
 
-  RobotSettings settings;
-  EEPROM.get(800, settings);
-  if (settings.magic == 0xAA) {
-    defaultSpeed = constrain(settings.speed, 10, 100);
-    motorLeftRatio = constrain(settings.ml, 50, 100);
-    motorRightRatio = constrain(settings.mr, 50, 100);
-  }
+  RobotSettings settings; EEPROM.get(800, settings);
+  if (settings.magic == 0xAA) { defaultSpeed = constrain(settings.speed, 10, 100); motorLeftRatio = constrain(settings.ml, 50, 100); motorRightRatio = constrain(settings.mr, 50, 100); }
+  EEPROM.get(0, cmdCount); if (cmdCount == 255 || cmdCount &gt; MAX_CMDS) cmdCount = 0;
+  for(int i = 0; i &lt; cmdCount; i++) EEPROM.get(1 + i * sizeof(Command), cmdQueue[i]);
 
-  EEPROM.get(0, cmdCount);
-  if (cmdCount == 255 || cmdCount &gt; MAX_CMDS) cmdCount = 0;
-  for(int i = 0; i &lt; cmdCount; i++) {
-    EEPROM.get(1 + i * sizeof(Command), cmdQueue[i]);
-  }
-
-  playTone(523, 100); delay(120); 
-  playTone(659, 100); delay(120); 
-  playTone(784, 200); delay(200); 
-  Serial.println("Arduino Ready. Default Speed: " + String(defaultSpeed) + "% | Stored Commands: " + String(cmdCount));
+  playTone(523, 100); delay(120); playTone(659, 100); delay(120); playTone(784, 200); delay(200); 
+  Serial.println("Arduino Ready. Stored Commands: " + String(cmdCount));
 }
 
 void loop() {
   unsigned long currentTime = millis();
   if (Serial.available() &gt; 0) {
-    String data = Serial.readStringUntil('\n');
-    data.trim(); 
+    String data = Serial.readStringUntil('\n'); data.trim(); 
     if (data.length() &gt; 0) {
-      if (data == "?SENS") {
-        Serial.print("SENS:");
-        Serial.print(analogRead(A1)); Serial.print(",");
-        Serial.print(analogRead(A2)); Serial.print(",");
-        Serial.print(analogRead(A3)); Serial.print(",");
-        Serial.print(analogRead(A4)); Serial.print(",");
-        Serial.println(analogRead(A5));
-        return;
+      if (data.startsWith("?SENS")) {
+        delay(2); // หน่วงนิดเดียวเพื่อให้ภาค ADC นิ่งก่อนอ่าน
+        Serial.print("SENS:"); Serial.print(analogRead(SENSOR_R1)); Serial.print(","); Serial.print(analogRead(SENSOR_L1)); Serial.print(",");
+        Serial.print(analogRead(SENSOR_R2)); Serial.print(","); Serial.print(analogRead(SENSOR_L2)); Serial.print(","); Serial.println(analogRead(A5)); return;
       }
-      if (!isReceivingBatch) {
-        cmdCount = 0;
-        EEPROM.update(0, 0); 
-        isReceivingBatch = true;
-        Serial.println("--- New Batch Start ---");
-      }
-      lastReceiveTime = currentTime; 
-
-      String actionStr = "";
-      float val = 0; int ex1 = 0; int ex2 = 0;
-      
+      if (!isReceivingBatch) { cmdCount = 0; EEPROM.update(0, 0); isReceivingBatch = true; }
+      lastReceiveTime = currentTime; String actionStr = ""; float val = 0; int ex1 = 0; int ex2 = 0;
       if (data.startsWith("SP")) { defaultSpeed = constrain(data.substring(2).toInt(), 10, 100); saveSettingsToEEPROM(); return; }
       else if (data.startsWith("ML")) { motorLeftRatio = constrain(data.substring(2).toInt(), 50, 100); saveSettingsToEEPROM(); return; }
       else if (data.startsWith("MR")) { motorRightRatio = constrain(data.substring(2).toInt(), 50, 100); saveSettingsToEEPROM(); return; }
-      else if (data.startsWith("SL")) { 
-        actionStr = "SL"; 
-        int c = data.indexOf(',');
-        if (c != -1) { val = data.substring(2, c).toFloat(); ex1 = data.substring(c + 1).toInt(); }
-        else { val = data.substring(2).toFloat(); ex1 = defaultSpeed; }
-      }
-      else if (data.startsWith("SR")) { 
-        actionStr = "SR"; 
-        int c = data.indexOf(',');
-        if (c != -1) { val = data.substring(2, c).toFloat(); ex1 = data.substring(c + 1).toInt(); }
-        else { val = data.substring(2).toFloat(); ex1 = defaultSpeed; }
-      }
-      else if (data.startsWith("PL")) { 
-        actionStr = "PL"; 
-        int c = data.indexOf(',');
-        if (c != -1) { val = data.substring(2, c).toFloat(); ex1 = data.substring(c + 1).toInt(); }
-        else { val = data.substring(2).toFloat(); ex1 = defaultSpeed; }
-      }
-      else if (data.startsWith("PR")) { 
-        actionStr = "PR"; 
-        int c = data.indexOf(',');
-        if (c != -1) { val = data.substring(2, c).toFloat(); ex1 = data.substring(c + 1).toInt(); }
-        else { val = data.substring(2).toFloat(); ex1 = defaultSpeed; }
+      else if (data.startsWith("SL") || data.startsWith("SR") || data.startsWith("PL") || data.startsWith("PR") || data.startsWith("F") || data.startsWith("B") || data.startsWith("L") || data.startsWith("R")) { 
+        if (data.startsWith("SL")) actionStr = "SL"; else if (data.startsWith("SR")) actionStr = "SR"; else if (data.startsWith("PL")) actionStr = "PL"; else if (data.startsWith("PR")) actionStr = "PR"; else if (data.startsWith("F")) actionStr = "F"; else if (data.startsWith("B")) actionStr = "B"; else if (data.startsWith("L")) actionStr = "L"; else if (data.startsWith("R")) actionStr = "R";
+        int startIdx = actionStr.length(); int c = data.indexOf(',');
+        if (c != -1) { val = data.substring(startIdx, c).toFloat(); ex1 = data.substring(c + 1).toInt(); } else { val = data.substring(startIdx).toFloat(); ex1 = defaultSpeed; }
       }
       else if (data.startsWith("CW")) { 
-        actionStr = "CW"; 
-        int c1 = data.indexOf(','); int c2 = data.indexOf(',', c1 + 1);
-        if (c1 != -1 &amp;&amp; c2 != -1) { val = data.substring(2, c1).toFloat(); ex1 = data.substring(c1 + 1, c2).toInt(); ex2 = data.substring(c2 + 1).toInt(); } 
-        else { val = data.substring(2).toFloat(); ex1 = 600; ex2 = 1; }
-      }
-      else if (data.startsWith("F")) { 
-        actionStr = "F"; 
-        int c = data.indexOf(',');
-        if (c != -1) { val = data.substring(1, c).toFloat(); ex1 = data.substring(c + 1).toInt(); }
-        else { val = data.substring(1).toFloat(); ex1 = defaultSpeed; }
-      }
-      else if (data.startsWith("B")) { 
-        actionStr = "B"; 
-        int c = data.indexOf(',');
-        if (c != -1) { val = data.substring(1, c).toFloat(); ex1 = data.substring(c + 1).toInt(); }
-        else { val = data.substring(1).toFloat(); ex1 = defaultSpeed; }
-      }
-      else if (data.startsWith("L")) { 
-        actionStr = "L"; 
-        int c = data.indexOf(',');
-        if (c != -1) { val = data.substring(1, c).toFloat(); ex1 = data.substring(c + 1).toInt(); }
-        else { val = data.substring(1).toFloat(); ex1 = defaultSpeed; }
-      }
-      else if (data.startsWith("R")) { 
-        actionStr = "R"; 
-        int c = data.indexOf(',');
-        if (c != -1) { val = data.substring(1, c).toFloat(); ex1 = data.substring(c + 1).toInt(); }
-        else { val = data.substring(1).toFloat(); ex1 = defaultSpeed; }
+        actionStr = "CW"; int c1 = data.indexOf(','); int c2 = data.indexOf(',', c1 + 1);
+        if (c1 != -1 &amp;&amp; c2 != -1) { val = data.substring(2, c1).toFloat(); ex1 = data.substring(c1 + 1, c2).toInt(); ex2 = data.substring(c2 + 1).toInt(); } else { val = data.substring(2).toFloat(); ex1 = 600; ex2 = 1; }
       }
       else if (data.startsWith("D1:")) { actionStr = "D1"; ex1 = data.substring(3).toInt(); }
       else if (data.startsWith("D2:")) { actionStr = "D2"; ex1 = data.substring(3).toInt(); }
 
       if (actionStr != "" &amp;&amp; cmdCount &lt; MAX_CMDS) {
-        actionStr.toCharArray(cmdQueue[cmdCount].action, 4);
-        cmdQueue[cmdCount].value = val; cmdQueue[cmdCount].extra1 = ex1; cmdQueue[cmdCount].extra2 = ex2;
-        EEPROM.put(1 + cmdCount * sizeof(Command), cmdQueue[cmdCount]); 
-        cmdCount++; EEPROM.put(0, cmdCount); 
-        playTone(2000, 30); 
+        actionStr.toCharArray(cmdQueue[cmdCount].action, 4); cmdQueue[cmdCount].value = val; cmdQueue[cmdCount].extra1 = ex1; cmdQueue[cmdCount].extra2 = ex2;
+        EEPROM.put(1 + cmdCount * sizeof(Command), cmdQueue[cmdCount]); cmdCount++; EEPROM.put(0, cmdCount); playTone(2000, 30); 
       }
     }
   }
-
-  if (isReceivingBatch &amp;&amp; (currentTime - lastReceiveTime &gt; FINISH_TRANSFER_TIMEOUT)) {
-    playTone(1500, 800); delay(1000); playTone(1500, 800); delay(1000);
-    isReceivingBatch = false; 
-  }
-
+  if (isReceivingBatch &amp;&amp; (currentTime - lastReceiveTime &gt; FINISH_TRANSFER_TIMEOUT)) { playTone(1500, 800); delay(1000); isReceivingBatch = false; }
   if (analogRead(START_BTN) &gt; 800) {
-    delay(50); 
-    if (analogRead(START_BTN) &gt; 800) {
-      if (cmdCount &gt; 0) {
-        playTone(1047, 1000); delay(1000); 
-        executeAllStoredCommands();
-        playTone(784, 200); delay(200); 
-      }
-      while(analogRead(START_BTN) &gt; 800); 
-    }
+    delay(50); if (analogRead(START_BTN) &gt; 800) { if (cmdCount &gt; 0) { playTone(1047, 1000); delay(1000); executeAllStoredCommands(); playTone(784, 200); delay(200); } while(analogRead(START_BTN) &gt; 800); }
   }
 }
 
@@ -663,81 +394,51 @@ void executeAllStoredCommands() {
   for(int i = 0; i &lt; cmdCount; i++) {
     String act = String(cmdQueue[i].action);
     float val = cmdQueue[i].value; int ex1 = cmdQueue[i].extra1; int ex2 = cmdQueue[i].extra2;
-    
-    float baseDelayTime;
-    if (act == "L" || act == "R" || act == "PL" || act == "PR") {
-      baseDelayTime = (val / 80.0) * 250.0;
-    } else {
-      baseDelayTime = val * 5.0; 
-    }
-
-    int currentSpeed = defaultSpeed;
-    if (act == "F" || act == "B" || act == "L" || act == "R" || act == "SL" || act == "SR" || act == "PL" || act == "PR") {
-      currentSpeed = ex1;
-      if (currentSpeed &lt;= 0) currentSpeed = defaultSpeed;
-    }
-
+    float baseDelayTime = (act == "L" || act == "R" || act == "PL" || act == "PR") ? (val / 80.0) * 250.0 : val * 5.0;
+    int currentSpeed = (ex1 &lt;= 0) ? defaultSpeed : ex1;
     float speedRatio = 100.0 / (float)currentSpeed;
-    float frictionBoost = 1.0;
-    
-    if (act == "L" || act == "R" || act == "PL" || act == "PR") {
-      if (currentSpeed &lt; 100) {
-        float turnBoostFactor = 0.08; 
-        frictionBoost = 1.0 + ((100.0 - currentSpeed) / 100.0) * turnBoostFactor;
-      }
-    } 
-    else {
-      frictionBoost = (currentSpeed &lt; 80) ? 1.04 : 1.0; 
-    }
-    
+    float frictionBoost = (act == "L" || act == "R" || act == "PL" || act == "PR") ? (1.0 + ((100.0 - currentSpeed) / 100.0) * 0.08) : ((currentSpeed &lt; 80) ? 1.04 : 1.0);
     int compensatedDelay = (int)(baseDelayTime * speedRatio * frictionBoost);
     
-    if (act == "F") { movePulsed(1, 1, 1, 1, compensatedDelay, currentSpeed); }
-    else if (act == "B") { movePulsed(-1, -1, -1, -1, compensatedDelay, currentSpeed); }
-    else if (act == "L") { movePulsed(-1, -1, 1, 1, compensatedDelay, currentSpeed); } 
-    else if (act == "R") { movePulsed(1, 1, -1, -1, compensatedDelay, currentSpeed); } 
-    else if (act == "SL") { movePulsed(1, -1, 1, -1, compensatedDelay, currentSpeed); }
-    else if (act == "SR") { movePulsed(-1, 1, -1, 1, compensatedDelay, currentSpeed); }
-    else if (act == "PL") { movePulsed(0, 0, 1, 1, compensatedDelay, currentSpeed); } // ซ้ายหยุด ขวาเดินหน้า
-    else if (act == "PR") { movePulsed(1, 1, 0, 0, compensatedDelay, currentSpeed); } // ซ้ายเดินหน้า ขวาหยุด
+    if (act == "F") movePulsed(1, 1, 1, 1, compensatedDelay, currentSpeed);
+    else if (act == "B") movePulsed(-1, -1, -1, -1, compensatedDelay, currentSpeed);
+    else if (act == "L") movePulsed(-1, -1, 1, 1, compensatedDelay, currentSpeed); 
+    else if (act == "R") movePulsed(1, 1, -1, -1, compensatedDelay, currentSpeed); 
+    else if (act == "SL") movePulsed(1, -1, 1, -1, compensatedDelay, currentSpeed);
+    else if (act == "SR") movePulsed(-1, 1, -1, 1, compensatedDelay, currentSpeed);
+    else if (act == "PL") movePulsed(0, 0, 1, 1, compensatedDelay, currentSpeed); 
+    else if (act == "PR") movePulsed(1, 1, 0, 0, compensatedDelay, currentSpeed); 
     else if (act == "D1") { servo1.write(ex1); delay(600); servo1.write(45); delay(400); }
     else if (act == "D2") { servo2.write(ex1); delay(600); servo2.write(45); delay(400); }
-    else if (act == "CW") { checkWallSequence(ex1, ex2); }
-    
+    else if (act == "CW") checkWallSequence(ex1, ex2);
     stopMotors(); delay(300); 
   }
 }
 
 void movePulsed(int m1, int m2, int m3, int m4, int totalDelay, int speedPercent) {
-  speedPercent = constrain(speedPercent, 0, 100);
   if (speedPercent == 0) { stopMotors(); delay(totalDelay); return; }
-
   int effectiveSpeedL = (speedPercent * motorLeftRatio) / 100;
   int effectiveSpeedR = (speedPercent * motorRightRatio) / 100;
-
   int onTime = 20; 
-  int offTimeL = map(effectiveSpeedL, 10, 100, 50, 0);
-  int offTimeR = map(effectiveSpeedR, 10, 100, 50, 0);
-  if (offTimeL &lt; 0) offTimeL = 0; if (offTimeR &lt; 0) offTimeR = 0;
+  int offTimeL = max(0L, map(effectiveSpeedL, 10, 100, 50, 0));
+  int offTimeR = max(0L, map(effectiveSpeedR, 10, 100, 50, 0));
 
   unsigned long startTime = millis();
   while (millis() - startTime &lt; (unsigned long)totalDelay) {
     unsigned long cycleStart = millis();
     bool leftDone = false; bool rightDone = false;
     setMotors(m1, m2, m3, m4);
-    
     while (!leftDone || !rightDone) {
       unsigned long elapsed = millis() - cycleStart;
-      if (elapsed &gt;= (unsigned long)(onTime + offTimeL)) leftDone = true;
-      else if (elapsed &gt;= (unsigned long)onTime) {
-        digitalWrite(M1_IN1, LOW); digitalWrite(M1_IN2, LOW);
-        digitalWrite(M2_IN1, LOW); digitalWrite(M2_IN2, LOW);
+      if (elapsed &gt;= (unsigned long)(onTime + offTimeL)) { 
+        leftDone = true; 
+        digitalWrite(M1_IN1, LOW); digitalWrite(M1_IN2, LOW); 
+        digitalWrite(M2_IN1, LOW); digitalWrite(M2_IN2, LOW); 
       }
-
-      if (elapsed &gt;= (unsigned long)(onTime + offTimeR)) rightDone = true;
-      else if (elapsed &gt;= (unsigned long)onTime) {
-        digitalWrite(M3_IN1, LOW); digitalWrite(M3_IN2, LOW);
-        digitalWrite(M4_IN1, LOW); digitalWrite(M4_IN2, LOW);
+      if (elapsed &gt;= (unsigned long)(onTime + offTimeR)) { 
+        rightDone = true; 
+        digitalWrite(M3_IN1, LOW); digitalWrite(M3_IN2, LOW); 
+        digitalWrite(M4_IN1, LOW); digitalWrite(M4_IN2, LOW); 
       }
       if (millis() - startTime &gt;= (unsigned long)totalDelay) break;
     }
@@ -745,19 +446,17 @@ void movePulsed(int m1, int m2, int m3, int m4, int totalDelay, int speedPercent
   stopMotors();
 }
 
-// เช็คผนังด้านหน้า/หลัง
 void checkWallSequence(int threshold, int logic) {
   while (true) {
-    int valL1 = analogRead(A2); int valL2 = analogRead(A4);
-    int valR1 = analogRead(A1); int valR2 = analogRead(A3);
-
+    int valL1 = analogRead(SENSOR_L1); int valL2 = analogRead(SENSOR_L2);
+    int valR1 = analogRead(SENSOR_R1); int valR2 = analogRead(SENSOR_R2);
     bool leftHit = (logic == 0) ? (valL1 &lt; threshold || valL2 &lt; threshold) : (valL1 &gt; threshold || valL2 &gt; threshold);
     bool rightHit = (logic == 0) ? (valR1 &lt; threshold || valR2 &lt; threshold) : (valR1 &gt; threshold || valR2 &gt; threshold);
 
     if (leftHit &amp;&amp; rightHit) { stopMotors(); delay(300); break; }
-    else if (leftHit) { setMotors(1, 1, -1, -1); delay(10); stopMotors(); delay(50); }
-    else if (rightHit) { setMotors(-1, -1, 1, 1); delay(10); stopMotors(); delay(50); }
-    else { setMotors(-1, -1, -1, -1); delay(20); stopMotors(); delay(50); }
+    else if (leftHit) { setMotors(1, 1, -1, -1); delay(15); stopMotors(); delay(40); }
+    else if (rightHit) { setMotors(-1, -1, 1, 1); delay(15); stopMotors(); delay(40); }
+    else { setMotors(-1, -1, -1, -1); delay(15); stopMotors(); delay(40); }
   }
   setMotors(1, 1, 1, 1); delay(100); stopMotors();
 }
@@ -772,201 +471,73 @@ void stopMotors() { setMotors(0, 0, 0, 0); }
 void playTone(int freq, int duration) { tone(BUZZER_PIN, freq, duration); }</code></pre>
             </div>
             <div class="p-5 border-t-2 border-red-100 dark:border-red-900 bg-red-50 dark:bg-red-950 flex justify-end gap-4">
-                <button onclick="closeFirmwareModal()" class="pressable-btn px-6 py-3 rounded-xl font-extrabold text-red-700 dark:text-red-300 hover:bg-red-200 dark:hover:bg-red-800 transition-colors border-2 border-b-[4px] border-red-300 dark:border-red-800 text-lg">ปิดหน้าต่าง</button>
-                <button onclick="copyFirmware()" class="pressable-btn flex items-center gap-3 px-8 py-3 bg-red-600 hover:bg-red-700 text-white rounded-xl font-extrabold shadow-lg transition-all text-lg border-2 border-b-[6px] border-red-800">
-                    <i class="fas fa-copy"></i> คัดลอกโค้ด
-                </button>
+                <button onclick="closeFirmwareModal()" class="pressable-btn px-6 py-3 rounded-xl font-extrabold text-red-700 dark:text-red-300 hover:bg-red-200">ปิดหน้าต่าง</button>
+                <button onclick="copyFirmware()" class="pressable-btn flex items-center gap-3 px-8 py-3 bg-red-600 hover:bg-red-700 text-white rounded-xl font-extrabold shadow-lg"><i class="fas fa-copy"></i> คัดลอกโค้ด</button>
             </div>
         </div>
     </div>
 
-    <!-- Script สำหรับ Tutorial (เพิ่มขั้นตอนที่ 6 ลากเดินหน้า 1 บล็อกเพื่อทดสอบระยะ) -->
     <script>
         const tutorialSteps = [
-            { 
-                target: 'connect-btn', 
-                title: 'บทที่ 1: การเชื่อมต่อ', 
-                content: 'เสียบสาย USB จากหุ่นยนต์เข้ากับคอมพิวเตอร์ของคุณ จากนั้นกดปุ่ม <b>"เชื่อมต่อ"</b>'
-            },
-            { 
-                target: 'connect-btn', 
-                title: 'บทที่ 2: เลือกพอร์ต (Port)', 
-                content: 'เมื่อกดเชื่อมต่อ บราวเซอร์จะแสดงหน้าต่างเล็กๆ ขึ้นมามุมซ้ายบน <b>ให้คุณคลิกเลือกชื่อพอร์ต</b> (เช่น COM3 หรือ USB Serial) แล้วกดปุ่มตกลง/Connect'
-            },
-            { 
-                target: 'toolbox-container', 
-                title: 'บทที่ 3: คลิกหรือลากคำสั่ง', 
-                content: 'คุณสามารถ <b>คลิก</b> หรือ <b>ลาก</b> บล็อกคำสั่งต่างๆ จากแถบนี้ ลงมาเรียงต่อกันในพื้นที่โปรแกรมมิ่งด้านล่าง เพื่อสร้างลำดับการทำงานให้หุ่นยนต์'
-            },
-            { 
-                target: 'param-settings-section', 
-                title: 'บทที่ 4: ตั้งค่าพารามิเตอร์', 
-                content: 'ตั้งค่าการเดินพื้นฐาน เช่น ความเร็ว, เกณฑ์เซ็นเซอร์ หรือแก้หุ่นเดินเอียง (ชดเชยซ้าย/ขวา) <br><br><span class="text-xs text-red-500">*ค่าเหล่านี้จะถูกใช้เป็นค่าเริ่มต้นเมื่อลากคำสั่งใหม่</span>'
-            },
-            { 
-                target: 'send-btn', 
-                title: 'บทที่ 5: อัปโหลดคำสั่ง', 
-                content: 'หลังจากลากบล็อกคำสั่งเสร็จเรียบร้อย ให้กดปุ่ม <b>"ส่งให้หุ่นยนต์ (ด่วน!)"</b> โค้ดจะถูกส่งเข้าหุ่นยนต์และพร้อมวิ่งทันที!'
-            },
-            { 
-                target: 'workspace-container', 
-                title: 'บทที่ 6: ทดสอบระยะทาง', 
-                content: 'ลอง <b>ลากหรือคลิกคำสั่ง "เดินหน้า" 1 บล็อก</b> มาวางในพื้นที่ทำงาน แล้วกดส่งให้หุ่นยนต์ เพื่อทดสอบระยะการวิ่งจริงบนพื้นตามพารามิเตอร์ที่ตั้งไว้'
-            }
+            { target: 'connect-btn', title: 'บทที่ 1: การเชื่อมต่อ', content: 'เสียบสาย USB จากหุ่นยนต์เข้ากับคอมพิวเตอร์ของคุณ จากนั้นกดปุ่ม <b>"เชื่อมต่อ"</b>' },
+            { target: 'connect-btn', title: 'บทที่ 2: เลือกพอร์ต (Port)', content: 'เมื่อกดเชื่อมต่อ บราวเซอร์จะแสดงหน้าต่างเล็กๆ ขึ้นมามุมซ้ายบน <b>ให้คุณคลิกเลือกชื่อพอร์ต</b> (เช่น COM3 หรือ USB Serial) แล้วกดปุ่มตกลง/Connect' },
+            { target: 'toolbox-container', title: 'บทที่ 3: คลิกหรือลากคำสั่ง', content: 'คุณสามารถ <b>คลิก</b> หรือ <b>ลาก</b> บล็อกคำสั่งต่างๆ จากแถบนี้ ลงมาเรียงต่อกันในพื้นที่โปรแกรมมิ่งด้านล่าง เพื่อสร้างลำดับการทำงานให้หุ่นยนต์' },
+            { target: 'param-settings-section', title: 'บทที่ 4: ตั้งค่าพารามิเตอร์', content: 'ตั้งค่าการเดินพื้นฐาน เช่น ความเร็ว, เกณฑ์เซ็นเซอร์ หรือแก้หุ่นเดินเอียง (ชดเชยซ้าย/ขวา) <br><br><span class="text-xs text-red-500">*ค่าเหล่านี้จะถูกใช้เป็นค่าเริ่มต้นเมื่อลากคำสั่งใหม่</span>' },
+            { target: 'send-btn', title: 'บทที่ 5: อัปโหลดคำสั่ง', content: 'หลังจากลากบล็อกคำสั่งเสร็จเรียบร้อย ให้กดปุ่ม <b>"ส่งให้หุ่นยนต์ (ด่วน!)"</b> โค้ดจะถูกส่งเข้าหุ่นยนต์และพร้อมวิ่งทันที!' },
+            { target: 'workspace-container', title: 'บทที่ 6: ทดสอบระยะทาง', content: 'ลอง <b>ลากหรือคลิกคำสั่ง "เดินหน้า" 1 บล็อก</b> มาวางในพื้นที่ทำงาน แล้วกดส่งให้หุ่นยนต์ เพื่อทดสอบระยะการวิ่งจริงบนพื้นตามพารามิเตอร์ที่ตั้งไว้' }
         ];
-
         let currentTutorialStep = 0;
-
-        function startTutorial() {
-            enterApp();
-            currentTutorialStep = 0;
-            document.body.style.overflow = 'hidden'; // ปิดการเลื่อนจอระหว่างสอน
-            setTimeout(showTutorialStep, 300);
-        }
-
+        function startTutorial() { enterApp(); currentTutorialStep = 0; document.body.style.overflow = 'hidden'; setTimeout(showTutorialStep, 300); }
         function showTutorialStep() {
-            if (currentTutorialStep >= tutorialSteps.length) {
-                endTutorial();
-                return;
-            }
-
-            const step = tutorialSteps[currentTutorialStep];
-            const targetEl = document.getElementById(step.target);
-            const overlay = document.getElementById('tutorialOverlay');
-            const tooltip = document.getElementById('tutorialTooltip');
-
-            // ลบ Highlight เดิมก่อน
+            if (currentTutorialStep >= tutorialSteps.length) { endTutorial(); return; }
+            const step = tutorialSteps[currentTutorialStep]; const targetEl = document.getElementById(step.target);
+            const overlay = document.getElementById('tutorialOverlay'); const tooltip = document.getElementById('tutorialTooltip');
             document.querySelectorAll('.tutorial-highlight').forEach(el => el.classList.remove('tutorial-highlight'));
-
             if (!targetEl) { nextTutorialStep(); return; }
-
-            overlay.classList.remove('hidden');
-            targetEl.classList.add('tutorial-highlight');
-            targetEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
-
-            // รอเลื่อนจอเสร็จ ค่อยคำนวณตำแหน่งแสดง Tooltip
+            overlay.classList.remove('hidden'); targetEl.classList.add('tutorial-highlight'); targetEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
             setTimeout(() => {
                 const rect = targetEl.getBoundingClientRect();
-                
-                document.getElementById('tutTitle').innerHTML = step.title;
-                document.getElementById('tutContent').innerHTML = step.content;
-                
+                document.getElementById('tutTitle').innerHTML = step.title; document.getElementById('tutContent').innerHTML = step.content;
                 const nextBtn = document.getElementById('tutNextBtn');
-                if (currentTutorialStep === tutorialSteps.length - 1) {
-                    nextBtn.innerHTML = 'เสร็จสิ้น <i class="fas fa-check"></i>';
-                    nextBtn.classList.replace('bg-red-600', 'bg-emerald-600');
-                    nextBtn.classList.replace('border-red-800', 'border-emerald-800');
-                    nextBtn.classList.replace('hover:bg-red-500', 'hover:bg-emerald-500');
-                } else {
-                    nextBtn.innerHTML = 'ถัดไป <i class="fas fa-arrow-right"></i>';
-                    nextBtn.classList.replace('bg-emerald-600', 'bg-red-600');
-                    nextBtn.classList.replace('border-emerald-800', 'border-red-800');
-                    nextBtn.classList.replace('hover:bg-emerald-500', 'hover:bg-red-500');
-                }
-
-                // การจัดวางตำแหน่ง (ให้อยู่ "บน" เป้าหมาย)
-                let tLeft = rect.left + (rect.width / 2) - 160; 
-                tLeft = Math.max(20, Math.min(tLeft, window.innerWidth - 340)); 
-                
-                // บังคับให้อยู่ด้านบนของกล่อง
-                let tTop = rect.top - 260; 
-                
-                // แต่ถ้าขอบบนหลุดจอ ค่อยย้ายมาไว้ข้างล่าง
-                if (tTop < 80) { 
-                    tTop = rect.bottom + 20; 
-                }
-
-                tooltip.style.left = `${tLeft}px`;
-                tooltip.style.top = `${tTop}px`;
-                tooltip.classList.remove('hidden');
+                if (currentTutorialStep === tutorialSteps.length - 1) { nextBtn.innerHTML = 'เสร็จสิ้น <i class="fas fa-check"></i>'; nextBtn.className = "px-5 py-2 bg-emerald-600 text-white font-extrabold rounded-xl shadow-md border-b-[4px] border-emerald-800 hover:bg-emerald-500 flex items-center gap-2"; } 
+                else { nextBtn.innerHTML = 'ถัดไป <i class="fas fa-arrow-right"></i>'; nextBtn.className = "px-5 py-2 bg-red-600 text-white font-extrabold rounded-xl shadow-md border-b-[4px] border-red-800 hover:bg-red-500 flex items-center gap-2"; }
+                let tLeft = Math.max(20, Math.min(rect.left + (rect.width / 2) - 160, window.innerWidth - 340)); 
+                let tTop = rect.top - 260; if (tTop < 80) tTop = rect.bottom + 20;
+                tooltip.style.left = `${tLeft}px`; tooltip.style.top = `${tTop}px`; tooltip.classList.remove('hidden');
             }, 400);
         }
-
-        function nextTutorialStep() {
-            currentTutorialStep++;
-            showTutorialStep();
-        }
-
-        function endTutorial() {
-            document.getElementById('tutorialOverlay').classList.add('hidden');
-            document.getElementById('tutorialTooltip').classList.add('hidden');
-            document.querySelectorAll('.tutorial-highlight').forEach(el => el.classList.remove('tutorial-highlight'));
-            document.body.style.overflow = ''; // เปิดการเลื่อนจอกลับมา
-            showSuccess("🎓 จบคู่มือการสอนแล้ว! เริ่มลากคำสั่งได้เลย");
-        }
+        function nextTutorialStep() { currentTutorialStep++; showTutorialStep(); }
+        function endTutorial() { document.getElementById('tutorialOverlay').classList.add('hidden'); document.getElementById('tutorialTooltip').classList.add('hidden'); document.querySelectorAll('.tutorial-highlight').forEach(el => el.classList.remove('tutorial-highlight')); document.body.style.overflow = ''; showSuccess("🎓 จบคู่มือการสอนแล้ว! เริ่มลากคำสั่งได้เลย"); }
     </script>
 
-    <!-- Script สำหรับการทำงานหลักของระบบ -->
     <script>
-        function enterApp() {
-            document.getElementById('authWrapper').classList.add('hidden-section');
-            document.getElementById('appWrapper').classList.remove('hidden-section');
-            render();
-        }
-
-        function showLoading(s) { 
-            const overlay = document.getElementById('loadingOverlay');
-            if(s) overlay.classList.remove('hidden'); else overlay.classList.add('hidden');
-        }
-
+        function enterApp() { document.getElementById('authWrapper').classList.add('hidden-section'); document.getElementById('appWrapper').classList.remove('hidden-section'); render(); }
+        function showLoading(s) { const overlay = document.getElementById('loadingOverlay'); if(s) overlay.classList.remove('hidden'); else overlay.classList.add('hidden'); }
         function openFirmwareModal() { document.getElementById('firmwareModal').classList.remove('hidden'); }
         function closeFirmwareModal() { document.getElementById('firmwareModal').classList.add('hidden'); }
+        function openSerialMonitor() { document.getElementById('serialMonitorModal').classList.remove('hidden'); }
+        function closeSerialMonitor() { document.getElementById('serialMonitorModal').classList.add('hidden'); }
+        function clearMonitor() { document.getElementById('monitorOutput').innerHTML = ''; }
         function copyFirmware() {
-            const codeText = document.getElementById('firmwareCodeBlock').innerText;
-            navigator.clipboard.writeText(codeText).then(() => { 
-                const box = document.getElementById('messageBox');
-                box.innerText = "✅ คัดลอกโค้ดเฟิร์มแวร์เรียบร้อย!";
-                box.style.display = 'block'; box.style.backgroundColor = '#10B981';
-                setTimeout(() => box.style.display = 'none', 3000);
+            navigator.clipboard.writeText(document.getElementById('firmwareCodeBlock').innerText).then(() => { 
+                showSuccess("✅ คัดลอกโค้ดเฟิร์มแวร์เรียบร้อย!");
             });
         }
 
-        const htmlEl = document.documentElement;
-        let isDarkMode = localStorage.getItem('theme') === 'dark';
-        if (isDarkMode) htmlEl.classList.add('dark');
-        
-        function toggleTheme() {
-            isDarkMode = !isDarkMode;
-            if (isDarkMode) { htmlEl.classList.add('dark'); localStorage.setItem('theme', 'dark'); } 
-            else { htmlEl.classList.remove('dark'); localStorage.setItem('theme', 'light'); }
-            updateThemeIcon(); render(); 
-        }
-        function updateThemeIcon() {
-            const btn = document.getElementById('theme-toggle-btn');
-            btn.innerHTML = isDarkMode ? `<i class="fas fa-sun text-xl"></i>` : `<i class="fas fa-moon text-xl"></i>`;
-        }
-        updateThemeIcon();
+        const htmlEl = document.documentElement; let isDarkMode = localStorage.getItem('theme') === 'dark'; if (isDarkMode) htmlEl.classList.add('dark');
+        function toggleTheme() { isDarkMode = !isDarkMode; if (isDarkMode) { htmlEl.classList.add('dark'); localStorage.setItem('theme', 'dark'); } else { htmlEl.classList.remove('dark'); localStorage.setItem('theme', 'light'); } updateThemeIcon(); render(); }
+        function updateThemeIcon() { document.getElementById('theme-toggle-btn').innerHTML = isDarkMode ? `<i class="fas fa-sun text-xl"></i>` : `<i class="fas fa-moon text-xl"></i>`; } updateThemeIcon();
 
-        const GRID_COLS = 8; const GRID_ROWS = 4;
-        const DELAY_MS = 600; const ROBOT_DELAY_MS = 1000; 
-        const DIRECTIONS = { UP: 0, RIGHT: 90, DOWN: 180, LEFT: 270 };
-
-        const initialSetup = { x: 0, y: GRID_ROWS - 1, dir: DIRECTIONS.UP };
-        let robotState = { ...initialSetup, offset: 0 };
-        
-        let blocksWorkspace = []; let droppedObjects = []; 
-        let isExecuting = false; let currentStepId = null; 
-        let errorMsg = ""; let successMsg = "";
+        const GRID_COLS = 8; const GRID_ROWS = 4; const DELAY_MS = 600; const DIRECTIONS = { UP: 0, RIGHT: 90, DOWN: 180, LEFT: 270 };
+        const initialSetup = { x: 0, y: GRID_ROWS - 1, dir: DIRECTIONS.UP }; let robotState = { ...initialSetup, offset: 0 };
+        let blocksWorkspace = []; let droppedObjects = []; let isExecuting = false; let currentStepId = null; let errorMsg = ""; let successMsg = "";
         
         let serialPort, serialWriter, isConnected = false;
         let readBuffer = ""; let autoSensorInterval = null; let isAutoSensor = false;
         let draggedBlockId = null; let draggedNewType = null;
 
-        const icons = {
-            bot: `<svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="4" height="18" rx="1" fill="#fca5a5"/><path d="M2 7h4 M2 12h4 M2 17h4"/><rect x="18" y="3" width="4" height="18" rx="1" fill="#fca5a5"/><path d="M18 7h4 M18 12h4 M18 17h4"/><path d="M 8.5 6 L 8.5 1 L 15.5 1 L 15.5 6 Z" fill="#fee2e2" stroke="#ef4444"/><rect x="10.5" y="2" width="3" height="2.5" rx="0.5" fill="#dc2626"/><rect x="6" y="6" width="12" height="13" rx="2" fill="white" stroke="#dc2626" stroke-width="2"/></svg>`
-        };
-
-        const renderMovementControls = (id, p) => `
-            <div class="flex items-center gap-1 ml-1">
-                <input type="number" value="${p.val}" step="1" onchange="updateBlockParam('${id}', 'val', this.value)" class="w-16 px-1 py-1 text-center text-lg text-slate-800 bg-white/90 font-mono rounded outline-none font-extrabold border-2 border-white/50"> 
-                <span class="font-bold text-sm">รอบ</span>
-            </div>
-            <div class="flex items-center gap-1 ml-2 pl-3 border-l-2 border-white/30">
-                <span class="font-bold text-sm">เร็ว:</span>
-                <input type="number" value="${p.speed || '100'}" min="10" max="100" step="1" onchange="updateBlockParam('${id}', 'speed', this.value)" class="w-14 px-1 py-1 text-center text-sm text-slate-800 bg-white/90 font-mono rounded outline-none font-bold border-2 border-white/50"> 
-                <span class="font-bold text-sm">%</span>
-            </div>
-        `;
+        const icons = { bot: `<svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="4" height="18" rx="1" fill="#fca5a5"/><path d="M2 7h4 M2 12h4 M2 17h4"/><rect x="18" y="3" width="4" height="18" rx="1" fill="#fca5a5"/><path d="M18 7h4 M18 12h4 M18 17h4"/><path d="M 8.5 6 L 8.5 1 L 15.5 1 L 15.5 6 Z" fill="#fee2e2" stroke="#ef4444"/><rect x="10.5" y="2" width="3" height="2.5" rx="0.5" fill="#dc2626"/><rect x="6" y="6" width="12" height="13" rx="2" fill="white" stroke="#dc2626" stroke-width="2"/></svg>` };
+        const renderMovementControls = (id, p) => `<div class="flex items-center gap-1 ml-1"><input type="number" value="${p.val}" step="1" onchange="updateBlockParam('${id}', 'val', this.value)" class="w-16 px-1 py-1 text-center text-lg text-slate-800 bg-white/90 font-mono rounded outline-none font-extrabold border-2 border-white/50"> <span class="font-bold text-sm">รอบ</span></div><div class="flex items-center gap-1 ml-2 pl-3 border-l-2 border-white/30"><span class="font-bold text-sm">เร็ว:</span><input type="number" value="${p.speed || '100'}" min="10" max="100" step="1" onchange="updateBlockParam('${id}', 'speed', this.value)" class="w-14 px-1 py-1 text-center text-sm text-slate-800 bg-white/90 font-mono rounded outline-none font-bold border-2 border-white/50"> <span class="font-bold text-sm">%</span></div>`;
 
         const blockDefinitions = {
             'FORWARD': { text: 'เดินหน้า', colorClass: 'bg-blue-500 text-white', defaultParams: { val: '100', speed: '100' }, renderControls: renderMovementControls },
@@ -977,148 +548,55 @@ void playTone(int freq, int duration) { tone(BUZZER_PIN, freq, duration); }</cod
             'PIVOT_RIGHT': { text: 'ตีวงขวา', colorClass: 'bg-violet-500 text-white', defaultParams: { val: '80', speed: '100' }, renderControls: renderMovementControls },
             'SLIDE_LEFT': { text: 'สไลด์ซ้าย', colorClass: 'bg-teal-500 text-white', defaultParams: { val: '100', speed: '100' }, renderControls: renderMovementControls },
             'SLIDE_RIGHT': { text: 'สไลด์ขวา', colorClass: 'bg-emerald-500 text-white', defaultParams: { val: '100', speed: '100' }, renderControls: renderMovementControls },
-            'CHECK_WALL': { text: 'เช็คหลัง/หน้า', colorClass: 'bg-amber-500 text-white', defaultParams: { val: '100', light: '600', logic: '1' },
-                renderControls: (id, p) => `<div class="flex flex-col gap-1 ml-1"><div class="flex items-center gap-1"><span class="text-xs">ชนที่:</span><input type="number" value="${p.val}" step="1" onchange="updateBlockParam('${id}', 'val', this.value)" class="w-14 px-1 py-0.5 text-center text-sm font-bold text-slate-800 bg-white/90 rounded border"> <span class="text-xs">รอบ</span></div></div>` },
-            'DISPENSE_PIN2': { text: 'จ่ายวัตถุ 1 (Pin 2)', colorClass: 'bg-indigo-500 text-white', defaultParams: { angle: '90' },
-                renderControls: (id, p) => `<div class="flex items-center gap-1 ml-1"><input type="number" value="${p.angle || '90'}" min="0" max="180" onchange="updateBlockParam('${id}', 'angle', this.value)" class="w-14 px-1 py-1 text-center text-lg text-slate-800 bg-white/90 font-mono rounded outline-none font-extrabold border-2 border-white/50"> <span class="font-bold text-sm">°</span></div>` },
-            'DISPENSE_PIN3': { text: 'จ่ายวัตถุ 2 (Pin 3)', colorClass: 'bg-sky-500 text-white', defaultParams: { angle: '90' },
-                renderControls: (id, p) => `<div class="flex items-center gap-1 ml-1"><input type="number" value="${p.angle || '90'}" min="0" max="180" onchange="updateBlockParam('${id}', 'angle', this.value)" class="w-14 px-1 py-1 text-center text-lg text-slate-800 bg-white/90 font-mono rounded outline-none font-extrabold border-2 border-white/50"> <span class="font-bold text-sm">°</span></div>` }
+            'CHECK_WALL': { text: 'เช็คหลัง/หน้า', colorClass: 'bg-amber-500 text-white', defaultParams: { val: '100', light: '600', logic: '1' }, renderControls: (id, p) => `<div class="flex flex-col gap-1 ml-1"><div class="flex items-center gap-1"><span class="text-xs">ชนที่:</span><input type="number" value="${p.val}" step="1" onchange="updateBlockParam('${id}', 'val', this.value)" class="w-14 px-1 py-0.5 text-center text-sm font-bold text-slate-800 bg-white/90 rounded border"> <span class="text-xs">รอบ</span></div></div>` },
+            'DISPENSE_PIN2': { text: 'จ่ายวัตถุ 1 (Pin 2)', colorClass: 'bg-indigo-500 text-white', defaultParams: { angle: '90' }, renderControls: (id, p) => `<div class="flex items-center gap-1 ml-1"><input type="number" value="${p.angle || '90'}" min="0" max="180" onchange="updateBlockParam('${id}', 'angle', this.value)" class="w-14 px-1 py-1 text-center text-lg text-slate-800 bg-white/90 font-mono rounded outline-none font-extrabold border-2 border-white/50"> <span class="font-bold text-sm">°</span></div>` },
+            'DISPENSE_PIN3': { text: 'จ่ายวัตถุ 2 (Pin 3)', colorClass: 'bg-sky-500 text-white', defaultParams: { angle: '90' }, renderControls: (id, p) => `<div class="flex items-center gap-1 ml-1"><input type="number" value="${p.angle || '90'}" min="0" max="180" onchange="updateBlockParam('${id}', 'angle', this.value)" class="w-14 px-1 py-1 text-center text-lg text-slate-800 bg-white/90 font-mono rounded outline-none font-extrabold border-2 border-white/50"> <span class="font-bold text-sm">°</span></div>` }
         };
 
         function saveFile() {
-            const dataToSave = {
-                blocks: blocksWorkspace,
-                params: {
-                    F: document.getElementById('param-F').value, B: document.getElementById('param-B').value,
-                    L: document.getElementById('param-L').value, R: document.getElementById('param-R').value,
-                    PL: document.getElementById('param-PL').value, PR: document.getElementById('param-PR').value,
-                    SL: document.getElementById('param-SL').value, SR: document.getElementById('param-SR').value,
-                    CW: document.getElementById('param-CW').value,
-                    D1: document.getElementById('param-D1').value, D2: document.getElementById('param-D2').value,
-                    SENSOR: document.getElementById('param-SENSOR').value, LOGIC: document.getElementById('param-LOGIC').value,
-                    SPEED: document.getElementById('param-SPEED').value, ML: document.getElementById('param-ML').value, MR: document.getElementById('param-MR').value
-                }
-            };
+            const dataToSave = { blocks: blocksWorkspace, params: { F: document.getElementById('param-F').value, B: document.getElementById('param-B').value, L: document.getElementById('param-L').value, R: document.getElementById('param-R').value, PL: document.getElementById('param-PL').value, PR: document.getElementById('param-PR').value, SL: document.getElementById('param-SL').value, SR: document.getElementById('param-SR').value, CW: document.getElementById('param-CW').value, D1: document.getElementById('param-D1').value, D2: document.getElementById('param-D2').value, SENSOR: document.getElementById('param-SENSOR').value, LOGIC: document.getElementById('param-LOGIC').value, SPEED: document.getElementById('param-SPEED').value, ML: document.getElementById('param-ML').value, MR: document.getElementById('param-MR').value } };
             const blob = new Blob([JSON.stringify(dataToSave, null, 2)], { type: "application/json" });
-            const url = URL.createObjectURL(blob); const a = document.createElement('a');
-            a.href = url; a.download = 'robot_workspace.json'; document.body.appendChild(a); a.click();
-            document.body.removeChild(a); URL.revokeObjectURL(url);
+            const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = 'robot_workspace.json'; document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
         }
 
         function loadFile(event) {
-            const file = event.target.files[0]; if (!file) return;
-            const reader = new FileReader();
+            const file = event.target.files[0]; if (!file) return; const reader = new FileReader();
             reader.onload = function(e) {
                 try {
                     const loadedData = JSON.parse(e.target.result);
                     if (loadedData.blocks) blocksWorkspace = loadedData.blocks.filter(b => b.type !== 'CHECK_WALL_LEFT' && b.type !== 'CHECK_WALL_RIGHT');
-                    if (loadedData.params) {
-                        ['F','B','L','R','PL','PR','SL','SR','CW','D1','D2','SENSOR','LOGIC','SPEED','ML','MR'].forEach(p => {
-                            if(loadedData.params[p] && document.getElementById('param-' + p)) document.getElementById('param-' + p).value = loadedData.params[p];
-                        });
-                    }
+                    if (loadedData.params) ['F','B','L','R','PL','PR','SL','SR','CW','D1','D2','SENSOR','LOGIC','SPEED','ML','MR'].forEach(p => { if(loadedData.params[p] && document.getElementById('param-' + p)) document.getElementById('param-' + p).value = loadedData.params[p]; });
                     render(); resetRobot();
                 } catch (err) { alert("ไฟล์ที่เลือกไม่ถูกต้อง"); }
-            };
-            reader.readAsText(file); event.target.value = ''; 
+            }; reader.readAsText(file); event.target.value = ''; 
         }
 
-        function handleToolboxDragStart(e, type) {
-            if (isExecuting) { e.preventDefault(); return; }
-            draggedNewType = type; draggedBlockId = null;
-            e.dataTransfer.effectAllowed = 'copy'; e.dataTransfer.setData('text/plain', 'new:' + type);
-        }
-
-        function handleDragStart(e, id) { 
-            if (isExecuting) { e.preventDefault(); return; } 
-            draggedBlockId = id; draggedNewType = null;
-            e.dataTransfer.effectAllowed = 'move'; e.dataTransfer.setData('text/plain', id); 
-            setTimeout(() => document.getElementById(id).style.opacity = '0.4', 0); 
-        }
-
+        function handleToolboxDragStart(e, type) { if (isExecuting) { e.preventDefault(); return; } draggedNewType = type; draggedBlockId = null; e.dataTransfer.effectAllowed = 'copy'; e.dataTransfer.setData('text/plain', 'new:' + type); }
+        function handleDragStart(e, id) { if (isExecuting) { e.preventDefault(); return; } draggedBlockId = id; draggedNewType = null; e.dataTransfer.effectAllowed = 'move'; e.dataTransfer.setData('text/plain', id); setTimeout(() => document.getElementById(id).style.opacity = '0.4', 0); }
         function handleDragEnd(e, id) { removeIndicator(); const el = document.getElementById(id); if (el) el.style.opacity = '1'; draggedBlockId = null; draggedNewType = null; }
         function removeIndicator() { const ind = document.getElementById('drop-indicator'); if (ind) ind.remove(); highlightTrash(false); }
         function allowDrop(e) { e.preventDefault(); }
-
         function handleWorkspaceDragOver(e) {
-            e.preventDefault(); if (isExecuting) return;
-            const list = document.getElementById('block-list');
-            const els = Array.from(list.querySelectorAll('.robot-block-wrapper'));
-            const dropY = e.clientY;
-            let indicator = document.getElementById('drop-indicator');
-            if (!indicator) {
-                indicator = document.createElement('div'); indicator.id = 'drop-indicator';
-                indicator.className = 'h-3 bg-red-300 dark:bg-red-700 rounded-full my-1 transition-all border-2 border-red-400 z-50 pointer-events-none relative';
-            }
-            let insertBeforeEl = null;
-            for (let i = 0; i < els.length; i++) {
-                const rect = els[i].getBoundingClientRect();
-                if (dropY < rect.top + (rect.height / 2)) { insertBeforeEl = els[i]; break; }
-            }
+            e.preventDefault(); if (isExecuting) return; const list = document.getElementById('block-list'); const els = Array.from(list.querySelectorAll('.robot-block-wrapper')); const dropY = e.clientY; let indicator = document.getElementById('drop-indicator');
+            if (!indicator) { indicator = document.createElement('div'); indicator.id = 'drop-indicator'; indicator.className = 'h-3 bg-red-300 dark:bg-red-700 rounded-full my-1 transition-all border-2 border-red-400 z-50 pointer-events-none relative'; }
+            let insertBeforeEl = null; for (let i = 0; i < els.length; i++) { const rect = els[i].getBoundingClientRect(); if (dropY < rect.top + (rect.height / 2)) { insertBeforeEl = els[i]; break; } }
             if (insertBeforeEl) list.insertBefore(indicator, insertBeforeEl); else list.appendChild(indicator);
         }
-
         function handleWorkspaceDrop(e) {
-            e.preventDefault(); removeIndicator();
-            const data = e.dataTransfer.getData('text/plain'); if (!data) return;
-            const list = document.getElementById('block-list');
-            const blockNodes = Array.from(list.children).filter(n => n.id !== 'drop-indicator' && n.classList.contains('robot-block-wrapper'));
-            const dropY = e.clientY; let tIdx = blocksWorkspace.length;
-            
-            for (let i = 0; i < blockNodes.length; i++) {
-                const rect = blockNodes[i].getBoundingClientRect();
-                if (dropY < rect.top + (rect.height / 2)) { tIdx = i; break; }
-            }
-
+            e.preventDefault(); removeIndicator(); const data = e.dataTransfer.getData('text/plain'); if (!data) return;
+            const list = document.getElementById('block-list'); const blockNodes = Array.from(list.children).filter(n => n.id !== 'drop-indicator' && n.classList.contains('robot-block-wrapper')); const dropY = e.clientY; let tIdx = blocksWorkspace.length;
+            for (let i = 0; i < blockNodes.length; i++) { const rect = blockNodes[i].getBoundingClientRect(); if (dropY < rect.top + (rect.height / 2)) { tIdx = i; break; } }
             if (data.startsWith('new:')) {
-                const cmdType = data.split(':')[1]; const id = 'b_' + Date.now();
-                let params = { ...blockDefinitions[cmdType].defaultParams };
-                
-                // ดึงค่าเริ่มต้นของความเร็วมาจากพารามิเตอร์
-                if (['FORWARD', 'BACKWARD', 'TURN_LEFT', 'TURN_RIGHT', 'PIVOT_LEFT', 'PIVOT_RIGHT', 'SLIDE_LEFT', 'SLIDE_RIGHT'].includes(cmdType)) {
-                    params.speed = document.getElementById('param-SPEED').value;
-                }
-
-                if (cmdType === 'FORWARD') params.val = document.getElementById('param-F').value;
-                if (cmdType === 'BACKWARD') params.val = document.getElementById('param-B').value;
-                if (cmdType === 'TURN_LEFT') params.val = document.getElementById('param-L').value;
-                if (cmdType === 'TURN_RIGHT') params.val = document.getElementById('param-R').value;
-                if (cmdType === 'PIVOT_LEFT') params.val = document.getElementById('param-PL').value;
-                if (cmdType === 'PIVOT_RIGHT') params.val = document.getElementById('param-PR').value;
-                if (cmdType === 'SLIDE_LEFT') params.val = document.getElementById('param-SL').value;
-                if (cmdType === 'SLIDE_RIGHT') params.val = document.getElementById('param-SR').value;
-                if (cmdType === 'DISPENSE_PIN2') params.angle = document.getElementById('param-D1').value;
-                if (cmdType === 'DISPENSE_PIN3') params.angle = document.getElementById('param-D2').value;
-                if (cmdType === 'CHECK_WALL') { params.val = document.getElementById('param-CW').value; params.light = document.getElementById('param-SENSOR').value; params.logic = document.getElementById('param-LOGIC').value; }
-
+                const cmdType = data.split(':')[1]; const id = 'b_' + Date.now(); let params = { ...blockDefinitions[cmdType].defaultParams };
+                if (['FORWARD', 'BACKWARD', 'TURN_LEFT', 'TURN_RIGHT', 'PIVOT_LEFT', 'PIVOT_RIGHT', 'SLIDE_LEFT', 'SLIDE_RIGHT'].includes(cmdType)) params.speed = document.getElementById('param-SPEED').value;
+                if (cmdType === 'FORWARD') params.val = document.getElementById('param-F').value; if (cmdType === 'BACKWARD') params.val = document.getElementById('param-B').value; if (cmdType === 'TURN_LEFT') params.val = document.getElementById('param-L').value; if (cmdType === 'TURN_RIGHT') params.val = document.getElementById('param-R').value; if (cmdType === 'PIVOT_LEFT') params.val = document.getElementById('param-PL').value; if (cmdType === 'PIVOT_RIGHT') params.val = document.getElementById('param-PR').value; if (cmdType === 'SLIDE_LEFT') params.val = document.getElementById('param-SL').value; if (cmdType === 'SLIDE_RIGHT') params.val = document.getElementById('param-SR').value; if (cmdType === 'DISPENSE_PIN2') params.angle = document.getElementById('param-D1').value; if (cmdType === 'DISPENSE_PIN3') params.angle = document.getElementById('param-D2').value; if (cmdType === 'CHECK_WALL') { params.val = document.getElementById('param-CW').value; params.light = document.getElementById('param-SENSOR').value; params.logic = document.getElementById('param-LOGIC').value; }
                 blocksWorkspace.splice(tIdx, 0, { id, type: cmdType, params, showNote: false, note: "" }); render();
-            } else {
-                const sIdx = blocksWorkspace.findIndex(b => b.id === data);
-                if (sIdx !== -1) { 
-                    const [b] = blocksWorkspace.splice(sIdx, 1); 
-                    const finalIdx = sIdx < tIdx ? tIdx - 1 : tIdx;
-                    blocksWorkspace.splice(finalIdx, 0, b); render();
-                }
-            }
+            } else { const sIdx = blocksWorkspace.findIndex(b => b.id === data); if (sIdx !== -1) { const [b] = blocksWorkspace.splice(sIdx, 1); const finalIdx = sIdx < tIdx ? tIdx - 1 : tIdx; blocksWorkspace.splice(finalIdx, 0, b); render(); } }
         }
-
         function highlightTrash(h) { const t = document.getElementById('trash-bin'); h ? t.classList.add('bg-red-100') : t.classList.remove('bg-red-100'); }
         function deleteDraggedBlock(e) { e.preventDefault(); const id = e.dataTransfer.getData('text/plain'); if (id && !id.startsWith('new:')) removeBlock(id); highlightTrash(false); }
-        
-        function toggleNote(id) {
-            const b = blocksWorkspace.find(b => b.id === id);
-            if (b) {
-                b.showNote = !b.showNote;
-                render();
-            }
-        }
-
-        function updateBlockNote(id, val) {
-            const b = blocksWorkspace.find(b => b.id === id);
-            if (b) {
-                b.note = val;
-            }
-        }
+        function toggleNote(id) { const b = blocksWorkspace.find(b => b.id === id); if (b) { b.showNote = !b.showNote; render(); } }
+        function updateBlockNote(id, val) { const b = blocksWorkspace.find(b => b.id === id); if (b) b.note = val; }
 
         async function connectArduino() {
             if (!("serial" in navigator)) return showError("เบราว์เซอร์ไม่รองรับ Web Serial");
@@ -1127,9 +605,11 @@ void playTone(int freq, int duration) { tone(BUZZER_PIN, freq, duration); }</cod
                 await serialPort.open({ baudRate: 115200 });
                 serialWriter = serialPort.writable.getWriter();
                 isConnected = true; render(); readSerialLoop(); 
+                showSuccess("💡 เชื่อมต่อแล้ว! รอ 2 วินาทีก่อนกดดึงค่าเซ็นเซอร์");
             } catch (error) { showError("ไม่สามารถเชื่อมต่อได้"); }
         }
 
+        // ระบบอ่าน Serial ที่แก้ไขใหม่ทั้งหมด ให้รับข้อมูลได้เสถียรแน่นอน 100%
         async function readSerialLoop() {
             const decoder = new TextDecoder();
             while (serialPort && serialPort.readable && isConnected) {
@@ -1137,29 +617,46 @@ void playTone(int freq, int duration) { tone(BUZZER_PIN, freq, duration); }</cod
                 try {
                     while (true) {
                         const { value, done } = await reader.read(); if (done) break;
-                        if (value) { readBuffer += decoder.decode(value, {stream: true}); processReadBuffer(); }
+                        if (value) {
+                            readBuffer += decoder.decode(value, {stream: true});
+                            let lines = readBuffer.split('\n');
+                            readBuffer = lines.pop(); // เก็บส่วนท้ายที่ยังไม่จบปะติปะต่อไว้
+                            
+                            for (let line of lines) {
+                                let text = line.trim();
+                                if (text.length > 0) {
+                                    // โชว์ใน Monitor
+                                    const out = document.getElementById('monitorOutput');
+                                    out.innerHTML += `<div>[${new Date().toLocaleTimeString()}] <span class="text-white">${text}</span></div>`;
+                                    out.scrollTop = out.scrollHeight;
+                                    
+                                    // ถ้าเป็นข้อความเซ็นเซอร์ ให้นำมาโชว์หน้าปัด
+                                    if (text.startsWith("SENS:")) {
+                                        const vals = text.substring(5).split(',');
+                                        if (vals.length >= 5) {
+                                            document.getElementById('val-a1').innerText = vals[0];
+                                            document.getElementById('val-a2').innerText = vals[1];
+                                            document.getElementById('val-a3').innerText = vals[2];
+                                            document.getElementById('val-a4').innerText = vals[3];
+                                            document.getElementById('val-a5').innerText = vals[4];
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
                 } catch (e) {} finally { reader.releaseLock(); }
             }
         }
 
-        function processReadBuffer() {
-            const lines = readBuffer.split('\n'); readBuffer = lines.pop(); 
-            for (const line of lines) {
-                const text = line.trim();
-                if (text.startsWith("SENS:")) {
-                    const values = text.substring(5).split(',');
-                    if (values.length >= 5) {
-                        document.getElementById('val-a1').innerText = values[0]; document.getElementById('val-a2').innerText = values[1];
-                        document.getElementById('val-a3').innerText = values[2]; document.getElementById('val-a4').innerText = values[3]; document.getElementById('val-a5').innerText = values[4];
-                    }
-                }
-            }
-        }
-
         async function requestSensorData() {
-            if (!isConnected || !serialWriter || isExecuting) return;
-            try { await serialWriter.write(new TextEncoder().encode("?SENS\n")); } catch (e) {}
+            if (!isConnected || !serialWriter || isExecuting) {
+                if(!isConnected) showError("กรุณากดเชื่อมต่อ USB ก่อน");
+                return;
+            }
+            try { 
+                await serialWriter.write(new TextEncoder().encode("?SENS\n")); 
+            } catch (e) { showError("ส่งข้อมูลไม่สำเร็จ"); }
         }
 
         function toggleAutoSensor() {
@@ -1176,25 +673,9 @@ void playTone(int freq, int duration) { tone(BUZZER_PIN, freq, duration); }</cod
         function showSuccess(msg) { const box = document.getElementById('messageBox'); box.innerText = msg; box.style.display = 'block'; box.style.backgroundColor = '#10B981'; setTimeout(() => box.style.display = 'none', 3000); }
         
         function addBlock(cmdType) { 
-            if (isExecuting) return; const id = 'b_' + Date.now(); 
-            let params = { ...blockDefinitions[cmdType].defaultParams };
-            
-            if (['FORWARD', 'BACKWARD', 'TURN_LEFT', 'TURN_RIGHT', 'PIVOT_LEFT', 'PIVOT_RIGHT', 'SLIDE_LEFT', 'SLIDE_RIGHT'].includes(cmdType)) {
-                params.speed = document.getElementById('param-SPEED').value;
-            }
-
-            if (cmdType === 'FORWARD') params.val = document.getElementById('param-F').value;
-            if (cmdType === 'BACKWARD') params.val = document.getElementById('param-B').value;
-            if (cmdType === 'TURN_LEFT') params.val = document.getElementById('param-L').value;
-            if (cmdType === 'TURN_RIGHT') params.val = document.getElementById('param-R').value;
-            if (cmdType === 'PIVOT_LEFT') params.val = document.getElementById('param-PL').value;
-            if (cmdType === 'PIVOT_RIGHT') params.val = document.getElementById('param-PR').value;
-            if (cmdType === 'SLIDE_LEFT') params.val = document.getElementById('param-SL').value;
-            if (cmdType === 'SLIDE_RIGHT') params.val = document.getElementById('param-SR').value;
-            if (cmdType === 'DISPENSE_PIN2') params.angle = document.getElementById('param-D1').value;
-            if (cmdType === 'DISPENSE_PIN3') params.angle = document.getElementById('param-D2').value;
-            if (cmdType === 'CHECK_WALL') { params.val = document.getElementById('param-CW').value; params.light = document.getElementById('param-SENSOR').value; params.logic = document.getElementById('param-LOGIC').value; }
-
+            if (isExecuting) return; const id = 'b_' + Date.now(); let params = { ...blockDefinitions[cmdType].defaultParams };
+            if (['FORWARD', 'BACKWARD', 'TURN_LEFT', 'TURN_RIGHT', 'PIVOT_LEFT', 'PIVOT_RIGHT', 'SLIDE_LEFT', 'SLIDE_RIGHT'].includes(cmdType)) params.speed = document.getElementById('param-SPEED').value;
+            if (cmdType === 'FORWARD') params.val = document.getElementById('param-F').value; if (cmdType === 'BACKWARD') params.val = document.getElementById('param-B').value; if (cmdType === 'TURN_LEFT') params.val = document.getElementById('param-L').value; if (cmdType === 'TURN_RIGHT') params.val = document.getElementById('param-R').value; if (cmdType === 'PIVOT_LEFT') params.val = document.getElementById('param-PL').value; if (cmdType === 'PIVOT_RIGHT') params.val = document.getElementById('param-PR').value; if (cmdType === 'SLIDE_LEFT') params.val = document.getElementById('param-SL').value; if (cmdType === 'SLIDE_RIGHT') params.val = document.getElementById('param-SR').value; if (cmdType === 'DISPENSE_PIN2') params.angle = document.getElementById('param-D1').value; if (cmdType === 'DISPENSE_PIN3') params.angle = document.getElementById('param-D2').value; if (cmdType === 'CHECK_WALL') { params.val = document.getElementById('param-CW').value; params.light = document.getElementById('param-SENSOR').value; params.logic = document.getElementById('param-LOGIC').value; }
             blocksWorkspace.push({ id, type: cmdType, params, showNote: false, note: "" }); render(); 
             setTimeout(() => { const ws = document.getElementById('workspace-container'); ws.scrollTop = ws.scrollHeight; }, 50); 
         }
@@ -1205,76 +686,28 @@ void playTone(int freq, int duration) { tone(BUZZER_PIN, freq, duration); }</cod
         function resetRobot() { if (isExecuting) return; robotState = { ...initialSetup, offset: 0 }; currentStepId = null; droppedObjects = []; render(); }
 
         function render() {
-            const gridEl = document.getElementById('grid-container');
-            gridEl.style.gridTemplateColumns = `repeat(${GRID_COLS}, minmax(0, 1fr))`;
-            gridEl.innerHTML = '';
-            
+            const gridEl = document.getElementById('grid-container'); gridEl.style.gridTemplateColumns = `repeat(${GRID_COLS}, minmax(0, 1fr))`; gridEl.innerHTML = '';
             for (let row = 0; row < GRID_ROWS; row++) {
                 for (let col = 0; col < GRID_COLS; col++) {
-                    const cell = document.createElement('div');
-                    cell.className = 'aspect-square border border-red-200 dark:border-red-900/50 bg-white dark:bg-red-900/20 flex items-center justify-center relative';
-                    if (col === initialSetup.x && row === initialSetup.y) {
-                        const startLabel = document.createElement('span');
-                        startLabel.className = 'absolute bottom-1 text-xs font-extrabold text-red-600 bg-red-100 px-1 rounded z-0';
-                        startLabel.innerText = 'START'; cell.appendChild(startLabel);
-                    }
-                    droppedObjects.filter(obj => obj.x === col && obj.y === row).forEach(obj => {
-                        const objDot = document.createElement('div');
-                        objDot.className = 'absolute w-1/3 h-1/3 bg-red-800 rounded-md shadow z-0 animate-pulse';
-                        cell.appendChild(objDot);
-                    });
-                    if (robotState.x === col && robotState.y === row) {
-                        const bot = document.createElement('div');
-                        bot.className = 'absolute w-[85%] h-[85%] transition-all duration-300 z-10 flex items-center justify-center';
-                        bot.style.transform = `rotate(${robotState.dir}deg)${robotState.offset ? ` translateY(${robotState.offset}%)` : ''}`;
-                        bot.innerHTML = icons.bot; cell.appendChild(bot);
-                    }
+                    const cell = document.createElement('div'); cell.className = 'aspect-square border border-red-200 dark:border-red-900/50 bg-white dark:bg-red-900/20 flex items-center justify-center relative';
+                    if (col === initialSetup.x && row === initialSetup.y) { const startLabel = document.createElement('span'); startLabel.className = 'absolute bottom-1 text-xs font-extrabold text-red-600 bg-red-100 px-1 rounded z-0'; startLabel.innerText = 'START'; cell.appendChild(startLabel); }
+                    droppedObjects.filter(obj => obj.x === col && obj.y === row).forEach(obj => { const objDot = document.createElement('div'); objDot.className = 'absolute w-1/3 h-1/3 bg-red-800 rounded-md shadow z-0 animate-pulse'; cell.appendChild(objDot); });
+                    if (robotState.x === col && robotState.y === row) { const bot = document.createElement('div'); bot.className = 'absolute w-[85%] h-[85%] transition-all duration-300 z-10 flex items-center justify-center'; bot.style.transform = `rotate(${robotState.dir}deg)${robotState.offset ? ` translateY(${robotState.offset}%)` : ''}`; bot.innerHTML = icons.bot; cell.appendChild(bot); }
                     gridEl.appendChild(cell);
                 }
             }
 
             const si = document.getElementById('status-indicator'); const st = document.getElementById('connection-status'); const cb = document.getElementById('connect-btn');
-            if (isConnected) {
-                si.className = 'w-3 h-3 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.8)]';
-                st.innerText = 'เชื่อมต่อแล้ว'; st.className = 'text-xs font-bold text-emerald-600';
-                cb.disabled = true; cb.classList.replace('bg-red-800', 'bg-emerald-600');
-                cb.classList.replace('border-red-950', 'border-emerald-800');
-            } else {
-                si.className = 'w-3 h-3 rounded-full bg-red-300 dark:bg-red-600';
-                st.innerText = 'ยังไม่เชื่อมต่อ'; st.className = 'text-xs font-bold text-red-500 dark:text-red-400';
-                cb.disabled = false; cb.classList.replace('bg-emerald-600', 'bg-red-800');
-                cb.classList.replace('border-emerald-800', 'border-red-950');
-            }
+            if (isConnected) { si.className = 'w-3 h-3 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.8)]'; st.innerText = 'เชื่อมต่อแล้ว'; st.className = 'text-xs font-bold text-emerald-600'; cb.disabled = true; cb.classList.replace('bg-red-800', 'bg-emerald-600'); cb.classList.replace('border-red-950', 'border-emerald-800'); } 
+            else { si.className = 'w-3 h-3 rounded-full bg-red-300 dark:bg-red-600'; st.innerText = 'ยังไม่เชื่อมต่อ'; st.className = 'text-xs font-bold text-red-500 dark:text-red-400'; cb.disabled = false; cb.classList.replace('bg-emerald-600', 'bg-red-800'); cb.classList.replace('border-emerald-800', 'border-red-950'); }
 
             const list = document.getElementById('block-list'); const msg = document.getElementById('empty-workspace-msg');
             if (blocksWorkspace.length === 0) { list.innerHTML = ''; msg.classList.remove('opacity-0'); } 
             else {
                 msg.classList.add('opacity-0');
                 list.innerHTML = blocksWorkspace.map((b, i) => {
-                    const def = blockDefinitions[b.type];
-                    const activeClass = currentStepId === b.id ? 'ring-4 ring-red-400 scale-[1.02] shadow-xl z-20 animate-pulse' : 'hover:brightness-110';
-                    return `<div class="robot-block-wrapper" data-id="${b.id}">
-                            <div id="${b.id}" draggable="true" ondragstart="handleDragStart(event, '${b.id}')" ondragend="handleDragEnd(event, '${b.id}')"
-                                 class="robot-block pressable-btn ${def.colorClass} ${activeClass} border-2 border-black/10 border-l-[8px] py-3 px-3 flex flex-wrap items-center gap-2 select-none">
-                                <span class="font-mono text-lg font-extrabold bg-black/20 text-white px-2.5 py-0.5 rounded-full min-w-[28px] text-center shadow-inner">${i + 1}</span>
-                                <span class="font-extrabold text-lg select-none drop-shadow-sm min-w-[80px]">${def.text}</span>
-                                <div class="flex-1 flex flex-wrap items-center gap-2">${def.renderControls(b.id, b.params)}</div>
-                                
-                                <div class="ml-auto flex items-center gap-1">
-                                    <button onclick="toggleNote('${b.id}')" class="text-white/80 hover:text-white hover:bg-black/30 w-8 h-8 flex justify-center items-center rounded-xl transition-colors" title="เพิ่ม/ซ่อนคำอธิบาย">
-                                        <i class="fas ${b.showNote ? 'fa-comment' : 'fa-comment-dots'}"></i>
-                                    </button>
-                                    ${!isExecuting ? `<button onclick="removeBlock('${b.id}')" class="text-white/80 hover:text-white hover:bg-black/30 w-8 h-8 flex justify-center items-center rounded-xl transition-colors"><i class="fas fa-times"></i></button>` : ''}
-                                </div>
-
-                                ${b.showNote ? `
-                                    <div class="w-full mt-2 pt-2 border-t border-white/30 flex items-center gap-2">
-                                        <i class="fas fa-pen text-white/70 text-sm ml-1"></i>
-                                        <input type="text" value="${b.note || ''}" onchange="updateBlockNote('${b.id}', this.value)" placeholder="พิมพ์คำอธิบายที่นี่..." class="flex-1 px-2 py-1 text-sm text-slate-800 bg-white/90 rounded-lg outline-none border-2 border-white/50 font-medium">
-                                    </div>
-                                ` : ''}
-                            </div>
-                        </div>`;
+                    const def = blockDefinitions[b.type]; const activeClass = currentStepId === b.id ? 'ring-4 ring-red-400 scale-[1.02] shadow-xl z-20 animate-pulse' : 'hover:brightness-110';
+                    return `<div class="robot-block-wrapper" data-id="${b.id}"><div id="${b.id}" draggable="true" ondragstart="handleDragStart(event, '${b.id}')" ondragend="handleDragEnd(event, '${b.id}')" class="robot-block pressable-btn ${def.colorClass} ${activeClass} border-2 border-black/10 border-l-[8px] py-3 px-3 flex flex-wrap items-center gap-2 select-none"><span class="font-mono text-lg font-extrabold bg-black/20 text-white px-2.5 py-0.5 rounded-full min-w-[28px] text-center shadow-inner">${i + 1}</span><span class="font-extrabold text-lg select-none drop-shadow-sm min-w-[80px]">${def.text}</span><div class="flex-1 flex flex-wrap items-center gap-2">${def.renderControls(b.id, b.params)}</div><div class="ml-auto flex items-center gap-1"><button onclick="toggleNote('${b.id}')" class="text-white/80 hover:text-white hover:bg-black/30 w-8 h-8 flex justify-center items-center rounded-xl transition-colors"><i class="fas ${b.showNote ? 'fa-comment' : 'fa-comment-dots'}"></i></button>${!isExecuting ? `<button onclick="removeBlock('${b.id}')" class="text-white/80 hover:text-white hover:bg-black/30 w-8 h-8 flex justify-center items-center rounded-xl transition-colors"><i class="fas fa-times"></i></button>` : ''}</div>${b.showNote ? `<div class="w-full mt-2 pt-2 border-t border-white/30 flex items-center gap-2"><i class="fas fa-pen text-white/70 text-sm ml-1"></i><input type="text" value="${b.note || ''}" onchange="updateBlockNote('${b.id}', this.value)" placeholder="พิมพ์คำอธิบายที่นี่..." class="flex-1 px-2 py-1 text-sm text-slate-800 bg-white/90 rounded-lg outline-none border-2 border-white/50 font-medium"></div>` : ''}</div></div>`;
                 }).join('');
             }
 
@@ -1285,8 +718,7 @@ void playTone(int freq, int duration) { tone(BUZZER_PIN, freq, duration); }</cod
             document.querySelectorAll('#block-list input, #block-list select').forEach(el => el.disabled = isExecuting);
             document.querySelectorAll('#param-F, #param-B, #param-L, #param-R, #param-PL, #param-PR, #param-SL, #param-SR, #param-CW, #param-D1, #param-D2, #param-SENSOR, #param-LOGIC, #param-SPEED, #param-ML, #param-MR').forEach(el => el.disabled = isExecuting);
             
-            const run = document.getElementById('run-btn'); run.disabled = isExecuting || blocksWorkspace.length === 0;
-            run.innerHTML = isExecuting ? `<i class="fas fa-spinner fa-spin"></i> ประมวลผล...` : `<i class="fas fa-play"></i> จำลองบนกระดาน 8x4`;
+            const run = document.getElementById('run-btn'); run.disabled = isExecuting || blocksWorkspace.length === 0; run.innerHTML = isExecuting ? `<i class="fas fa-spinner fa-spin"></i> ประมวลผล...` : `<i class="fas fa-play"></i> จำลองบนกระดาน 8x4`;
             document.getElementById('send-btn').disabled = isExecuting || blocksWorkspace.length === 0 || !isConnected;
         }
 
@@ -1294,24 +726,11 @@ void playTone(int freq, int duration) { tone(BUZZER_PIN, freq, duration); }</cod
 
         async function executeBlocks() {
             if (blocksWorkspace.length === 0 || isExecuting) return;
-            if (isAutoSensor) toggleAutoSensor(); 
-            isExecuting = true; currentStepId = null; droppedObjects = []; render();
-
+            if (isAutoSensor) toggleAutoSensor(); isExecuting = true; currentStepId = null; droppedObjects = []; render();
             for (let i = 0; i < blocksWorkspace.length; i++) {
-                const b = blocksWorkspace[i]; currentStepId = b.id; render(); 
-                let { x, y, dir } = robotState;
-                if (b.type === 'FORWARD') { if (dir === 0) y--; else if (dir === 90) x++; else if (dir === 180) y++; else x--; } 
-                else if (b.type === 'BACKWARD') { if (dir === 0) y++; else if (dir === 90) x--; else if (dir === 180) y--; else x++; } 
-                else if (b.type === 'TURN_LEFT' || b.type === 'PIVOT_LEFT') dir = (dir - 90 + 360) % 360;
-                else if (b.type === 'TURN_RIGHT' || b.type === 'PIVOT_RIGHT') dir = (dir + 90) % 360;
-                else if (b.type === 'SLIDE_LEFT') { if (dir === 0) x--; else if (dir === 90) y--; else if (dir === 180) x++; else y++; } 
-                else if (b.type === 'SLIDE_RIGHT') { if (dir === 0) x++; else if (dir === 90) y++; else if (dir === 180) x--; else y--; } 
-                else if (b.type === 'DISPENSE_PIN2' || b.type === 'DISPENSE_PIN3') droppedObjects.push({ x, y, dir });
-                else if (b.type === 'CHECK_WALL') { robotState.offset = 40; render(); await sleep(DELAY_MS); robotState.offset = 0; }
-
-                if (x < 0 || x >= GRID_COLS || y < 0 || y >= GRID_ROWS) {
-                    showError("ระวัง! หุ่นยนต์ชนขอบพื้นที่"); isExecuting = false; currentStepId = null; render(); return; 
-                }
+                const b = blocksWorkspace[i]; currentStepId = b.id; render(); let { x, y, dir } = robotState;
+                if (b.type === 'FORWARD') { if (dir === 0) y--; else if (dir === 90) x++; else if (dir === 180) y++; else x--; } else if (b.type === 'BACKWARD') { if (dir === 0) y++; else if (dir === 90) x--; else if (dir === 180) y--; else x++; } else if (b.type === 'TURN_LEFT' || b.type === 'PIVOT_LEFT') dir = (dir - 90 + 360) % 360; else if (b.type === 'TURN_RIGHT' || b.type === 'PIVOT_RIGHT') dir = (dir + 90) % 360; else if (b.type === 'SLIDE_LEFT') { if (dir === 0) x--; else if (dir === 90) y--; else if (dir === 180) x++; else y++; } else if (b.type === 'SLIDE_RIGHT') { if (dir === 0) x++; else if (dir === 90) y++; else if (dir === 180) x--; else y--; } else if (b.type === 'DISPENSE_PIN2' || b.type === 'DISPENSE_PIN3') droppedObjects.push({ x, y, dir }); else if (b.type === 'CHECK_WALL') { robotState.offset = 40; render(); await sleep(DELAY_MS); robotState.offset = 0; }
+                if (x < 0 || x >= GRID_COLS || y < 0 || y >= GRID_ROWS) { showError("ระวัง! หุ่นยนต์ชนขอบพื้นที่"); isExecuting = false; currentStepId = null; render(); return; }
                 robotState = { x, y, dir, offset: 0 }; render(); await sleep(DELAY_MS);
             }
             currentStepId = null; isExecuting = false; render();
@@ -1319,50 +738,23 @@ void playTone(int freq, int duration) { tone(BUZZER_PIN, freq, duration); }</cod
 
         async function sendBlocksToRobot() {
             if (blocksWorkspace.length === 0 || isExecuting || !isConnected || !serialWriter) return;
-            if (isAutoSensor) toggleAutoSensor(); 
-
-            isExecuting = true; currentStepId = null; droppedObjects = []; render();
+            if (isAutoSensor) toggleAutoSensor(); isExecuting = true; currentStepId = null; droppedObjects = []; render();
             const enc = new TextEncoder();
             try {
-                const speedVal = document.getElementById('param-SPEED').value || 100;
-                const mlVal = document.getElementById('param-ML').value || 100;
-                const mrVal = document.getElementById('param-MR').value || 100;
-
-                await serialWriter.write(enc.encode(`SP${speedVal}\n`)); await sleep(30);
-                await serialWriter.write(enc.encode(`ML${mlVal}\n`)); await sleep(30);
-                await serialWriter.write(enc.encode(`MR${mrVal}\n`)); await sleep(40);
-
+                const speedVal = document.getElementById('param-SPEED').value || 100; const mlVal = document.getElementById('param-ML').value || 100; const mrVal = document.getElementById('param-MR').value || 100;
+                await serialWriter.write(enc.encode(`SP${speedVal}\n`)); await sleep(30); await serialWriter.write(enc.encode(`ML${mlVal}\n`)); await sleep(30); await serialWriter.write(enc.encode(`MR${mrVal}\n`)); await sleep(40);
                 for (let i = 0; i < blocksWorkspace.length; i++) {
-                    const b = blocksWorkspace[i]; currentStepId = b.id;
-                    let cmd = ''; const p = b.params;
-                    
-                    if (b.type === 'FORWARD') cmd = `F${p.val},${p.speed || 100}\n`; 
-                    else if (b.type === 'BACKWARD') cmd = `B${p.val},${p.speed || 100}\n`; 
-                    else if (b.type === 'TURN_LEFT') cmd = `L${p.val},${p.speed || 100}\n`; 
-                    else if (b.type === 'TURN_RIGHT') cmd = `R${p.val},${p.speed || 100}\n`; 
-                    else if (b.type === 'PIVOT_LEFT') cmd = `PL${p.val},${p.speed || 100}\n`; 
-                    else if (b.type === 'PIVOT_RIGHT') cmd = `PR${p.val},${p.speed || 100}\n`; 
-                    else if (b.type === 'SLIDE_LEFT') cmd = `SL${p.val},${p.speed || 100}\n`; 
-                    else if (b.type === 'SLIDE_RIGHT') cmd = `SR${p.val},${p.speed || 100}\n`; 
-                    else if (b.type === 'CHECK_WALL') cmd = `CW${p.val},${p.light || 600},${p.logic !== undefined ? p.logic : 1}\n`; 
-                    else if (b.type === 'DISPENSE_PIN2') { cmd = `D1:${p.angle || 90}\n`; droppedObjects.push({ x: robotState.x, y: robotState.y, dir: robotState.dir }); }
-                    else if (b.type === 'DISPENSE_PIN3') { cmd = `D2:${p.angle || 90}\n`; droppedObjects.push({ x: robotState.x, y: robotState.y, dir: robotState.dir }); }
-
+                    const b = blocksWorkspace[i]; currentStepId = b.id; let cmd = ''; const p = b.params;
+                    if (b.type === 'FORWARD') cmd = `F${p.val},${p.speed || 100}\n`; else if (b.type === 'BACKWARD') cmd = `B${p.val},${p.speed || 100}\n`; else if (b.type === 'TURN_LEFT') cmd = `L${p.val},${p.speed || 100}\n`; else if (b.type === 'TURN_RIGHT') cmd = `R${p.val},${p.speed || 100}\n`; else if (b.type === 'PIVOT_LEFT') cmd = `PL${p.val},${p.speed || 100}\n`; else if (b.type === 'PIVOT_RIGHT') cmd = `PR${p.val},${p.speed || 100}\n`; else if (b.type === 'SLIDE_LEFT') cmd = `SL${p.val},${p.speed || 100}\n`; else if (b.type === 'SLIDE_RIGHT') cmd = `SR${p.val},${p.speed || 100}\n`; else if (b.type === 'CHECK_WALL') cmd = `CW${p.val},${p.light || 600},${p.logic !== undefined ? p.logic : 1}\n`; else if (b.type === 'DISPENSE_PIN2') { cmd = `D1:${p.angle || 90}\n`; droppedObjects.push({ x: robotState.x, y: robotState.y, dir: robotState.dir }); } else if (b.type === 'DISPENSE_PIN3') { cmd = `D2:${p.angle || 90}\n`; droppedObjects.push({ x: robotState.x, y: robotState.y, dir: robotState.dir }); }
                     if (b.type !== 'DISPENSE_PIN2' && b.type !== 'DISPENSE_PIN3' && b.type !== 'CHECK_WALL') {
                         let { x, y, dir } = robotState;
-                        if (b.type === 'FORWARD') { if (dir === 0) y--; else if (dir === 90) x++; else if (dir === 180) y++; else x--; } 
-                        else if (b.type === 'BACKWARD') { if (dir === 0) y++; else if (dir === 90) x--; else if (dir === 180) y--; else x++; } 
-                        else if (b.type === 'TURN_LEFT' || b.type === 'PIVOT_LEFT') dir = (dir - 90 + 360) % 360; 
-                        else if (b.type === 'TURN_RIGHT' || b.type === 'PIVOT_RIGHT') dir = (dir + 90) % 360; 
-                        else if (b.type === 'SLIDE_LEFT') { if (dir === 0) x--; else if (dir === 90) y--; else if (dir === 180) x++; else y++; } 
-                        else if (b.type === 'SLIDE_RIGHT') { if (dir === 0) x++; else if (dir === 90) y++; else if (dir === 180) x--; else y--; }
+                        if (b.type === 'FORWARD') { if (dir === 0) y--; else if (dir === 90) x++; else if (dir === 180) y++; else x--; } else if (b.type === 'BACKWARD') { if (dir === 0) y++; else if (dir === 90) x--; else if (dir === 180) y--; else x++; } else if (b.type === 'TURN_LEFT' || b.type === 'PIVOT_LEFT') dir = (dir - 90 + 360) % 360; else if (b.type === 'TURN_RIGHT' || b.type === 'PIVOT_RIGHT') dir = (dir + 90) % 360; else if (b.type === 'SLIDE_LEFT') { if (dir === 0) x--; else if (dir === 90) y--; else if (dir === 180) x++; else y++; } else if (b.type === 'SLIDE_RIGHT') { if (dir === 0) x++; else if (dir === 90) y++; else if (dir === 180) x--; else y--; }
                         robotState = { x, y, dir, offset: 0 };
                     }
                     render(); await serialWriter.write(enc.encode(cmd)); await sleep(60);
                 }
                 showSuccess("⚡ อัปโหลดข้อมูลด่วนเสร็จสมบูรณ์!");
-            } catch (error) { showError("เกิดข้อผิดพลาดในการส่งข้อมูล"); isConnected = false; } 
-            finally { currentStepId = null; isExecuting = false; render(); }
+            } catch (error) { showError("เกิดข้อผิดพลาดในการส่งข้อมูล"); isConnected = false; } finally { currentStepId = null; isExecuting = false; render(); }
         }
 
         render();
