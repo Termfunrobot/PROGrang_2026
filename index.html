@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ระบบเขียนคำสั่งควบคุมหุ่นยนต์ PRO V4.12 (Sensor Fixed + Monitor)</title>
+    <title>ระบบเขียนคำสั่งควบคุมหุ่นยนต์ PRO V4.12 (TCS34725 & Dynamic Sub-Functions)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <script>
@@ -24,7 +24,7 @@
         .glass-card { 
             background: rgba(255, 255, 255, 0.95); border-radius: 40px; 
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); 
-            width: 100%; max-width: 460px; overflow: hidden; border: 8px solid #ffffff;
+            width: 100%; max-width: 500px; overflow: hidden; border: 8px solid #ffffff;
             position: relative; z-index: 10;
         }
         .hidden-section { display: none !important; }
@@ -95,17 +95,31 @@
         <div class="bubble w-48 h-48 bottom-10 right-10 animate-pulse"></div>
         
         <div class="glass-card p-8 md:p-12 self-center w-full text-center">
-            <div class="w-28 h-28 bg-red-50 text-red-600 rounded-full flex items-center justify-center mx-auto mb-6 text-5xl shadow-inner border-4 border-white animate-bounce">
-                <i class="fas fa-robot"></i>
+            <div class="w-24 h-24 bg-red-50 text-red-600 rounded-full flex items-center justify-center mx-auto mb-4 text-5xl shadow-inner border-4 border-white animate-bounce">
+                <i id="start-mode-icon" class="fas fa-robot"></i>
             </div>
-            <h2 class="text-3xl sm:text-4xl font-black text-red-700 mb-2">Robot Controller</h2>
-            <p class="text-red-500 font-medium text-base sm:text-lg mb-8">โปรแกรมควบคุมหุ่นยนต์ PRO V4.12<br><span class="text-xs text-gray-400 font-bold">(เพิ่มระบบ Buffer รับค่าเซ็นเซอร์ + Monitor)</span></p>
+            <h2 class="text-3xl sm:text-4xl font-black text-red-700 mb-1">Robot Controller</h2>
+            <p class="text-red-500 font-bold text-sm sm:text-base mb-6">PRO V4.12 <span class="text-xs text-slate-500 font-normal">(TCS34725 Color & Dynamic Sub-Functions)</span></p>
             
-            <div class="space-y-4">
-                <button onclick="enterApp()" class="w-full bg-red-600 hover:bg-red-500 text-white font-extrabold py-5 rounded-2xl text-2xl shadow-xl transition-all active:scale-95 border-b-[6px] border-red-800 pressable-btn flex items-center justify-center gap-3">
+            <div class="bg-red-50 p-3 rounded-2xl border-2 border-red-100 mb-6 text-left">
+                <label class="block text-xs font-extrabold text-red-600 uppercase tracking-wider mb-2 text-center">⚙️ กรุณาเลือกรูปแบบหุ่นยนต์ของคุณ</label>
+                <div class="grid grid-cols-2 gap-2">
+                    <button id="mode-btn-dispense" onclick="selectRobotMode('DISPENSER')" class="pressable-btn flex flex-col items-center justify-center p-3 rounded-xl border-2 font-extrabold text-sm transition-all bg-red-600 text-white border-red-800 shadow-md">
+                        <i class="fas fa-box text-2xl mb-1"></i> รุ่นจ่ายวัตถุ
+                        <span class="text-[10px] font-normal opacity-90">(Servo 2 ตัว)</span>
+                    </button>
+                    <button id="mode-btn-gripper" onclick="selectRobotMode('GRIPPER')" class="pressable-btn flex flex-col items-center justify-center p-3 rounded-xl border-2 font-extrabold text-sm transition-all bg-white text-gray-700 border-gray-200 hover:border-red-400">
+                        <i class="fas fa-hand-rock text-2xl mb-1 text-indigo-600"></i> รุ่นมือคีบ
+                        <span class="text-[10px] font-normal opacity-90">(Gripper คีบ/ปล่อย)</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="space-y-3">
+                <button onclick="enterApp()" class="w-full bg-red-600 hover:bg-red-500 text-white font-extrabold py-4 rounded-2xl text-xl shadow-xl transition-all active:scale-95 border-b-[6px] border-red-800 pressable-btn flex items-center justify-center gap-3">
                     <i class="fas fa-play"></i> เริ่มต้นใช้งาน
                 </button>
-                <button onclick="startTutorial()" class="w-full bg-orange-500 hover:bg-orange-400 text-white font-extrabold py-4 rounded-2xl text-xl shadow-xl transition-all active:scale-95 border-b-[6px] border-orange-700 pressable-btn flex items-center justify-center gap-3">
+                <button onclick="startTutorial()" class="w-full bg-orange-500 hover:bg-orange-400 text-white font-extrabold py-3.5 rounded-2xl text-lg shadow-xl transition-all active:scale-95 border-b-[6px] border-orange-700 pressable-btn flex items-center justify-center gap-3">
                     <i class="fas fa-graduation-cap"></i> คู่มือสอนการใช้งาน
                 </button>
             </div>
@@ -119,6 +133,10 @@
                     <h1 class="text-xl sm:text-2xl font-black text-red-600 dark:text-white flex items-center gap-2">
                         <i class="fas fa-rocket"></i> <span class="hidden sm:inline">ROBOT CONTROLLER V4.12</span>
                     </h1>
+                    <button onclick="toggleRobotMode()" class="pressable-btn px-3 py-1 rounded-full text-xs font-extrabold flex items-center gap-1.5 shadow-inner transition-colors bg-red-100 text-red-800 border border-red-300 dark:bg-red-950 dark:text-red-200 dark:border-red-700" title="คลิกเพื่อสลับระหว่าง รุ่นจ่ายวัตถุ / รุ่นมือคีบ">
+                        <span id="header-mode-indicator"><i class="fas fa-box text-red-500"></i> โหมด: จ่ายวัตถุ</span>
+                        <i class="fas fa-sync-alt text-[10px] opacity-70"></i>
+                    </button>
                 </div>
 
                 <div class="flex flex-wrap items-center justify-center gap-2.5 w-full xl:w-auto">
@@ -148,9 +166,9 @@
                 </div>
             </div>
 
-            <div id="toolbox-container" class="pt-2 border-t border-red-100 dark:border-red-800 flex flex-wrap gap-2 items-center justify-center xl:justify-start overflow-x-auto max-h-[160px] pb-1">
+            <div id="toolbox-container" class="pt-2 border-t border-red-100 dark:border-red-800 flex flex-wrap gap-2 items-center justify-center xl:justify-start overflow-x-auto max-h-[180px] pb-1">
                 <span class="text-xs font-extrabold text-red-500 dark:text-red-300 flex items-center gap-1 mr-1">
-                    <i class="fas fa-cubes"></i> คลิก/ลาก:
+                    <i class="fas fa-cubes"></i> พื้นฐาน:
                 </span>
                 <button draggable="true" ondragstart="handleToolboxDragStart(event, 'FORWARD')" ondragend="removeIndicator()" onclick="addBlock('FORWARD')" class="pressable-btn toolbox-btn flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 hover:bg-blue-100 dark:bg-slate-800 dark:hover:bg-slate-700 text-blue-700 dark:text-blue-300 border-2 border-b-[3px] border-blue-300 dark:border-blue-700 rounded-xl shadow-sm text-xs sm:text-sm font-extrabold"><span class="p-1 bg-blue-500 text-white rounded text-xs"><i class="fas fa-arrow-up"></i></span> เดินหน้า</button>
                 <button draggable="true" ondragstart="handleToolboxDragStart(event, 'BACKWARD')" ondragend="removeIndicator()" onclick="addBlock('BACKWARD')" class="pressable-btn toolbox-btn flex items-center gap-1.5 px-3 py-1.5 bg-orange-50 hover:bg-orange-100 dark:bg-slate-800 dark:hover:bg-slate-700 text-orange-700 dark:text-orange-300 border-2 border-b-[3px] border-orange-300 dark:border-orange-700 rounded-xl shadow-sm text-xs sm:text-sm font-extrabold"><span class="p-1 bg-orange-500 text-white rounded text-xs"><i class="fas fa-arrow-down"></i></span> ถอยหลัง</button>
@@ -161,8 +179,21 @@
                 <button draggable="true" ondragstart="handleToolboxDragStart(event, 'SLIDE_LEFT')" ondragend="removeIndicator()" onclick="addBlock('SLIDE_LEFT')" class="pressable-btn toolbox-btn flex items-center gap-1.5 px-3 py-1.5 bg-teal-50 hover:bg-teal-100 dark:bg-slate-800 dark:hover:bg-slate-700 text-teal-700 dark:text-teal-300 border-2 border-b-[3px] border-teal-300 dark:border-teal-700 rounded-xl shadow-sm text-xs sm:text-sm font-extrabold"><span class="p-1 bg-teal-500 text-white rounded text-xs"><i class="fas fa-angle-double-left"></i></span> สไลด์ซ้าย</button>
                 <button draggable="true" ondragstart="handleToolboxDragStart(event, 'SLIDE_RIGHT')" ondragend="removeIndicator()" onclick="addBlock('SLIDE_RIGHT')" class="pressable-btn toolbox-btn flex items-center gap-1.5 px-3 py-1.5 bg-emerald-50 hover:bg-emerald-100 dark:bg-slate-800 dark:hover:bg-slate-700 text-emerald-700 dark:text-emerald-300 border-2 border-b-[3px] border-emerald-300 dark:border-emerald-700 rounded-xl shadow-sm text-xs sm:text-sm font-extrabold"><span class="p-1 bg-emerald-500 text-white rounded text-xs"><i class="fas fa-angle-double-right"></i></span> สไลด์ขวา</button>
                 <button draggable="true" ondragstart="handleToolboxDragStart(event, 'CHECK_WALL')" ondragend="removeIndicator()" onclick="addBlock('CHECK_WALL')" class="pressable-btn toolbox-btn flex items-center gap-1.5 px-3 py-1.5 bg-amber-50 hover:bg-amber-100 dark:bg-slate-800 dark:hover:bg-slate-700 text-amber-700 dark:text-amber-300 border-2 border-b-[3px] border-amber-300 dark:border-amber-700 rounded-xl shadow-sm text-xs sm:text-sm font-extrabold"><span class="p-1 bg-amber-500 text-white rounded text-xs"><i class="fas fa-shield-alt"></i></span> เช็คหลัง/หน้า</button>
-                <button draggable="true" ondragstart="handleToolboxDragStart(event, 'DISPENSE_PIN2')" ondragend="removeIndicator()" onclick="addBlock('DISPENSE_PIN2')" class="pressable-btn toolbox-btn flex items-center gap-1.5 px-3 py-1.5 bg-indigo-50 hover:bg-indigo-100 dark:bg-slate-800 dark:hover:bg-slate-700 text-indigo-700 dark:text-indigo-300 border-2 border-b-[3px] border-indigo-300 dark:border-indigo-700 rounded-xl shadow-sm text-xs sm:text-sm font-extrabold"><span class="p-1 bg-indigo-500 text-white rounded text-xs"><i class="fas fa-box"></i></span> วัตถุ 1 (Pin 2)</button>
-                <button draggable="true" ondragstart="handleToolboxDragStart(event, 'DISPENSE_PIN3')" ondragend="removeIndicator()" onclick="addBlock('DISPENSE_PIN3')" class="pressable-btn toolbox-btn flex items-center gap-1.5 px-3 py-1.5 bg-sky-50 hover:bg-sky-100 dark:bg-slate-800 dark:hover:bg-slate-700 text-sky-700 dark:text-sky-300 border-2 border-b-[3px] border-sky-300 dark:border-sky-700 rounded-xl shadow-sm text-xs sm:text-sm font-extrabold"><span class="p-1 bg-sky-500 text-white rounded text-xs"><i class="fas fa-box-open"></i></span> วัตถุ 2 (Pin 3)</button>
+                
+                <span id="toolbox-dispenser-group" class="inline-flex gap-2">
+                    <button draggable="true" ondragstart="handleToolboxDragStart(event, 'DISPENSE_PIN2')" ondragend="removeIndicator()" onclick="addBlock('DISPENSE_PIN2')" class="pressable-btn toolbox-btn flex items-center gap-1.5 px-3 py-1.5 bg-indigo-50 hover:bg-indigo-100 dark:bg-slate-800 dark:hover:bg-slate-700 text-indigo-700 dark:text-indigo-300 border-2 border-b-[3px] border-indigo-300 dark:border-indigo-700 rounded-xl shadow-sm text-xs sm:text-sm font-extrabold"><span class="p-1 bg-indigo-500 text-white rounded text-xs"><i class="fas fa-box"></i></span> วัตถุ 1 (Pin 2)</button>
+                    <button draggable="true" ondragstart="handleToolboxDragStart(event, 'DISPENSE_PIN3')" ondragend="removeIndicator()" onclick="addBlock('DISPENSE_PIN3')" class="pressable-btn toolbox-btn flex items-center gap-1.5 px-3 py-1.5 bg-sky-50 hover:bg-sky-100 dark:bg-slate-800 dark:hover:bg-slate-700 text-sky-700 dark:text-sky-300 border-2 border-b-[3px] border-sky-300 dark:border-sky-700 rounded-xl shadow-sm text-xs sm:text-sm font-extrabold"><span class="p-1 bg-sky-500 text-white rounded text-xs"><i class="fas fa-box-open"></i></span> วัตถุ 2 (Pin 3)</button>
+                </span>
+
+                <span id="toolbox-gripper-group" class="hidden inline-flex gap-2">
+                    <button draggable="true" ondragstart="handleToolboxDragStart(event, 'GRIP_GRAB')" ondragend="removeIndicator()" onclick="addBlock('GRIP_GRAB')" class="pressable-btn toolbox-btn flex items-center gap-1.5 px-3 py-1.5 bg-indigo-50 hover:bg-indigo-100 dark:bg-slate-800 dark:hover:bg-slate-700 text-indigo-700 dark:text-indigo-300 border-2 border-b-[3px] border-indigo-300 dark:border-indigo-700 rounded-xl shadow-sm text-xs sm:text-sm font-extrabold"><span class="p-1 bg-indigo-600 text-white rounded text-xs"><i class="fas fa-hand-rock"></i></span> คีบวัตถุ (Grab)</button>
+                    <button draggable="true" ondragstart="handleToolboxDragStart(event, 'GRIP_RELEASE')" ondragend="removeIndicator()" onclick="addBlock('GRIP_RELEASE')" class="pressable-btn toolbox-btn flex items-center gap-1.5 px-3 py-1.5 bg-sky-50 hover:bg-sky-100 dark:bg-slate-800 dark:hover:bg-slate-700 text-sky-700 dark:text-sky-300 border-2 border-b-[3px] border-sky-300 dark:border-sky-700 rounded-xl shadow-sm text-xs sm:text-sm font-extrabold"><span class="p-1 bg-sky-600 text-white rounded text-xs"><i class="fas fa-hand-paper"></i></span> ปล่อยวัตถุ (Release)</button>
+                </span>
+
+                <span id="toolbox-call-functions-group" class="inline-flex items-center gap-1.5 pl-2 border-l-2 border-red-200 dark:border-red-800">
+                    <button draggable="true" ondragstart="handleToolboxDragStart(event, 'CHECK_COLOR_TCS')" ondragend="removeIndicator()" onclick="addBlock('CHECK_COLOR_TCS')" class="pressable-btn toolbox-btn flex items-center gap-1 px-3 py-1.5 bg-amber-100 hover:bg-amber-200 text-amber-900 dark:bg-amber-950 dark:text-amber-100 border-2 border-b-[3px] border-amber-400 dark:border-amber-700 rounded-xl shadow-sm text-xs font-extrabold"><span class="p-1 bg-gradient-to-r from-red-500 via-green-500 to-blue-500 text-white rounded text-xs"><i class="fas fa-eye"></i></span> เช็คสี TCS34725</button>
+                    <button draggable="true" ondragstart="handleToolboxDragStart(event, 'CALL_SUB')" ondragend="removeIndicator()" onclick="addBlock('CALL_SUB')" class="pressable-btn toolbox-btn flex items-center gap-1 px-3 py-1.5 bg-rose-100 hover:bg-rose-200 text-rose-900 dark:bg-rose-950 dark:text-rose-100 border-2 border-b-[3px] border-rose-400 dark:border-rose-700 rounded-xl shadow-sm text-xs font-extrabold"><span class="p-1 bg-rose-600 text-white rounded text-xs"><i class="fas fa-layer-group"></i></span> เรียกใช้ฟังก์ชันรอง</button>
+                </span>
             </div>
         </header>
 
@@ -170,21 +201,45 @@
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
                 
                 <div class="lg:col-span-5 flex flex-col h-full min-h-[600px] max-h-[850px]">
+                    
+                    <div class="flex gap-2 mb-3">
+                        <button id="tab-btn-main" onclick="switchTab('MAIN')" class="pressable-btn flex-1 py-3 px-4 rounded-2xl font-black text-sm sm:text-base transition-all bg-red-600 text-white shadow-md border-b-[4px] border-red-800 flex items-center justify-center gap-2">
+                            <i class="fas fa-rocket"></i> ฟังก์ชันหลัก (Main Function)
+                        </button>
+                        <button id="tab-btn-func" onclick="switchTab('FUNC')" class="pressable-btn flex-1 py-3 px-4 rounded-2xl font-black text-sm sm:text-base transition-all bg-white dark:bg-red-950 text-gray-700 dark:text-red-200 hover:bg-red-50 border-2 border-red-200 dark:border-red-800 flex items-center justify-center gap-2">
+                            <i class="fas fa-puzzle-piece text-rose-500"></i> ฟังก์ชันรอง (Sub Functions)
+                        </button>
+                    </div>
+
                     <div class="bg-white dark:bg-red-900/80 p-5 rounded-3xl shadow-xl border-2 border-red-100 dark:border-red-800 transition-colors flex flex-col h-full flex-1">
                         <div class="flex justify-between items-center mb-4 pb-3 border-b-2 border-red-50 dark:border-red-800 transition-colors flex-wrap gap-2">
-                            <div><h2 class="text-2xl font-extrabold text-red-800 dark:text-red-100">พื้นที่โปรแกรมมิ่ง</h2></div>
+                            <div>
+                                <h2 id="workspace-title" class="text-2xl font-extrabold text-red-800 dark:text-red-100">📋 พื้นที่: ฟังก์ชันหลัก</h2>
+                            </div>
                             <div class="flex gap-2">
                                 <input type="file" id="file-input" class="hidden" accept=".json" onchange="loadFile(event)">
-                                <button id="load-btn" onclick="document.getElementById('file-input').click()" class="pressable-btn text-sm font-bold flex items-center gap-1 px-3 py-2 rounded-xl bg-red-50 text-red-700 hover:bg-red-100 dark:bg-red-950 dark:text-red-300 transition-all border-2 border-b-[4px] border-red-200 dark:border-red-700" title="เปิดไฟล์"><i class="fas fa-folder-open"></i> เปิดไฟล์</button>
+                                <button id="load-btn" onclick="document.getElementById('file-input').click()" class="pressable-btn text-sm font-bold flex items-center gap-1 px-3 py-2 rounded-xl bg-red-50 text-red-700 hover:bg-red-100 dark:bg-red-950 dark:text-red-300 transition-all border-2 border-b-[4px] border-red-200 dark:border-red-700" title="เปิดไฟล์"><i class="fas fa-folder-open"></i> เปิด</button>
                                 <button id="save-btn" onclick="saveFile()" class="pressable-btn text-sm font-bold flex items-center gap-1 px-3 py-2 rounded-xl bg-red-50 text-red-700 hover:bg-red-100 dark:bg-red-950 dark:text-red-300 transition-all border-2 border-b-[4px] border-red-200 dark:border-red-700" title="บันทึกไฟล์"><i class="fas fa-save"></i> บันทึก</button>
-                                <button id="clear-btn" onclick="clearBlocks()" class="pressable-btn text-sm font-bold flex items-center gap-1 px-3 py-2 rounded-xl bg-red-100 text-red-800 hover:bg-red-200 dark:bg-red-950 dark:text-red-400 disabled:opacity-50 transition-all border-2 border-b-[4px] border-red-300 dark:border-red-800" title="ล้างบล็อกทั้งหมด"><i class="fas fa-trash"></i> ล้าง</button>
+                                <button id="clear-btn" onclick="clearBlocks()" class="pressable-btn text-sm font-bold flex items-center gap-1 px-3 py-2 rounded-xl bg-red-100 text-red-800 hover:bg-red-200 dark:bg-red-950 dark:text-red-400 disabled:opacity-50 transition-all border-2 border-b-[4px] border-red-300 dark:border-red-800" title="ล้างบล็อกหน้านี้"><i class="fas fa-trash"></i> ล้าง</button>
                             </div>
+                        </div>
+
+                        <div id="func-selector-bar" class="hidden mb-3 p-3 bg-red-50 dark:bg-red-950/80 rounded-2xl border-2 border-red-200 dark:border-red-800 space-y-2">
+                            <div class="flex justify-between items-center">
+                                <span class="text-xs font-extrabold text-red-700 dark:text-red-300 flex items-center gap-1"><i class="fas fa-folder-tree"></i> เลือกหรือตั้งชื่อฟังก์ชันรอง:</span>
+                                <div class="flex gap-1">
+                                    <button onclick="addNewSubFunction()" class="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-extrabold rounded-lg shadow transition-all"><i class="fas fa-plus"></i> เพิ่มฟังก์ชันรอง</button>
+                                    <button onclick="renameCurrentSubFunction()" class="px-2 py-1 bg-amber-500 hover:bg-amber-400 text-white text-xs font-extrabold rounded-lg shadow transition-all" title="เปลี่ยนชื่อฟังก์ชันนี้"><i class="fas fa-pen"></i></button>
+                                    <button onclick="deleteCurrentSubFunction()" class="px-2 py-1 bg-red-600 hover:bg-red-500 text-white text-xs font-extrabold rounded-lg shadow transition-all" title="ลบฟังก์ชันนี้ทิ้ง"><i class="fas fa-trash"></i></button>
+                                </div>
+                            </div>
+                            <div id="sub-func-list-container" class="flex flex-wrap gap-1.5 max-h-[80px] overflow-y-auto p-1"></div>
                         </div>
 
                         <div id="workspace-container" class="flex-1 overflow-x-hidden overflow-y-auto bg-red-50/30 dark:bg-red-950/40 border-2 border-dashed border-red-300 dark:border-red-800 rounded-2xl p-4 space-y-1 min-h-[400px] transition-colors relative" ondragover="handleWorkspaceDragOver(event)" ondrop="handleWorkspaceDrop(event)">
                             <div id="empty-workspace-msg" class="absolute inset-0 flex flex-col items-center justify-center text-red-400 dark:text-red-700 p-4 text-center pointer-events-none transition-opacity">
                                 <i class="fas fa-cubes text-6xl mb-3 opacity-30"></i>
-                                <p class="font-extrabold text-2xl text-red-500/50">ลากคำสั่งจากด้านบนมาวางที่นี่</p>
+                                <p id="empty-text-desc" class="font-extrabold text-2xl text-red-500/50">ลากคำสั่งมาเรียงสำหรับฟังก์ชันหลัก</p>
                             </div>
                             <div id="block-list" class="relative z-10 pb-12"></div>
                         </div>
@@ -196,7 +251,7 @@
 
                         <div class="mt-4">
                             <button id="run-btn" onclick="executeBlocks()" class="pressable-btn w-full flex items-center justify-center gap-2 p-4 bg-red-800 hover:bg-red-900 dark:bg-red-100 dark:text-red-900 text-white rounded-2xl font-extrabold transition-all disabled:opacity-50 shadow-xl text-lg border-2 border-b-[6px] border-red-950 dark:border-red-300 hover:border-red-400 dark:hover:border-red-400">
-                                <i class="fas fa-play"></i> จำลองบนกระดาน 8x4
+                                <i class="fas fa-play"></i> จำลองบนกระดาน 7x10
                             </button>
                         </div>
                     </div>
@@ -207,7 +262,7 @@
                         <div class="mb-4 w-full flex justify-between items-center">
                             <div class="flex items-center gap-3">
                                 <span class="flex h-4 w-4 relative"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span><span class="relative inline-flex rounded-full h-4 w-4 bg-red-500"></span></span>
-                                <h2 class="text-2xl font-extrabold text-red-800 dark:text-red-100">กระดานจำลอง 8x4 Grid</h2>
+                                <h2 class="text-2xl font-extrabold text-red-800 dark:text-red-100">กระดานจำลอง 7x10 Grid</h2>
                             </div>
                             <button id="reset-btn" onclick="resetRobot()" class="pressable-btn text-sm flex items-center gap-2 px-4 py-2 rounded-xl bg-red-50 text-red-700 hover:bg-red-100 font-extrabold dark:bg-red-950 dark:text-red-300 transition-colors border-2 border-b-[4px] border-red-200 dark:border-red-800 shadow"><i class="fas fa-undo-alt"></i> รีเซ็ต</button>
                         </div>
@@ -278,8 +333,10 @@
                             <div class="flex flex-col gap-1"><label class="text-[12px] text-red-500 dark:text-red-300 font-bold">เช็คหลัง/หน้า (CW)</label><input type="number" id="param-CW" value="100" step="1" class="px-2.5 py-2 text-sm font-mono rounded-xl border-2 border-red-200 dark:border-red-700 outline-none"></div>
                             <div class="flex flex-col gap-1"><label class="text-[12px] text-red-500 dark:text-red-300 font-bold">เกณฑ์เซ็นเซอร์</label><input type="number" id="param-SENSOR" value="600" class="px-2.5 py-2 text-sm font-mono rounded-xl border-2 border-red-200 dark:border-red-700 outline-none"></div>
                             <div class="flex flex-col gap-1"><label class="text-[12px] text-red-500 dark:text-red-300 font-bold">ตรรกะ</label><select id="param-LOGIC" class="px-2 py-2 text-xs font-bold rounded-xl border-2 border-red-200 dark:border-red-700 outline-none"><option value="1" selected>&gt; มากกว่า</option><option value="0">&lt; น้อยกว่า</option></select></div>
-                            <div class="flex flex-col gap-1"><label class="text-[12px] text-red-500 dark:text-red-300 font-bold">วัตถุ 1 (°)</label><input type="number" id="param-D1" value="90" min="0" max="180" class="px-2.5 py-2 text-sm font-mono rounded-xl border-2 border-red-200 dark:border-red-700 outline-none"></div>
-                            <div class="flex flex-col gap-1"><label class="text-[12px] text-red-500 dark:text-red-300 font-bold">วัตถุ 2 (°)</label><input type="number" id="param-D2" value="90" min="0" max="180" class="px-2.5 py-2 text-sm font-mono rounded-xl border-2 border-red-200 dark:border-red-700 outline-none"></div>
+                            
+                            <div id="box-param-d1" class="flex flex-col gap-1"><label id="lbl-param-d1" class="text-[12px] text-red-500 dark:text-red-300 font-bold">วัตถุ 1 (°)</label><input type="number" id="param-D1" value="90" min="0" max="180" class="px-2.5 py-2 text-sm font-mono rounded-xl border-2 border-red-200 dark:border-red-700 outline-none"></div>
+                            <div id="box-param-d2" class="flex flex-col gap-1"><label id="lbl-param-d2" class="text-[12px] text-red-500 dark:text-red-300 font-bold">วัตถุ 2 (°)</label><input type="number" id="param-D2" value="90" min="0" max="180" class="px-2.5 py-2 text-sm font-mono rounded-xl border-2 border-red-200 dark:border-red-700 outline-none"></div>
+                            
                             <div class="flex flex-col gap-1"><label class="text-[12px] text-red-600 dark:text-red-400 font-extrabold" title="ลดค่าหากหุ่นเอียงขวา">ชดเชยซ้าย L</label><input type="number" id="param-ML" value="100" min="50" max="100" class="px-2.5 py-2 text-sm font-mono font-bold text-red-600 dark:text-red-400 rounded-xl border-2 border-red-400 dark:border-red-600 outline-none"></div>
                             <div class="flex flex-col gap-1"><label class="text-[12px] text-red-600 dark:text-red-400 font-extrabold" title="ลดค่าหากหุ่นเอียงซ้าย">ชดเชยขวา R</label><input type="number" id="param-MR" value="100" min="50" max="100" class="px-2.5 py-2 text-sm font-mono font-bold text-red-600 dark:text-red-400 rounded-xl border-2 border-red-400 dark:border-red-600 outline-none"></div>
                             <div class="flex flex-col gap-1 col-span-2 sm:col-span-1"><label class="text-[12px] text-red-700 dark:text-red-300 font-extrabold">ความเร็วเริ่ม (%)</label><input type="number" id="param-SPEED" value="100" min="10" max="100" class="px-2.5 py-2 text-sm font-mono font-bold text-red-700 dark:text-red-300 rounded-xl border-2 border-red-500 dark:border-red-500 outline-none"></div>
@@ -307,168 +364,11 @@
     <div id="firmwareModal" class="hidden fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
         <div class="bg-white dark:bg-red-950 rounded-3xl w-full max-w-4xl max-h-[90vh] flex flex-col shadow-2xl overflow-hidden border-4 border-red-600">
             <div class="flex justify-between items-center p-5 border-b-2 border-red-100 dark:border-red-900 bg-red-50 dark:bg-red-950">
-                <h2 class="text-2xl font-extrabold text-red-800 dark:text-red-200 flex items-center gap-3"><i class="fas fa-microchip"></i> Arduino Firmware Code (PRO V4.12)</h2>
+                <h2 id="firmware-title" class="text-2xl font-extrabold text-red-800 dark:text-red-200 flex items-center gap-3"><i class="fas fa-microchip"></i> Arduino Firmware Code (PRO V4.12)</h2>
                 <button onclick="closeFirmwareModal()" class="text-red-500 hover:text-red-700 w-10 h-10 rounded-full flex items-center justify-center"><i class="fas fa-times text-xl"></i></button>
             </div>
             <div class="p-5 flex-1 overflow-auto bg-red-50/50 dark:bg-red-950/80 text-left">
-                <pre><code id="firmwareCodeBlock" class="text-xs sm:text-sm font-mono text-red-900 dark:text-red-100 font-medium">#include &lt;EEPROM.h&gt;
-#include &lt;Servo.h&gt;
-
-const int BUZZER_PIN = 13; const int START_BTN = A0;  
-const int SERVO_PIN1 = 2;  const int SERVO_PIN2 = 3; 
-const int SENSOR_R1 = A1; const int SENSOR_L1 = A2; const int SENSOR_R2 = A3; const int SENSOR_L2 = A4;
-const int M1_IN1 = 8; const int M1_IN2 = 9; const int M2_IN1 = 10; const int M2_IN2 = 11;
-const int M3_IN1 = 4; const int M3_IN2 = 5; const int M4_IN1 = 6;  const int M4_IN2 = 7;
-
-int defaultSpeed = 100; int motorLeftRatio = 100; int motorRightRatio = 100; 
-struct Command { char action[4]; float value; int extra1; int extra2; };
-struct RobotSettings { uint8_t magic; int speed; int ml; int mr; };
-
-const int MAX_CMDS = 50; Command cmdQueue[MAX_CMDS]; uint8_t cmdCount = 0;
-unsigned long lastReceiveTime = 0; const unsigned long FINISH_TRANSFER_TIMEOUT = 1000; bool isReceivingBatch = false; 
-Servo servo1; Servo servo2;
-
-void saveSettingsToEEPROM() {
-  RobotSettings settings = {0xAA, defaultSpeed, motorLeftRatio, motorRightRatio}; EEPROM.put(800, settings);
-}
-
-void setup() {
-  Serial.begin(115200); 
-  Serial.setTimeout(50); // ตั้งค่า Timeout ให้รับข้อมูลได้เสถียรขึ้น
-  
-  pinMode(BUZZER_PIN, OUTPUT); pinMode(START_BTN, INPUT); 
-  pinMode(SENSOR_R1, INPUT); pinMode(SENSOR_L1, INPUT); pinMode(SENSOR_R2, INPUT); pinMode(SENSOR_L2, INPUT); pinMode(A5, INPUT);
-  
-  for(int i = 4; i &lt;= 11; i++) pinMode(i, OUTPUT);
-  servo1.attach(SERVO_PIN1); servo2.attach(SERVO_PIN2); servo1.write(45); servo2.write(45); 
-
-  RobotSettings settings; EEPROM.get(800, settings);
-  if (settings.magic == 0xAA) { defaultSpeed = constrain(settings.speed, 10, 100); motorLeftRatio = constrain(settings.ml, 50, 100); motorRightRatio = constrain(settings.mr, 50, 100); }
-  EEPROM.get(0, cmdCount); if (cmdCount == 255 || cmdCount &gt; MAX_CMDS) cmdCount = 0;
-  for(int i = 0; i &lt; cmdCount; i++) EEPROM.get(1 + i * sizeof(Command), cmdQueue[i]);
-
-  playTone(523, 100); delay(120); playTone(659, 100); delay(120); playTone(784, 200); delay(200); 
-  Serial.println("Arduino Ready. Stored Commands: " + String(cmdCount));
-}
-
-void loop() {
-  unsigned long currentTime = millis();
-  if (Serial.available() &gt; 0) {
-    String data = Serial.readStringUntil('\n'); data.trim(); 
-    if (data.length() &gt; 0) {
-      if (data.startsWith("?SENS")) {
-        delay(2); // หน่วงนิดเดียวเพื่อให้ภาค ADC นิ่งก่อนอ่าน
-        Serial.print("SENS:"); Serial.print(analogRead(SENSOR_R1)); Serial.print(","); Serial.print(analogRead(SENSOR_L1)); Serial.print(",");
-        Serial.print(analogRead(SENSOR_R2)); Serial.print(","); Serial.print(analogRead(SENSOR_L2)); Serial.print(","); Serial.println(analogRead(A5)); return;
-      }
-      if (!isReceivingBatch) { cmdCount = 0; EEPROM.update(0, 0); isReceivingBatch = true; }
-      lastReceiveTime = currentTime; String actionStr = ""; float val = 0; int ex1 = 0; int ex2 = 0;
-      if (data.startsWith("SP")) { defaultSpeed = constrain(data.substring(2).toInt(), 10, 100); saveSettingsToEEPROM(); return; }
-      else if (data.startsWith("ML")) { motorLeftRatio = constrain(data.substring(2).toInt(), 50, 100); saveSettingsToEEPROM(); return; }
-      else if (data.startsWith("MR")) { motorRightRatio = constrain(data.substring(2).toInt(), 50, 100); saveSettingsToEEPROM(); return; }
-      else if (data.startsWith("SL") || data.startsWith("SR") || data.startsWith("PL") || data.startsWith("PR") || data.startsWith("F") || data.startsWith("B") || data.startsWith("L") || data.startsWith("R")) { 
-        if (data.startsWith("SL")) actionStr = "SL"; else if (data.startsWith("SR")) actionStr = "SR"; else if (data.startsWith("PL")) actionStr = "PL"; else if (data.startsWith("PR")) actionStr = "PR"; else if (data.startsWith("F")) actionStr = "F"; else if (data.startsWith("B")) actionStr = "B"; else if (data.startsWith("L")) actionStr = "L"; else if (data.startsWith("R")) actionStr = "R";
-        int startIdx = actionStr.length(); int c = data.indexOf(',');
-        if (c != -1) { val = data.substring(startIdx, c).toFloat(); ex1 = data.substring(c + 1).toInt(); } else { val = data.substring(startIdx).toFloat(); ex1 = defaultSpeed; }
-      }
-      else if (data.startsWith("CW")) { 
-        actionStr = "CW"; int c1 = data.indexOf(','); int c2 = data.indexOf(',', c1 + 1);
-        if (c1 != -1 &amp;&amp; c2 != -1) { val = data.substring(2, c1).toFloat(); ex1 = data.substring(c1 + 1, c2).toInt(); ex2 = data.substring(c2 + 1).toInt(); } else { val = data.substring(2).toFloat(); ex1 = 600; ex2 = 1; }
-      }
-      else if (data.startsWith("D1:")) { actionStr = "D1"; ex1 = data.substring(3).toInt(); }
-      else if (data.startsWith("D2:")) { actionStr = "D2"; ex1 = data.substring(3).toInt(); }
-
-      if (actionStr != "" &amp;&amp; cmdCount &lt; MAX_CMDS) {
-        actionStr.toCharArray(cmdQueue[cmdCount].action, 4); cmdQueue[cmdCount].value = val; cmdQueue[cmdCount].extra1 = ex1; cmdQueue[cmdCount].extra2 = ex2;
-        EEPROM.put(1 + cmdCount * sizeof(Command), cmdQueue[cmdCount]); cmdCount++; EEPROM.put(0, cmdCount); playTone(2000, 30); 
-      }
-    }
-  }
-  if (isReceivingBatch &amp;&amp; (currentTime - lastReceiveTime &gt; FINISH_TRANSFER_TIMEOUT)) { playTone(1500, 800); delay(1000); isReceivingBatch = false; }
-  if (analogRead(START_BTN) &gt; 800) {
-    delay(50); if (analogRead(START_BTN) &gt; 800) { if (cmdCount &gt; 0) { playTone(1047, 1000); delay(1000); executeAllStoredCommands(); playTone(784, 200); delay(200); } while(analogRead(START_BTN) &gt; 800); }
-  }
-}
-
-void executeAllStoredCommands() {
-  for(int i = 0; i &lt; cmdCount; i++) {
-    String act = String(cmdQueue[i].action);
-    float val = cmdQueue[i].value; int ex1 = cmdQueue[i].extra1; int ex2 = cmdQueue[i].extra2;
-    float baseDelayTime = (act == "L" || act == "R" || act == "PL" || act == "PR") ? (val / 80.0) * 250.0 : val * 5.0;
-    int currentSpeed = (ex1 &lt;= 0) ? defaultSpeed : ex1;
-    float speedRatio = 100.0 / (float)currentSpeed;
-    float frictionBoost = (act == "L" || act == "R" || act == "PL" || act == "PR") ? (1.0 + ((100.0 - currentSpeed) / 100.0) * 0.08) : ((currentSpeed &lt; 80) ? 1.04 : 1.0);
-    int compensatedDelay = (int)(baseDelayTime * speedRatio * frictionBoost);
-    
-    if (act == "F") movePulsed(1, 1, 1, 1, compensatedDelay, currentSpeed);
-    else if (act == "B") movePulsed(-1, -1, -1, -1, compensatedDelay, currentSpeed);
-    else if (act == "L") movePulsed(-1, -1, 1, 1, compensatedDelay, currentSpeed); 
-    else if (act == "R") movePulsed(1, 1, -1, -1, compensatedDelay, currentSpeed); 
-    else if (act == "SL") movePulsed(1, -1, 1, -1, compensatedDelay, currentSpeed);
-    else if (act == "SR") movePulsed(-1, 1, -1, 1, compensatedDelay, currentSpeed);
-    else if (act == "PL") movePulsed(0, 0, 1, 1, compensatedDelay, currentSpeed); 
-    else if (act == "PR") movePulsed(1, 1, 0, 0, compensatedDelay, currentSpeed); 
-    else if (act == "D1") { servo1.write(ex1); delay(600); servo1.write(45); delay(400); }
-    else if (act == "D2") { servo2.write(ex1); delay(600); servo2.write(45); delay(400); }
-    else if (act == "CW") checkWallSequence(ex1, ex2);
-    stopMotors(); delay(300); 
-  }
-}
-
-void movePulsed(int m1, int m2, int m3, int m4, int totalDelay, int speedPercent) {
-  if (speedPercent == 0) { stopMotors(); delay(totalDelay); return; }
-  int effectiveSpeedL = (speedPercent * motorLeftRatio) / 100;
-  int effectiveSpeedR = (speedPercent * motorRightRatio) / 100;
-  int onTime = 20; 
-  int offTimeL = max(0L, map(effectiveSpeedL, 10, 100, 50, 0));
-  int offTimeR = max(0L, map(effectiveSpeedR, 10, 100, 50, 0));
-
-  unsigned long startTime = millis();
-  while (millis() - startTime &lt; (unsigned long)totalDelay) {
-    unsigned long cycleStart = millis();
-    bool leftDone = false; bool rightDone = false;
-    setMotors(m1, m2, m3, m4);
-    while (!leftDone || !rightDone) {
-      unsigned long elapsed = millis() - cycleStart;
-      if (elapsed &gt;= (unsigned long)(onTime + offTimeL)) { 
-        leftDone = true; 
-        digitalWrite(M1_IN1, LOW); digitalWrite(M1_IN2, LOW); 
-        digitalWrite(M2_IN1, LOW); digitalWrite(M2_IN2, LOW); 
-      }
-      if (elapsed &gt;= (unsigned long)(onTime + offTimeR)) { 
-        rightDone = true; 
-        digitalWrite(M3_IN1, LOW); digitalWrite(M3_IN2, LOW); 
-        digitalWrite(M4_IN1, LOW); digitalWrite(M4_IN2, LOW); 
-      }
-      if (millis() - startTime &gt;= (unsigned long)totalDelay) break;
-    }
-  }
-  stopMotors();
-}
-
-void checkWallSequence(int threshold, int logic) {
-  while (true) {
-    int valL1 = analogRead(SENSOR_L1); int valL2 = analogRead(SENSOR_L2);
-    int valR1 = analogRead(SENSOR_R1); int valR2 = analogRead(SENSOR_R2);
-    bool leftHit = (logic == 0) ? (valL1 &lt; threshold || valL2 &lt; threshold) : (valL1 &gt; threshold || valL2 &gt; threshold);
-    bool rightHit = (logic == 0) ? (valR1 &lt; threshold || valR2 &lt; threshold) : (valR1 &gt; threshold || valR2 &gt; threshold);
-
-    if (leftHit &amp;&amp; rightHit) { stopMotors(); delay(300); break; }
-    else if (leftHit) { setMotors(1, 1, -1, -1); delay(15); stopMotors(); delay(40); }
-    else if (rightHit) { setMotors(-1, -1, 1, 1); delay(15); stopMotors(); delay(40); }
-    else { setMotors(-1, -1, -1, -1); delay(15); stopMotors(); delay(40); }
-  }
-  setMotors(1, 1, 1, 1); delay(100); stopMotors();
-}
-
-void setMotors(int m1, int m2, int m3, int m4) {
-  digitalWrite(M1_IN1, m1 == 1 ? HIGH : LOW); digitalWrite(M1_IN2, m1 == -1 ? HIGH : LOW);
-  digitalWrite(M2_IN1, m2 == 1 ? HIGH : LOW); digitalWrite(M2_IN2, m2 == -1 ? HIGH : LOW);
-  digitalWrite(M3_IN1, m3 == 1 ? HIGH : LOW); digitalWrite(M3_IN2, m3 == -1 ? HIGH : LOW);
-  digitalWrite(M4_IN1, m4 == 1 ? HIGH : LOW); digitalWrite(M4_IN2, m4 == -1 ? HIGH : LOW);
-}
-void stopMotors() { setMotors(0, 0, 0, 0); }
-void playTone(int freq, int duration) { tone(BUZZER_PIN, freq, duration); }</code></pre>
+                <pre><code id="firmwareCodeBlock" class="text-xs sm:text-sm font-mono text-red-900 dark:text-red-100 font-medium"></code></pre>
             </div>
             <div class="p-5 border-t-2 border-red-100 dark:border-red-900 bg-red-50 dark:bg-red-950 flex justify-end gap-4">
                 <button onclick="closeFirmwareModal()" class="pressable-btn px-6 py-3 rounded-xl font-extrabold text-red-700 dark:text-red-300 hover:bg-red-200">ปิดหน้าต่าง</button>
@@ -480,11 +380,11 @@ void playTone(int freq, int duration) { tone(BUZZER_PIN, freq, duration); }</cod
     <script>
         const tutorialSteps = [
             { target: 'connect-btn', title: 'บทที่ 1: การเชื่อมต่อ', content: 'เสียบสาย USB จากหุ่นยนต์เข้ากับคอมพิวเตอร์ของคุณ จากนั้นกดปุ่ม <b>"เชื่อมต่อ"</b>' },
-            { target: 'connect-btn', title: 'บทที่ 2: เลือกพอร์ต (Port)', content: 'เมื่อกดเชื่อมต่อ บราวเซอร์จะแสดงหน้าต่างเล็กๆ ขึ้นมามุมซ้ายบน <b>ให้คุณคลิกเลือกชื่อพอร์ต</b> (เช่น COM3 หรือ USB Serial) แล้วกดปุ่มตกลง/Connect' },
-            { target: 'toolbox-container', title: 'บทที่ 3: คลิกหรือลากคำสั่ง', content: 'คุณสามารถ <b>คลิก</b> หรือ <b>ลาก</b> บล็อกคำสั่งต่างๆ จากแถบนี้ ลงมาเรียงต่อกันในพื้นที่โปรแกรมมิ่งด้านล่าง เพื่อสร้างลำดับการทำงานให้หุ่นยนต์' },
-            { target: 'param-settings-section', title: 'บทที่ 4: ตั้งค่าพารามิเตอร์', content: 'ตั้งค่าการเดินพื้นฐาน เช่น ความเร็ว, เกณฑ์เซ็นเซอร์ หรือแก้หุ่นเดินเอียง (ชดเชยซ้าย/ขวา) <br><br><span class="text-xs text-red-500">*ค่าเหล่านี้จะถูกใช้เป็นค่าเริ่มต้นเมื่อลากคำสั่งใหม่</span>' },
-            { target: 'send-btn', title: 'บทที่ 5: อัปโหลดคำสั่ง', content: 'หลังจากลากบล็อกคำสั่งเสร็จเรียบร้อย ให้กดปุ่ม <b>"ส่งให้หุ่นยนต์ (ด่วน!)"</b> โค้ดจะถูกส่งเข้าหุ่นยนต์และพร้อมวิ่งทันที!' },
-            { target: 'workspace-container', title: 'บทที่ 6: ทดสอบระยะทาง', content: 'ลอง <b>ลากหรือคลิกคำสั่ง "เดินหน้า" 1 บล็อก</b> มาวางในพื้นที่ทำงาน แล้วกดส่งให้หุ่นยนต์ เพื่อทดสอบระยะการวิ่งจริงบนพื้นตามพารามิเตอร์ที่ตั้งไว้' }
+            { target: 'connect-btn', title: 'บทที่ 2: เลือกพอร์ต (Port)', content: 'เมื่อกดเชื่อมต่อ บราวเซอร์จะแสดงหน้าต่างเล็กๆ ขึ้นมามุมซ้ายบน <b>ให้คุณคลิกเลือกชื่อพอร์ต</b> แล้วกดปุ่ม Connect' },
+            { target: 'tab-btn-main', title: 'บทที่ 3: ระบบ 2 หน้ากระดานใหม่', content: 'สลับการเขียนโปรแกรมระหว่าง <b>"🚀 ฟังก์ชันหลัก"</b> และ <b>"🧩 ฟังก์ชันรอง"</b> (สำหรับสร้างคำสั่งย่อย เช่น สีแดง1, สีแดง2, เก็บของ)' },
+            { target: 'toolbox-call-functions-group', title: 'บทที่ 4: บล็อกเช็คสี TCS34725', content: 'เมื่ออยู่ในฟังก์ชันหลัก คุณสามารถลากบล็อก <b>"เช็คสี TCS34725"</b> มาวาง และกำหนดให้หุ่นยนต์รันฟังก์ชันรองที่สร้างไว้ได้ตามสีที่เซ็นเซอร์อ่านเจอ!' },
+            { target: 'param-settings-section', title: 'บทที่ 5: ตั้งค่าพารามิเตอร์', content: 'ตั้งค่าการเดินพื้นฐาน เช่น ความเร็ว, เกณฑ์เซ็นเซอร์ หรือแก้หุ่นเดินเอียง (ชดเชยซ้าย/ขวา)' },
+            { target: 'send-btn', title: 'บทที่ 6: อัปโหลดคำสั่ง', content: 'หลังจากแต่งคำสั่งเสร็จเรียบร้อย ให้กดปุ่ม <b>"ส่งให้หุ่นยนต์ (ด่วน!)"</b> โค้ดจะถูกส่งเข้าหุ่นยนต์ทันที!' }
         ];
         let currentTutorialStep = 0;
         function startTutorial() { enterApp(); currentTutorialStep = 0; document.body.style.overflow = 'hidden'; setTimeout(showTutorialStep, 300); }
@@ -511,9 +411,179 @@ void playTone(int freq, int duration) { tone(BUZZER_PIN, freq, duration); }</cod
     </script>
 
     <script>
-        function enterApp() { document.getElementById('authWrapper').classList.add('hidden-section'); document.getElementById('appWrapper').classList.remove('hidden-section'); render(); }
+        let currentRobotMode = 'DISPENSER'; 
+
+        function selectRobotMode(mode) {
+            currentRobotMode = mode;
+            const btnDis = document.getElementById('mode-btn-dispense');
+            const btnGrip = document.getElementById('mode-btn-gripper');
+            
+            if (mode === 'DISPENSER') {
+                btnDis.className = "pressable-btn flex flex-col items-center justify-center p-3 rounded-xl border-2 font-extrabold text-sm transition-all bg-red-600 text-white border-red-800 shadow-md";
+                btnGrip.className = "pressable-btn flex flex-col items-center justify-center p-3 rounded-xl border-2 font-extrabold text-sm transition-all bg-white text-gray-700 border-gray-200 hover:border-red-400";
+            } else {
+                btnGrip.className = "pressable-btn flex flex-col items-center justify-center p-3 rounded-xl border-2 font-extrabold text-sm transition-all bg-indigo-600 text-white border-indigo-800 shadow-md";
+                btnDis.className = "pressable-btn flex flex-col items-center justify-center p-3 rounded-xl border-2 font-extrabold text-sm transition-all bg-white text-gray-700 border-gray-200 hover:border-red-400";
+            }
+            updateModeUI();
+        }
+
+        function toggleRobotMode() {
+            currentRobotMode = (currentRobotMode === 'DISPENSER') ? 'GRIPPER' : 'DISPENSER';
+            selectRobotMode(currentRobotMode);
+            showSuccess(`สลับเป็น: ${currentRobotMode === 'DISPENSER' ? '🤖 รุ่นจ่ายวัตถุ' : '🦾 รุ่นมือคีบ (Gripper)'}`);
+        }
+
+        function updateModeUI() {
+            const ind = document.getElementById('header-mode-indicator');
+            const grpDis = document.getElementById('toolbox-dispenser-group');
+            const grpGrip = document.getElementById('toolbox-gripper-group');
+            const lblD1 = document.getElementById('lbl-param-d1');
+            const lblD2 = document.getElementById('lbl-param-d2');
+            const boxD2 = document.getElementById('box-param-d2');
+
+            if (currentRobotMode === 'DISPENSER') {
+                ind.innerHTML = `<i class="fas fa-box text-red-500"></i> โหมด: จ่ายวัตถุ`;
+                grpDis.classList.remove('hidden');
+                grpGrip.classList.add('hidden');
+                lblD1.innerText = "วัตถุ 1 (°)";
+                lblD2.innerText = "วัตถุ 2 (°)";
+                boxD2.classList.remove('hidden');
+            } else {
+                ind.innerHTML = `<i class="fas fa-hand-rock text-indigo-500"></i> โหมด: มือคีบ`;
+                grpDis.classList.add('hidden');
+                grpGrip.classList.remove('hidden');
+                lblD1.innerText = "องศาเตรียมพัก (°)";
+                boxD2.classList.add('hidden'); 
+            }
+            updateFirmwareCode();
+            render();
+        }
+
+        let activeTab = 'MAIN'; 
+        let subFunctionsList = ['สีแดง1', 'สีแดง2', 'สีเขียว1', 'หลบหลีก']; 
+        let activeSubFunc = subFunctionsList[0];
+        let workspaces = { 'MAIN': [] };
+        subFunctionsList.forEach(name => workspaces[name] = []);
+
+        function getActiveWorkspace() {
+            return activeTab === 'MAIN' ? workspaces['MAIN'] : workspaces[activeSubFunc];
+        }
+
+        function switchTab(tab) {
+            activeTab = tab;
+            const btnMain = document.getElementById('tab-btn-main');
+            const btnFunc = document.getElementById('tab-btn-func');
+            const selectorBar = document.getElementById('func-selector-bar');
+            const title = document.getElementById('workspace-title');
+            const callGroup = document.getElementById('toolbox-call-functions-group');
+            const desc = document.getElementById('empty-text-desc');
+
+            if (tab === 'MAIN') {
+                btnMain.className = "pressable-btn flex-1 py-3 px-4 rounded-2xl font-black text-sm sm:text-base transition-all bg-red-600 text-white shadow-md border-b-[4px] border-red-800 flex items-center justify-center gap-2";
+                btnFunc.className = "pressable-btn flex-1 py-3 px-4 rounded-2xl font-black text-sm sm:text-base transition-all bg-white dark:bg-red-950 text-gray-700 dark:text-red-200 hover:bg-red-50 border-2 border-red-200 dark:border-red-800 flex items-center justify-center gap-2";
+                selectorBar.classList.add('hidden');
+                callGroup.classList.remove('hidden');
+                title.innerHTML = `📋 พื้นที่: ฟังก์ชันหลัก (Main Function)`;
+                desc.innerText = "ลากคำสั่งมาเรียงสำหรับฟังก์ชันหลัก";
+            } else {
+                btnFunc.className = "pressable-btn flex-1 py-3 px-4 rounded-2xl font-black text-sm sm:text-base transition-all bg-rose-600 text-white shadow-md border-b-[4px] border-rose-800 flex items-center justify-center gap-2";
+                btnMain.className = "pressable-btn flex-1 py-3 px-4 rounded-2xl font-black text-sm sm:text-base transition-all bg-white dark:bg-red-950 text-gray-700 dark:text-red-200 hover:bg-red-50 border-2 border-red-200 dark:border-red-800 flex items-center justify-center gap-2";
+                selectorBar.classList.remove('hidden');
+                callGroup.classList.add('hidden'); 
+                updateSubFuncUI();
+            }
+            render();
+        }
+
+        function selectSubFunc(name) {
+            activeSubFunc = name;
+            updateSubFuncUI();
+            render();
+        }
+
+        function addNewSubFunction() {
+            let name = prompt("ตั้งชื่อฟังก์ชันรองใหม่ (เช่น สีแดง3, เก็บของ):", `ฟังก์ชัน_${subFunctionsList.length + 1}`);
+            if (name && name.trim() !== "") {
+                name = name.trim();
+                if (subFunctionsList.includes(name) || name === 'MAIN') {
+                    alert("⚠️ ชื่อฟังก์ชันนี้มีอยู่แล้ว กรุณาตั้งชื่ออื่น");
+                    return;
+                }
+                subFunctionsList.push(name);
+                workspaces[name] = [];
+                activeSubFunc = name;
+                updateSubFuncUI();
+                render();
+                showSuccess(`✅ เพิ่มฟังก์ชัน "${name}" เรียบร้อย!`);
+            }
+        }
+
+        function renameCurrentSubFunction() {
+            let newName = prompt(`เปลี่ยนชื่อฟังก์ชัน "${activeSubFunc}":`, activeSubFunc);
+            if (newName && newName.trim() !== "" && newName.trim() !== activeSubFunc) {
+                newName = newName.trim();
+                if (subFunctionsList.includes(newName) || newName === 'MAIN') {
+                    alert("⚠️ ชื่อฟังก์ชันนี้มีอยู่แล้ว กรุณาใช้ชื่ออื่น");
+                    return;
+                }
+                const oldName = activeSubFunc;
+                workspaces[newName] = workspaces[oldName];
+                delete workspaces[oldName];
+                const idx = subFunctionsList.indexOf(oldName);
+                if (idx !== -1) subFunctionsList[idx] = newName;
+                workspaces['MAIN'].forEach(b => {
+                    if (b.params && b.params.target === oldName) b.params.target = newName;
+                });
+                activeSubFunc = newName;
+                updateSubFuncUI();
+                render();
+                showSuccess(`✏️ เปลี่ยนชื่อเป็น "${newName}" แล้ว!`);
+            }
+        }
+
+        function deleteCurrentSubFunction() {
+            if (subFunctionsList.length <= 1) {
+                alert("⚠️ ต้องมีฟังก์ชันรองอย่างน้อย 1 รายการ");
+                return;
+            }
+            if (confirm(`คุณแน่ใจหรือไม่ที่จะลบฟังก์ชัน "${activeSubFunc}" และคำสั่งภายในทั้งหมด?`)) {
+                const deletedName = activeSubFunc;
+                delete workspaces[deletedName];
+                subFunctionsList = subFunctionsList.filter(n => n !== deletedName);
+                activeSubFunc = subFunctionsList[0];
+                workspaces['MAIN'] = workspaces['MAIN'].filter(b => !(b.params && b.params.target === deletedName));
+                updateSubFuncUI();
+                render();
+                showSuccess(`🗑️ ลบฟังก์ชัน "${deletedName}" แล้ว!`);
+            }
+        }
+
+        function updateSubFuncUI() {
+            const title = document.getElementById('workspace-title');
+            const desc = document.getElementById('empty-text-desc');
+            const listContainer = document.getElementById('sub-func-list-container');
+
+            listContainer.innerHTML = subFunctionsList.map(name => {
+                const isActive = (name === activeSubFunc);
+                const cls = isActive ? "bg-rose-600 text-white font-black shadow-md scale-105 border-b-[3px] border-rose-800" : "bg-white text-gray-700 font-bold hover:bg-rose-50 border-2 border-gray-200";
+                return `<button onclick="selectSubFunc('${name}')" class="px-3 py-1.5 rounded-xl text-xs transition-all ${cls}">${name}</button>`;
+            }).join('');
+
+            title.innerHTML = `🧩 ปรับแต่ง: ฟังก์ชันรอง [${activeSubFunc}]`;
+            desc.innerText = `ลากคำสั่งมาเรียงสำหรับชุดฟังก์ชัน "${activeSubFunc}"`;
+        }
+
+        function renderSubFuncOptions(currentValue) {
+            if (!subFunctionsList.includes(currentValue) && subFunctionsList.length > 0) {
+                currentValue = subFunctionsList[0];
+            }
+            return subFunctionsList.map(name => `<option value="${name}" ${name === currentValue ? 'selected' : ''}>${name}</option>`).join('');
+        }
+
+        function enterApp() { document.getElementById('authWrapper').classList.add('hidden-section'); document.getElementById('appWrapper').classList.remove('hidden-section'); updateModeUI(); render(); }
         function showLoading(s) { const overlay = document.getElementById('loadingOverlay'); if(s) overlay.classList.remove('hidden'); else overlay.classList.add('hidden'); }
-        function openFirmwareModal() { document.getElementById('firmwareModal').classList.remove('hidden'); }
+        function openFirmwareModal() { updateFirmwareCode(); document.getElementById('firmwareModal').classList.remove('hidden'); }
         function closeFirmwareModal() { document.getElementById('firmwareModal').classList.add('hidden'); }
         function openSerialMonitor() { document.getElementById('serialMonitorModal').classList.remove('hidden'); }
         function closeSerialMonitor() { document.getElementById('serialMonitorModal').classList.add('hidden'); }
@@ -528,35 +598,78 @@ void playTone(int freq, int duration) { tone(BUZZER_PIN, freq, duration); }</cod
         function toggleTheme() { isDarkMode = !isDarkMode; if (isDarkMode) { htmlEl.classList.add('dark'); localStorage.setItem('theme', 'dark'); } else { htmlEl.classList.remove('dark'); localStorage.setItem('theme', 'light'); } updateThemeIcon(); render(); }
         function updateThemeIcon() { document.getElementById('theme-toggle-btn').innerHTML = isDarkMode ? `<i class="fas fa-sun text-xl"></i>` : `<i class="fas fa-moon text-xl"></i>`; } updateThemeIcon();
 
-        const GRID_COLS = 8; const GRID_ROWS = 4; const DELAY_MS = 600; const DIRECTIONS = { UP: 0, RIGHT: 90, DOWN: 180, LEFT: 270 };
-        const initialSetup = { x: 0, y: GRID_ROWS - 1, dir: DIRECTIONS.UP }; let robotState = { ...initialSetup, offset: 0 };
-        let blocksWorkspace = []; let droppedObjects = []; let isExecuting = false; let currentStepId = null; let errorMsg = ""; let successMsg = "";
+        const GRID_COLS = 7; const GRID_ROWS = 10; const DELAY_MS = 600; const DIRECTIONS = { UP: 0, RIGHT: 90, DOWN: 180, LEFT: 270 };
+        const initialSetup = { x: 3, y: GRID_ROWS - 1, dir: DIRECTIONS.UP }; let robotState = { ...initialSetup, offset: 0 };
+        let droppedObjects = []; let isExecuting = false; let currentStepId = null; let errorMsg = ""; let successMsg = "";
         
         let serialPort, serialWriter, isConnected = false;
         let readBuffer = ""; let autoSensorInterval = null; let isAutoSensor = false;
         let draggedBlockId = null; let draggedNewType = null;
 
-        const icons = { bot: `<svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="4" height="18" rx="1" fill="#fca5a5"/><path d="M2 7h4 M2 12h4 M2 17h4"/><rect x="18" y="3" width="4" height="18" rx="1" fill="#fca5a5"/><path d="M18 7h4 M18 12h4 M18 17h4"/><path d="M 8.5 6 L 8.5 1 L 15.5 1 L 15.5 6 Z" fill="#fee2e2" stroke="#ef4444"/><rect x="10.5" y="2" width="3" height="2.5" rx="0.5" fill="#dc2626"/><rect x="6" y="6" width="12" height="13" rx="2" fill="white" stroke="#dc2626" stroke-width="2"/></svg>` };
+        const icons = { 
+            bot: `<svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="4" height="18" rx="1" fill="#fca5a5"/><path d="M2 7h4 M2 12h4 M2 17h4"/><rect x="18" y="3" width="4" height="18" rx="1" fill="#fca5a5"/><path d="M18 7h4 M18 12h4 M18 17h4"/><path d="M 8.5 6 L 8.5 1 L 15.5 1 L 15.5 6 Z" fill="#fee2e2" stroke="#ef4444"/><rect x="10.5" y="2" width="3" height="2.5" rx="0.5" fill="#dc2626"/><rect x="6" y="6" width="12" height="13" rx="2" fill="white" stroke="#dc2626" stroke-width="2"/></svg>`,
+            grab: `<div class="w-3 h-3 bg-indigo-600 rounded-full border border-white shadow animate-ping"></div>`,
+            release: `<div class="w-3 h-3 bg-sky-500 rounded-sm border border-white shadow animate-pulse"></div>`
+        };
         const renderMovementControls = (id, p) => `<div class="flex items-center gap-1 ml-1"><input type="number" value="${p.val}" step="1" onchange="updateBlockParam('${id}', 'val', this.value)" class="w-16 px-1 py-1 text-center text-lg text-slate-800 bg-white/90 font-mono rounded outline-none font-extrabold border-2 border-white/50"> <span class="font-bold text-sm">รอบ</span></div><div class="flex items-center gap-1 ml-2 pl-3 border-l-2 border-white/30"><span class="font-bold text-sm">เร็ว:</span><input type="number" value="${p.speed || '100'}" min="10" max="100" step="1" onchange="updateBlockParam('${id}', 'speed', this.value)" class="w-14 px-1 py-1 text-center text-sm text-slate-800 bg-white/90 font-mono rounded outline-none font-bold border-2 border-white/50"> <span class="font-bold text-sm">%</span></div>`;
 
         const blockDefinitions = {
-            'FORWARD': { text: 'เดินหน้า', colorClass: 'bg-blue-500 text-white', defaultParams: { val: '100', speed: '100' }, renderControls: renderMovementControls },
-            'BACKWARD': { text: 'ถอยหลัง', colorClass: 'bg-orange-500 text-white', defaultParams: { val: '100', speed: '100' }, renderControls: renderMovementControls },
-            'TURN_LEFT': { text: 'หมุนซ้าย', colorClass: 'bg-pink-500 text-white', defaultParams: { val: '80', speed: '100' }, renderControls: renderMovementControls },
-            'TURN_RIGHT': { text: 'หมุนขวา', colorClass: 'bg-purple-500 text-white', defaultParams: { val: '80', speed: '100' }, renderControls: renderMovementControls },
-            'PIVOT_LEFT': { text: 'ตีวงซ้าย', colorClass: 'bg-fuchsia-500 text-white', defaultParams: { val: '80', speed: '100' }, renderControls: renderMovementControls },
-            'PIVOT_RIGHT': { text: 'ตีวงขวา', colorClass: 'bg-violet-500 text-white', defaultParams: { val: '80', speed: '100' }, renderControls: renderMovementControls },
-            'SLIDE_LEFT': { text: 'สไลด์ซ้าย', colorClass: 'bg-teal-500 text-white', defaultParams: { val: '100', speed: '100' }, renderControls: renderMovementControls },
-            'SLIDE_RIGHT': { text: 'สไลด์ขวา', colorClass: 'bg-emerald-500 text-white', defaultParams: { val: '100', speed: '100' }, renderControls: renderMovementControls },
-            'CHECK_WALL': { text: 'เช็คหลัง/หน้า', colorClass: 'bg-amber-500 text-white', defaultParams: { val: '100', light: '600', logic: '1' }, renderControls: (id, p) => `<div class="flex flex-col gap-1 ml-1"><div class="flex items-center gap-1"><span class="text-xs">ชนที่:</span><input type="number" value="${p.val}" step="1" onchange="updateBlockParam('${id}', 'val', this.value)" class="w-14 px-1 py-0.5 text-center text-sm font-bold text-slate-800 bg-white/90 rounded border"> <span class="text-xs">รอบ</span></div></div>` },
-            'DISPENSE_PIN2': { text: 'จ่ายวัตถุ 1 (Pin 2)', colorClass: 'bg-indigo-500 text-white', defaultParams: { angle: '90' }, renderControls: (id, p) => `<div class="flex items-center gap-1 ml-1"><input type="number" value="${p.angle || '90'}" min="0" max="180" onchange="updateBlockParam('${id}', 'angle', this.value)" class="w-14 px-1 py-1 text-center text-lg text-slate-800 bg-white/90 font-mono rounded outline-none font-extrabold border-2 border-white/50"> <span class="font-bold text-sm">°</span></div>` },
-            'DISPENSE_PIN3': { text: 'จ่ายวัตถุ 2 (Pin 3)', colorClass: 'bg-sky-500 text-white', defaultParams: { angle: '90' }, renderControls: (id, p) => `<div class="flex items-center gap-1 ml-1"><input type="number" value="${p.angle || '90'}" min="0" max="180" onchange="updateBlockParam('${id}', 'angle', this.value)" class="w-14 px-1 py-1 text-center text-lg text-slate-800 bg-white/90 font-mono rounded outline-none font-extrabold border-2 border-white/50"> <span class="font-bold text-sm">°</span></div>` }
+            'FORWARD': { text: 'เดินหน้า', colorClass: 'bg-blue-500 text-white border-blue-700', defaultParams: { val: '100', speed: '100' }, renderControls: renderMovementControls },
+            'BACKWARD': { text: 'ถอยหลัง', colorClass: 'bg-orange-500 text-white border-orange-700', defaultParams: { val: '100', speed: '100' }, renderControls: renderMovementControls },
+            'TURN_LEFT': { text: 'หมุนซ้าย', colorClass: 'bg-pink-500 text-white border-pink-700', defaultParams: { val: '80', speed: '100' }, renderControls: renderMovementControls },
+            'TURN_RIGHT': { text: 'หมุนขวา', colorClass: 'bg-purple-500 text-white border-purple-700', defaultParams: { val: '80', speed: '100' }, renderControls: renderMovementControls },
+            'PIVOT_LEFT': { text: 'ตีวงซ้าย', colorClass: 'bg-fuchsia-500 text-white border-fuchsia-700', defaultParams: { val: '80', speed: '100' }, renderControls: renderMovementControls },
+            'PIVOT_RIGHT': { text: 'ตีวงขวา', colorClass: 'bg-violet-500 text-white border-violet-700', defaultParams: { val: '80', speed: '100' }, renderControls: renderMovementControls },
+            'SLIDE_LEFT': { text: 'สไลด์ซ้าย', colorClass: 'bg-teal-500 text-white border-teal-700', defaultParams: { val: '100', speed: '100' }, renderControls: renderMovementControls },
+            'SLIDE_RIGHT': { text: 'สไลด์ขวา', colorClass: 'bg-emerald-500 text-white border-emerald-700', defaultParams: { val: '100', speed: '100' }, renderControls: renderMovementControls },
+            'CHECK_WALL': { text: 'เช็คหลัง/หน้า', colorClass: 'bg-amber-500 text-white border-amber-700', defaultParams: { val: '100', light: '600', logic: '1' }, renderControls: (id, p) => `<div class="flex flex-col gap-1 ml-1"><div class="flex items-center gap-1"><span class="text-xs">ชนที่:</span><input type="number" value="${p.val}" step="1" onchange="updateBlockParam('${id}', 'val', this.value)" class="w-14 px-1 py-0.5 text-center text-sm font-bold text-slate-800 bg-white/90 rounded border"> <span class="text-xs">รอบ</span></div></div>` },
+            'DISPENSE_PIN2': { text: 'จ่ายวัตถุ 1 (Pin 2)', colorClass: 'bg-indigo-500 text-white border-indigo-700', defaultParams: { angle: '90' }, renderControls: (id, p) => `<div class="flex items-center gap-1 ml-1"><input type="number" value="${p.angle || '90'}" min="0" max="180" onchange="updateBlockParam('${id}', 'angle', this.value)" class="w-14 px-1 py-1 text-center text-lg text-slate-800 bg-white/90 font-mono rounded outline-none font-extrabold border-2 border-white/50"> <span class="font-bold text-sm">°</span></div>` },
+            'DISPENSE_PIN3': { text: 'จ่ายวัตถุ 2 (Pin 3)', colorClass: 'bg-sky-500 text-white border-sky-700', defaultParams: { angle: '90' }, renderControls: (id, p) => `<div class="flex items-center gap-1 ml-1"><input type="number" value="${p.angle || '90'}" min="0" max="180" onchange="updateBlockParam('${id}', 'angle', this.value)" class="w-14 px-1 py-1 text-center text-lg text-slate-800 bg-white/90 font-mono rounded outline-none font-extrabold border-2 border-white/50"> <span class="font-bold text-sm">°</span></div>` },
+            'GRIP_GRAB': { text: 'คีบวัตถุ (Grab)', colorClass: 'bg-indigo-600 text-white border-indigo-800', defaultParams: {}, renderControls: () => `<div class="flex items-center gap-1 ml-1 font-extrabold text-xs bg-black/20 px-3 py-1.5 rounded-lg"><i class="fas fa-hand-rock"></i> หมุน 45° ➔ ค้าง 1 วิ ➔ กลับ 90°</div>` },
+            'GRIP_RELEASE': { text: 'ปล่อยวัตถุ (Release)', colorClass: 'bg-sky-600 text-white border-sky-800', defaultParams: {}, renderControls: () => `<div class="flex items-center gap-1 ml-1 font-extrabold text-xs bg-black/20 px-3 py-1.5 rounded-lg"><i class="fas fa-hand-paper"></i> หมุน 135° ➔ ค้าง 1 วิ ➔ กลับ 90°</div>` },
+            
+            'CHECK_COLOR_TCS': { 
+                text: '🔍 เช็คสี TCS34725', 
+                colorClass: 'bg-amber-600 text-white border-amber-800', 
+                defaultParams: { color: 'RED', target: 'สีแดง1' }, 
+                renderControls: (id, p) => `
+                    <div class="flex items-center gap-1.5 ml-1 bg-black/20 px-2.5 py-1 rounded-lg">
+                        <span class="text-xs font-bold">เมื่อเจอสี:</span>
+                        <select onchange="updateBlockParam('${id}', 'color', this.value)" class="px-1.5 py-0.5 text-xs font-extrabold text-slate-800 bg-white rounded border outline-none">
+                            <option value="RED" ${p.color === 'RED' ? 'selected' : ''}>🔴 สีแดง (Red)</option>
+                            <option value="GREEN" ${p.color === 'GREEN' ? 'selected' : ''}>🟢 สีเขียว (Green)</option>
+                            <option value="BLUE" ${p.color === 'BLUE' ? 'selected' : ''}>🔵 สีน้ำเงิน (Blue)</option>
+                            <option value="YELLOW" ${p.color === 'YELLOW' ? 'selected' : ''}>🟡 สีเหลือง (Yellow)</option>
+                        </select>
+                        <span class="text-xs font-bold ml-1">➔ ให้ทำ:</span>
+                        <select onchange="updateBlockParam('${id}', 'target', this.value)" class="px-2 py-0.5 text-xs font-extrabold text-slate-800 bg-white rounded border outline-none">
+                            ${renderSubFuncOptions(p.target)}
+                        </select>
+                    </div>`
+            },
+            'CALL_SUB': { 
+                text: '⚡ เรียกใช้ฟังก์ชันรอง', 
+                colorClass: 'bg-rose-600 text-white border-rose-800', 
+                defaultParams: { target: 'สีแดง1' }, 
+                renderControls: (id, p) => `
+                    <div class="flex items-center gap-1 ml-1 bg-black/20 px-2.5 py-1 rounded-lg">
+                        <span class="text-xs font-bold">รันคำสั่งจาก:</span>
+                        <select onchange="updateBlockParam('${id}', 'target', this.value)" class="px-2 py-0.5 text-xs font-extrabold text-slate-800 bg-white rounded border outline-none">
+                            ${renderSubFuncOptions(p.target)}
+                        </select>
+                    </div>` 
+            }
         };
 
         function saveFile() {
-            const dataToSave = { blocks: blocksWorkspace, params: { F: document.getElementById('param-F').value, B: document.getElementById('param-B').value, L: document.getElementById('param-L').value, R: document.getElementById('param-R').value, PL: document.getElementById('param-PL').value, PR: document.getElementById('param-PR').value, SL: document.getElementById('param-SL').value, SR: document.getElementById('param-SR').value, CW: document.getElementById('param-CW').value, D1: document.getElementById('param-D1').value, D2: document.getElementById('param-D2').value, SENSOR: document.getElementById('param-SENSOR').value, LOGIC: document.getElementById('param-LOGIC').value, SPEED: document.getElementById('param-SPEED').value, ML: document.getElementById('param-ML').value, MR: document.getElementById('param-MR').value } };
+            const dataToSave = { 
+                mode: currentRobotMode, 
+                subFunctionsList: subFunctionsList,
+                workspaces: workspaces, 
+                params: { F: document.getElementById('param-F').value, B: document.getElementById('param-B').value, L: document.getElementById('param-L').value, R: document.getElementById('param-R').value, PL: document.getElementById('param-PL').value, PR: document.getElementById('param-PR').value, SL: document.getElementById('param-SL').value, SR: document.getElementById('param-SR').value, CW: document.getElementById('param-CW').value, D1: document.getElementById('param-D1').value, D2: document.getElementById('param-D2').value, SENSOR: document.getElementById('param-SENSOR').value, LOGIC: document.getElementById('param-LOGIC').value, SPEED: document.getElementById('param-SPEED').value, ML: document.getElementById('param-ML').value, MR: document.getElementById('param-MR').value } 
+            };
             const blob = new Blob([JSON.stringify(dataToSave, null, 2)], { type: "application/json" });
-            const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = 'robot_workspace.json'; document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
+            const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = `robot_${currentRobotMode.toLowerCase()}_workspace.json`; document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
         }
 
         function loadFile(event) {
@@ -564,8 +677,18 @@ void playTone(int freq, int duration) { tone(BUZZER_PIN, freq, duration); }</cod
             reader.onload = function(e) {
                 try {
                     const loadedData = JSON.parse(e.target.result);
-                    if (loadedData.blocks) blocksWorkspace = loadedData.blocks.filter(b => b.type !== 'CHECK_WALL_LEFT' && b.type !== 'CHECK_WALL_RIGHT');
+                    if (loadedData.mode) selectRobotMode(loadedData.mode);
+                    if (loadedData.subFunctionsList) {
+                        subFunctionsList = loadedData.subFunctionsList;
+                        activeSubFunc = subFunctionsList[0] || 'สีแดง1';
+                    }
+                    if (loadedData.workspaces) {
+                        workspaces = loadedData.workspaces;
+                    } else if (loadedData.blocks) {
+                        workspaces['MAIN'] = loadedData.blocks;
+                    }
                     if (loadedData.params) ['F','B','L','R','PL','PR','SL','SR','CW','D1','D2','SENSOR','LOGIC','SPEED','ML','MR'].forEach(p => { if(loadedData.params[p] && document.getElementById('param-' + p)) document.getElementById('param-' + p).value = loadedData.params[p]; });
+                    updateSubFuncUI();
                     render(); resetRobot();
                 } catch (err) { alert("ไฟล์ที่เลือกไม่ถูกต้อง"); }
             }; reader.readAsText(file); event.target.value = ''; 
@@ -576,27 +699,47 @@ void playTone(int freq, int duration) { tone(BUZZER_PIN, freq, duration); }</cod
         function handleDragEnd(e, id) { removeIndicator(); const el = document.getElementById(id); if (el) el.style.opacity = '1'; draggedBlockId = null; draggedNewType = null; }
         function removeIndicator() { const ind = document.getElementById('drop-indicator'); if (ind) ind.remove(); highlightTrash(false); }
         function allowDrop(e) { e.preventDefault(); }
+        
         function handleWorkspaceDragOver(e) {
             e.preventDefault(); if (isExecuting) return; const list = document.getElementById('block-list'); const els = Array.from(list.querySelectorAll('.robot-block-wrapper')); const dropY = e.clientY; let indicator = document.getElementById('drop-indicator');
             if (!indicator) { indicator = document.createElement('div'); indicator.id = 'drop-indicator'; indicator.className = 'h-3 bg-red-300 dark:bg-red-700 rounded-full my-1 transition-all border-2 border-red-400 z-50 pointer-events-none relative'; }
             let insertBeforeEl = null; for (let i = 0; i < els.length; i++) { const rect = els[i].getBoundingClientRect(); if (dropY < rect.top + (rect.height / 2)) { insertBeforeEl = els[i]; break; } }
             if (insertBeforeEl) list.insertBefore(indicator, insertBeforeEl); else list.appendChild(indicator);
         }
+        
         function handleWorkspaceDrop(e) {
             e.preventDefault(); removeIndicator(); const data = e.dataTransfer.getData('text/plain'); if (!data) return;
-            const list = document.getElementById('block-list'); const blockNodes = Array.from(list.children).filter(n => n.id !== 'drop-indicator' && n.classList.contains('robot-block-wrapper')); const dropY = e.clientY; let tIdx = blocksWorkspace.length;
+            const list = document.getElementById('block-list'); const blockNodes = Array.from(list.children).filter(n => n.id !== 'drop-indicator' && n.classList.contains('robot-block-wrapper')); const dropY = e.clientY; 
+            let currentList = getActiveWorkspace();
+            let tIdx = currentList.length;
             for (let i = 0; i < blockNodes.length; i++) { const rect = blockNodes[i].getBoundingClientRect(); if (dropY < rect.top + (rect.height / 2)) { tIdx = i; break; } }
+            
             if (data.startsWith('new:')) {
-                const cmdType = data.split(':')[1]; const id = 'b_' + Date.now(); let params = { ...blockDefinitions[cmdType].defaultParams };
+                const cmdType = data.split(':')[1]; 
+                if (activeTab === 'FUNC' && (cmdType === 'CALL_SUB' || cmdType === 'CHECK_COLOR_TCS')) {
+                    showError("⚠️ ไม่สามารถใส่คำสั่งเรียกฟังก์ชันซ้อนกันในหน้าฟังก์ชันย่อยได้");
+                    return;
+                }
+                const id = 'b_' + Date.now(); let params = { ...blockDefinitions[cmdType].defaultParams };
+                if (params.target && subFunctionsList.length > 0) params.target = subFunctionsList[0];
                 if (['FORWARD', 'BACKWARD', 'TURN_LEFT', 'TURN_RIGHT', 'PIVOT_LEFT', 'PIVOT_RIGHT', 'SLIDE_LEFT', 'SLIDE_RIGHT'].includes(cmdType)) params.speed = document.getElementById('param-SPEED').value;
                 if (cmdType === 'FORWARD') params.val = document.getElementById('param-F').value; if (cmdType === 'BACKWARD') params.val = document.getElementById('param-B').value; if (cmdType === 'TURN_LEFT') params.val = document.getElementById('param-L').value; if (cmdType === 'TURN_RIGHT') params.val = document.getElementById('param-R').value; if (cmdType === 'PIVOT_LEFT') params.val = document.getElementById('param-PL').value; if (cmdType === 'PIVOT_RIGHT') params.val = document.getElementById('param-PR').value; if (cmdType === 'SLIDE_LEFT') params.val = document.getElementById('param-SL').value; if (cmdType === 'SLIDE_RIGHT') params.val = document.getElementById('param-SR').value; if (cmdType === 'DISPENSE_PIN2') params.angle = document.getElementById('param-D1').value; if (cmdType === 'DISPENSE_PIN3') params.angle = document.getElementById('param-D2').value; if (cmdType === 'CHECK_WALL') { params.val = document.getElementById('param-CW').value; params.light = document.getElementById('param-SENSOR').value; params.logic = document.getElementById('param-LOGIC').value; }
-                blocksWorkspace.splice(tIdx, 0, { id, type: cmdType, params, showNote: false, note: "" }); render();
-            } else { const sIdx = blocksWorkspace.findIndex(b => b.id === data); if (sIdx !== -1) { const [b] = blocksWorkspace.splice(sIdx, 1); const finalIdx = sIdx < tIdx ? tIdx - 1 : tIdx; blocksWorkspace.splice(finalIdx, 0, b); render(); } }
+                currentList.splice(tIdx, 0, { id, type: cmdType, params, showNote: false, note: "" }); render();
+            } else { 
+                const sIdx = currentList.findIndex(b => b.id === data); 
+                if (sIdx !== -1) { 
+                    const [b] = currentList.splice(sIdx, 1); 
+                    const finalIdx = sIdx < tIdx ? tIdx - 1 : tIdx; 
+                    currentList.splice(finalIdx, 0, b); 
+                    render(); 
+                } 
+            }
         }
+
         function highlightTrash(h) { const t = document.getElementById('trash-bin'); h ? t.classList.add('bg-red-100') : t.classList.remove('bg-red-100'); }
         function deleteDraggedBlock(e) { e.preventDefault(); const id = e.dataTransfer.getData('text/plain'); if (id && !id.startsWith('new:')) removeBlock(id); highlightTrash(false); }
-        function toggleNote(id) { const b = blocksWorkspace.find(b => b.id === id); if (b) { b.showNote = !b.showNote; render(); } }
-        function updateBlockNote(id, val) { const b = blocksWorkspace.find(b => b.id === id); if (b) b.note = val; }
+        function toggleNote(id) { const currentList = getActiveWorkspace(); const b = currentList.find(b => b.id === id); if (b) { b.showNote = !b.showNote; render(); } }
+        function updateBlockNote(id, val) { const currentList = getActiveWorkspace(); const b = currentList.find(b => b.id === id); if (b) b.note = val; }
 
         async function connectArduino() {
             if (!("serial" in navigator)) return showError("เบราว์เซอร์ไม่รองรับ Web Serial");
@@ -609,7 +752,6 @@ void playTone(int freq, int duration) { tone(BUZZER_PIN, freq, duration); }</cod
             } catch (error) { showError("ไม่สามารถเชื่อมต่อได้"); }
         }
 
-        // ระบบอ่าน Serial ที่แก้ไขใหม่ทั้งหมด ให้รับข้อมูลได้เสถียรแน่นอน 100%
         async function readSerialLoop() {
             const decoder = new TextDecoder();
             while (serialPort && serialPort.readable && isConnected) {
@@ -620,17 +762,15 @@ void playTone(int freq, int duration) { tone(BUZZER_PIN, freq, duration); }</cod
                         if (value) {
                             readBuffer += decoder.decode(value, {stream: true});
                             let lines = readBuffer.split('\n');
-                            readBuffer = lines.pop(); // เก็บส่วนท้ายที่ยังไม่จบปะติปะต่อไว้
+                            readBuffer = lines.pop(); 
                             
                             for (let line of lines) {
                                 let text = line.trim();
                                 if (text.length > 0) {
-                                    // โชว์ใน Monitor
                                     const out = document.getElementById('monitorOutput');
                                     out.innerHTML += `<div>[${new Date().toLocaleTimeString()}] <span class="text-white">${text}</span></div>`;
                                     out.scrollTop = out.scrollHeight;
                                     
-                                    // ถ้าเป็นข้อความเซ็นเซอร์ ให้นำมาโชว์หน้าปัด
                                     if (text.startsWith("SENS:")) {
                                         const vals = text.substring(5).split(',');
                                         if (vals.length >= 5) {
@@ -673,16 +813,24 @@ void playTone(int freq, int duration) { tone(BUZZER_PIN, freq, duration); }</cod
         function showSuccess(msg) { const box = document.getElementById('messageBox'); box.innerText = msg; box.style.display = 'block'; box.style.backgroundColor = '#10B981'; setTimeout(() => box.style.display = 'none', 3000); }
         
         function addBlock(cmdType) { 
-            if (isExecuting) return; const id = 'b_' + Date.now(); let params = { ...blockDefinitions[cmdType].defaultParams };
+            if (isExecuting) return; 
+            if (activeTab === 'FUNC' && (cmdType === 'CALL_SUB' || cmdType === 'CHECK_COLOR_TCS')) {
+                showError("⚠️ ไม่สามารถใส่คำสั่งเรียกใช้ฟังก์ชันซ้อนกันในหน้าฟังก์ชันย่อยได้");
+                return;
+            }
+            const id = 'b_' + Date.now(); let params = { ...blockDefinitions[cmdType].defaultParams };
+            if (params.target && subFunctionsList.length > 0) params.target = subFunctionsList[0];
             if (['FORWARD', 'BACKWARD', 'TURN_LEFT', 'TURN_RIGHT', 'PIVOT_LEFT', 'PIVOT_RIGHT', 'SLIDE_LEFT', 'SLIDE_RIGHT'].includes(cmdType)) params.speed = document.getElementById('param-SPEED').value;
             if (cmdType === 'FORWARD') params.val = document.getElementById('param-F').value; if (cmdType === 'BACKWARD') params.val = document.getElementById('param-B').value; if (cmdType === 'TURN_LEFT') params.val = document.getElementById('param-L').value; if (cmdType === 'TURN_RIGHT') params.val = document.getElementById('param-R').value; if (cmdType === 'PIVOT_LEFT') params.val = document.getElementById('param-PL').value; if (cmdType === 'PIVOT_RIGHT') params.val = document.getElementById('param-PR').value; if (cmdType === 'SLIDE_LEFT') params.val = document.getElementById('param-SL').value; if (cmdType === 'SLIDE_RIGHT') params.val = document.getElementById('param-SR').value; if (cmdType === 'DISPENSE_PIN2') params.angle = document.getElementById('param-D1').value; if (cmdType === 'DISPENSE_PIN3') params.angle = document.getElementById('param-D2').value; if (cmdType === 'CHECK_WALL') { params.val = document.getElementById('param-CW').value; params.light = document.getElementById('param-SENSOR').value; params.logic = document.getElementById('param-LOGIC').value; }
-            blocksWorkspace.push({ id, type: cmdType, params, showNote: false, note: "" }); render(); 
+            
+            let currentList = getActiveWorkspace();
+            currentList.push({ id, type: cmdType, params, showNote: false, note: "" }); render(); 
             setTimeout(() => { const ws = document.getElementById('workspace-container'); ws.scrollTop = ws.scrollHeight; }, 50); 
         }
 
-        function updateBlockParam(id, param, val) { const b = blocksWorkspace.find(b => b.id === id); if (b) b.params[param] = val; }
-        function removeBlock(id) { if (isExecuting) return; blocksWorkspace = blocksWorkspace.filter(b => b.id !== id); render(); }
-        function clearBlocks() { if (isExecuting) return; blocksWorkspace = []; currentStepId = null; droppedObjects = []; render(); }
+        function updateBlockParam(id, param, val) { const currentList = getActiveWorkspace(); const b = currentList.find(b => b.id === id); if (b) b.params[param] = val; }
+        function removeBlock(id) { if (isExecuting) return; let currentList = getActiveWorkspace(); const idx = currentList.findIndex(b => b.id === id); if(idx !== -1) currentList.splice(idx, 1); render(); }
+        function clearBlocks() { if (isExecuting) return; if(activeTab === 'MAIN') workspaces['MAIN'] = []; else workspaces[activeSubFunc] = []; currentStepId = null; droppedObjects = []; render(); }
         function resetRobot() { if (isExecuting) return; robotState = { ...initialSetup, offset: 0 }; currentStepId = null; droppedObjects = []; render(); }
 
         function render() {
@@ -691,7 +839,16 @@ void playTone(int freq, int duration) { tone(BUZZER_PIN, freq, duration); }</cod
                 for (let col = 0; col < GRID_COLS; col++) {
                     const cell = document.createElement('div'); cell.className = 'aspect-square border border-red-200 dark:border-red-900/50 bg-white dark:bg-red-900/20 flex items-center justify-center relative';
                     if (col === initialSetup.x && row === initialSetup.y) { const startLabel = document.createElement('span'); startLabel.className = 'absolute bottom-1 text-xs font-extrabold text-red-600 bg-red-100 px-1 rounded z-0'; startLabel.innerText = 'START'; cell.appendChild(startLabel); }
-                    droppedObjects.filter(obj => obj.x === col && obj.y === row).forEach(obj => { const objDot = document.createElement('div'); objDot.className = 'absolute w-1/3 h-1/3 bg-red-800 rounded-md shadow z-0 animate-pulse'; cell.appendChild(objDot); });
+                    droppedObjects.filter(obj => obj.x === col && obj.y === row).forEach(obj => { 
+                        const objEl = document.createElement('div'); 
+                        objEl.className = 'absolute z-0 flex items-center justify-center';
+                        if (obj.type === 'GRIP_GRAB') objEl.innerHTML = icons.grab;
+                        else if (obj.type === 'GRIP_RELEASE') objEl.innerHTML = icons.release;
+                        else {
+                            objEl.className = 'absolute w-1/3 h-1/3 bg-red-800 rounded-md shadow z-0 animate-pulse';
+                        }
+                        cell.appendChild(objEl); 
+                    });
                     if (robotState.x === col && robotState.y === row) { const bot = document.createElement('div'); bot.className = 'absolute w-[85%] h-[85%] transition-all duration-300 z-10 flex items-center justify-center'; bot.style.transform = `rotate(${robotState.dir}deg)${robotState.offset ? ` translateY(${robotState.offset}%)` : ''}`; bot.innerHTML = icons.bot; cell.appendChild(bot); }
                     gridEl.appendChild(cell);
                 }
@@ -702,10 +859,12 @@ void playTone(int freq, int duration) { tone(BUZZER_PIN, freq, duration); }</cod
             else { si.className = 'w-3 h-3 rounded-full bg-red-300 dark:bg-red-600'; st.innerText = 'ยังไม่เชื่อมต่อ'; st.className = 'text-xs font-bold text-red-500 dark:text-red-400'; cb.disabled = false; cb.classList.replace('bg-emerald-600', 'bg-red-800'); cb.classList.replace('border-emerald-800', 'border-red-950'); }
 
             const list = document.getElementById('block-list'); const msg = document.getElementById('empty-workspace-msg');
-            if (blocksWorkspace.length === 0) { list.innerHTML = ''; msg.classList.remove('opacity-0'); } 
+            const currentList = getActiveWorkspace();
+
+            if (currentList.length === 0) { list.innerHTML = ''; msg.classList.remove('opacity-0'); } 
             else {
                 msg.classList.add('opacity-0');
-                list.innerHTML = blocksWorkspace.map((b, i) => {
+                list.innerHTML = currentList.map((b, i) => {
                     const def = blockDefinitions[b.type]; const activeClass = currentStepId === b.id ? 'ring-4 ring-red-400 scale-[1.02] shadow-xl z-20 animate-pulse' : 'hover:brightness-110';
                     return `<div class="robot-block-wrapper" data-id="${b.id}"><div id="${b.id}" draggable="true" ondragstart="handleDragStart(event, '${b.id}')" ondragend="handleDragEnd(event, '${b.id}')" class="robot-block pressable-btn ${def.colorClass} ${activeClass} border-2 border-black/10 border-l-[8px] py-3 px-3 flex flex-wrap items-center gap-2 select-none"><span class="font-mono text-lg font-extrabold bg-black/20 text-white px-2.5 py-0.5 rounded-full min-w-[28px] text-center shadow-inner">${i + 1}</span><span class="font-extrabold text-lg select-none drop-shadow-sm min-w-[80px]">${def.text}</span><div class="flex-1 flex flex-wrap items-center gap-2">${def.renderControls(b.id, b.params)}</div><div class="ml-auto flex items-center gap-1"><button onclick="toggleNote('${b.id}')" class="text-white/80 hover:text-white hover:bg-black/30 w-8 h-8 flex justify-center items-center rounded-xl transition-colors"><i class="fas ${b.showNote ? 'fa-comment' : 'fa-comment-dots'}"></i></button>${!isExecuting ? `<button onclick="removeBlock('${b.id}')" class="text-white/80 hover:text-white hover:bg-black/30 w-8 h-8 flex justify-center items-center rounded-xl transition-colors"><i class="fas fa-times"></i></button>` : ''}</div>${b.showNote ? `<div class="w-full mt-2 pt-2 border-t border-white/30 flex items-center gap-2"><i class="fas fa-pen text-white/70 text-sm ml-1"></i><input type="text" value="${b.note || ''}" onchange="updateBlockNote('${b.id}', this.value)" placeholder="พิมพ์คำอธิบายที่นี่..." class="flex-1 px-2 py-1 text-sm text-slate-800 bg-white/90 rounded-lg outline-none border-2 border-white/50 font-medium"></div>` : ''}</div></div>`;
                 }).join('');
@@ -714,22 +873,42 @@ void playTone(int freq, int duration) { tone(BUZZER_PIN, freq, duration); }</cod
             const err = document.getElementById('error-msg'); if (errorMsg) { err.innerText = errorMsg; err.classList.remove('hidden'); } else err.classList.add('hidden');
             const succ = document.getElementById('success-msg'); if (successMsg) { succ.innerText = successMsg; succ.classList.remove('hidden'); } else succ.classList.add('hidden');
 
-            ['reset-btn', 'clear-btn', 'load-btn', 'save-btn'].forEach(id => document.getElementById(id).disabled = isExecuting);
-            document.querySelectorAll('#block-list input, #block-list select').forEach(el => el.disabled = isExecuting);
+            ['reset-btn', 'clear-btn', 'load-btn', 'save-btn', 'tab-btn-main', 'tab-btn-func'].forEach(id => document.getElementById(id).disabled = isExecuting);
+            document.querySelectorAll('#block-list input, #block-list select, #func-selector-bar button').forEach(el => el.disabled = isExecuting);
             document.querySelectorAll('#param-F, #param-B, #param-L, #param-R, #param-PL, #param-PR, #param-SL, #param-SR, #param-CW, #param-D1, #param-D2, #param-SENSOR, #param-LOGIC, #param-SPEED, #param-ML, #param-MR').forEach(el => el.disabled = isExecuting);
             
-            const run = document.getElementById('run-btn'); run.disabled = isExecuting || blocksWorkspace.length === 0; run.innerHTML = isExecuting ? `<i class="fas fa-spinner fa-spin"></i> ประมวลผล...` : `<i class="fas fa-play"></i> จำลองบนกระดาน 8x4`;
-            document.getElementById('send-btn').disabled = isExecuting || blocksWorkspace.length === 0 || !isConnected;
+            const run = document.getElementById('run-btn'); run.disabled = isExecuting || currentList.length === 0; run.innerHTML = isExecuting ? `<i class="fas fa-spinner fa-spin"></i> ประมวลผล...` : `<i class="fas fa-play"></i> จำลองบนกระดาน 7x10`;
+            
+            document.getElementById('send-btn').disabled = isExecuting || workspaces['MAIN'].length === 0 || !isConnected;
         }
 
         const sleep = ms => new Promise(res => setTimeout(res, ms));
 
+        function getExpandedBlocks(sourceList) {
+            let expanded = [];
+            for (let b of sourceList) {
+                if (b.type === 'CALL_SUB' || b.type === 'CHECK_COLOR_TCS') {
+                    const targetName = b.params.target;
+                    if (workspaces[targetName]) {
+                        expanded.push(...workspaces[targetName]);
+                    }
+                } else {
+                    expanded.push(b);
+                }
+            }
+            return expanded;
+        }
+
         async function executeBlocks() {
-            if (blocksWorkspace.length === 0 || isExecuting) return;
+            let targetList = getActiveWorkspace();
+            if (targetList.length === 0 || isExecuting) return;
+            
+            let executionQueue = (activeTab === 'MAIN') ? getExpandedBlocks(targetList) : targetList;
+
             if (isAutoSensor) toggleAutoSensor(); isExecuting = true; currentStepId = null; droppedObjects = []; render();
-            for (let i = 0; i < blocksWorkspace.length; i++) {
-                const b = blocksWorkspace[i]; currentStepId = b.id; render(); let { x, y, dir } = robotState;
-                if (b.type === 'FORWARD') { if (dir === 0) y--; else if (dir === 90) x++; else if (dir === 180) y++; else x--; } else if (b.type === 'BACKWARD') { if (dir === 0) y++; else if (dir === 90) x--; else if (dir === 180) y--; else x++; } else if (b.type === 'TURN_LEFT' || b.type === 'PIVOT_LEFT') dir = (dir - 90 + 360) % 360; else if (b.type === 'TURN_RIGHT' || b.type === 'PIVOT_RIGHT') dir = (dir + 90) % 360; else if (b.type === 'SLIDE_LEFT') { if (dir === 0) x--; else if (dir === 90) y--; else if (dir === 180) x++; else y++; } else if (b.type === 'SLIDE_RIGHT') { if (dir === 0) x++; else if (dir === 90) y++; else if (dir === 180) x--; else y--; } else if (b.type === 'DISPENSE_PIN2' || b.type === 'DISPENSE_PIN3') droppedObjects.push({ x, y, dir }); else if (b.type === 'CHECK_WALL') { robotState.offset = 40; render(); await sleep(DELAY_MS); robotState.offset = 0; }
+            for (let i = 0; i < executionQueue.length; i++) {
+                const b = executionQueue[i]; currentStepId = b.id; render(); let { x, y, dir } = robotState;
+                if (b.type === 'FORWARD') { if (dir === 0) y--; else if (dir === 90) x++; else if (dir === 180) y++; else x--; } else if (b.type === 'BACKWARD') { if (dir === 0) y++; else if (dir === 90) x--; else if (dir === 180) y--; else x++; } else if (b.type === 'TURN_LEFT' || b.type === 'PIVOT_LEFT') dir = (dir - 90 + 360) % 360; else if (b.type === 'TURN_RIGHT' || b.type === 'PIVOT_RIGHT') dir = (dir + 90) % 360; else if (b.type === 'SLIDE_LEFT') { if (dir === 0) x--; else if (dir === 90) y--; else if (dir === 180) x++; else y++; } else if (b.type === 'SLIDE_RIGHT') { if (dir === 0) x++; else if (dir === 90) y++; else if (dir === 180) x--; else y--; } else if (b.type === 'DISPENSE_PIN2' || b.type === 'DISPENSE_PIN3' || b.type === 'GRIP_GRAB' || b.type === 'GRIP_RELEASE') droppedObjects.push({ x, y, dir, type: b.type }); else if (b.type === 'CHECK_WALL') { robotState.offset = 40; render(); await sleep(DELAY_MS); robotState.offset = 0; }
                 if (x < 0 || x >= GRID_COLS || y < 0 || y >= GRID_ROWS) { showError("ระวัง! หุ่นยนต์ชนขอบพื้นที่"); isExecuting = false; currentStepId = null; render(); return; }
                 robotState = { x, y, dir, offset: 0 }; render(); await sleep(DELAY_MS);
             }
@@ -737,24 +916,421 @@ void playTone(int freq, int duration) { tone(BUZZER_PIN, freq, duration); }</cod
         }
 
         async function sendBlocksToRobot() {
-            if (blocksWorkspace.length === 0 || isExecuting || !isConnected || !serialWriter) return;
+            if (workspaces['MAIN'].length === 0 || isExecuting || !isConnected || !serialWriter) return;
             if (isAutoSensor) toggleAutoSensor(); isExecuting = true; currentStepId = null; droppedObjects = []; render();
+            
+            let finalCommands = getExpandedBlocks(workspaces['MAIN']);
+            
             const enc = new TextEncoder();
             try {
                 const speedVal = document.getElementById('param-SPEED').value || 100; const mlVal = document.getElementById('param-ML').value || 100; const mrVal = document.getElementById('param-MR').value || 100;
                 await serialWriter.write(enc.encode(`SP${speedVal}\n`)); await sleep(30); await serialWriter.write(enc.encode(`ML${mlVal}\n`)); await sleep(30); await serialWriter.write(enc.encode(`MR${mrVal}\n`)); await sleep(40);
-                for (let i = 0; i < blocksWorkspace.length; i++) {
-                    const b = blocksWorkspace[i]; currentStepId = b.id; let cmd = ''; const p = b.params;
-                    if (b.type === 'FORWARD') cmd = `F${p.val},${p.speed || 100}\n`; else if (b.type === 'BACKWARD') cmd = `B${p.val},${p.speed || 100}\n`; else if (b.type === 'TURN_LEFT') cmd = `L${p.val},${p.speed || 100}\n`; else if (b.type === 'TURN_RIGHT') cmd = `R${p.val},${p.speed || 100}\n`; else if (b.type === 'PIVOT_LEFT') cmd = `PL${p.val},${p.speed || 100}\n`; else if (b.type === 'PIVOT_RIGHT') cmd = `PR${p.val},${p.speed || 100}\n`; else if (b.type === 'SLIDE_LEFT') cmd = `SL${p.val},${p.speed || 100}\n`; else if (b.type === 'SLIDE_RIGHT') cmd = `SR${p.val},${p.speed || 100}\n`; else if (b.type === 'CHECK_WALL') cmd = `CW${p.val},${p.light || 600},${p.logic !== undefined ? p.logic : 1}\n`; else if (b.type === 'DISPENSE_PIN2') { cmd = `D1:${p.angle || 90}\n`; droppedObjects.push({ x: robotState.x, y: robotState.y, dir: robotState.dir }); } else if (b.type === 'DISPENSE_PIN3') { cmd = `D2:${p.angle || 90}\n`; droppedObjects.push({ x: robotState.x, y: robotState.y, dir: robotState.dir }); }
-                    if (b.type !== 'DISPENSE_PIN2' && b.type !== 'DISPENSE_PIN3' && b.type !== 'CHECK_WALL') {
+                for (let i = 0; i < finalCommands.length; i++) {
+                    const b = finalCommands[i]; currentStepId = b.id; let cmd = ''; const p = b.params;
+                    if (b.type === 'FORWARD') cmd = `F${p.val},${p.speed || 100}\n`; else if (b.type === 'BACKWARD') cmd = `B${p.val},${p.speed || 100}\n`; else if (b.type === 'TURN_LEFT') cmd = `L${p.val},${p.speed || 100}\n`; else if (b.type === 'TURN_RIGHT') cmd = `R${p.val},${p.speed || 100}\n`; else if (b.type === 'PIVOT_LEFT') cmd = `PL${p.val},${p.speed || 100}\n`; else if (b.type === 'PIVOT_RIGHT') cmd = `PR${p.val},${p.speed || 100}\n`; else if (b.type === 'SLIDE_LEFT') cmd = `SL${p.val},${p.speed || 100}\n`; else if (b.type === 'SLIDE_RIGHT') cmd = `SR${p.val},${p.speed || 100}\n`; else if (b.type === 'CHECK_WALL') cmd = `CW${p.val},${p.light || 600},${p.logic !== undefined ? p.logic : 1}\n`; 
+                    else if (b.type === 'DISPENSE_PIN2') { cmd = `D1:${p.angle || 90}\n`; droppedObjects.push({ x: robotState.x, y: robotState.y, dir: robotState.dir, type: b.type }); } 
+                    else if (b.type === 'DISPENSE_PIN3') { cmd = `D2:${p.angle || 90}\n`; droppedObjects.push({ x: robotState.x, y: robotState.y, dir: robotState.dir, type: b.type }); }
+                    else if (b.type === 'GRIP_GRAB') { cmd = `G1\n`; droppedObjects.push({ x: robotState.x, y: robotState.y, dir: robotState.dir, type: b.type }); }
+                    else if (b.type === 'GRIP_RELEASE') { cmd = `G2\n`; droppedObjects.push({ x: robotState.x, y: robotState.y, dir: robotState.dir, type: b.type }); }
+                    
+                    if (b.type !== 'DISPENSE_PIN2' && b.type !== 'DISPENSE_PIN3' && b.type !== 'GRIP_GRAB' && b.type !== 'GRIP_RELEASE' && b.type !== 'CHECK_WALL') {
                         let { x, y, dir } = robotState;
                         if (b.type === 'FORWARD') { if (dir === 0) y--; else if (dir === 90) x++; else if (dir === 180) y++; else x--; } else if (b.type === 'BACKWARD') { if (dir === 0) y++; else if (dir === 90) x--; else if (dir === 180) y--; else x++; } else if (b.type === 'TURN_LEFT' || b.type === 'PIVOT_LEFT') dir = (dir - 90 + 360) % 360; else if (b.type === 'TURN_RIGHT' || b.type === 'PIVOT_RIGHT') dir = (dir + 90) % 360; else if (b.type === 'SLIDE_LEFT') { if (dir === 0) x--; else if (dir === 90) y--; else if (dir === 180) x++; else y++; } else if (b.type === 'SLIDE_RIGHT') { if (dir === 0) x++; else if (dir === 90) y++; else if (dir === 180) x--; else y--; }
                         robotState = { x, y, dir, offset: 0 };
                     }
                     render(); await serialWriter.write(enc.encode(cmd)); await sleep(60);
                 }
-                showSuccess("⚡ อัปโหลดข้อมูลด่วนเสร็จสมบูรณ์!");
+                showSuccess("⚡ อัปโหลดข้อมูลด่วนพร้อมฟังก์ชันรองเสร็จสมบูรณ์!");
             } catch (error) { showError("เกิดข้อผิดพลาดในการส่งข้อมูล"); isConnected = false; } finally { currentStepId = null; isExecuting = false; render(); }
+        }
+
+        function updateFirmwareCode() {
+            const titleEl = document.getElementById('firmware-title');
+            const codeEl = document.getElementById('firmwareCodeBlock');
+            
+            if (currentRobotMode === 'DISPENSER') {
+                titleEl.innerHTML = `<i class="fas fa-microchip"></i> Arduino Firmware Code (รุ่นจ่ายวัตถุ Dispenser + TCS34725 V4.12)`;
+                codeEl.innerText = `#include <EEPROM.h>
+#include <Servo.h>
+#include <Wire.h>
+#include "Adafruit_TCS34725.h"
+
+// ตั้งค่าเซ็นเซอร์สี TCS34725 (ต่อสาย SDA->A4, SCL->A5)
+Adafruit_TCS34725 tcs = Adafruit_TCS34725(TCS34725_INTEGRATIONTIME_50MS, TCS34725_GAIN_4X);
+bool tcsFound = false;
+
+const int BUZZER_PIN = 13; const int START_BTN = A0;  
+const int SERVO_PIN1 = 2;  const int SERVO_PIN2 = 3; 
+// ย้าย SENSOR_L2 จาก A4 มาที่ A3 เพื่อเว้น A4, A5 ให้เซ็นเซอร์สี I2C TCS34725
+const int SENSOR_R1 = A1; const int SENSOR_L1 = A2; const int SENSOR_R2 = A3; 
+const int M1_IN1 = 8; const int M1_IN2 = 9; const int M2_IN1 = 10; const int M2_IN2 = 11;
+const int M3_IN1 = 4; const int M3_IN2 = 5; const int M4_IN1 = 6;  const int M4_IN2 = 7;
+
+int defaultSpeed = 100; int motorLeftRatio = 100; int motorRightRatio = 100; 
+struct Command { char action[4]; float value; int extra1; int extra2; };
+struct RobotSettings { uint8_t magic; int speed; int ml; int mr; };
+
+const int MAX_CMDS = 50; Command cmdQueue[MAX_CMDS]; uint8_t cmdCount = 0;
+unsigned long lastReceiveTime = 0; const unsigned long FINISH_TRANSFER_TIMEOUT = 1000; bool isReceivingBatch = false; 
+Servo servo1; Servo servo2;
+
+int currentButtonState = LOW;
+int lastButtonState = LOW;
+
+void saveSettingsToEEPROM() {
+  RobotSettings settings = {0xAA, defaultSpeed, motorLeftRatio, motorRightRatio}; EEPROM.put(800, settings);
+}
+
+void setup() {
+  Serial.begin(115200); 
+  Serial.setTimeout(50);
+  
+  if (tcs.begin()) { tcsFound = true; } else { Serial.println("No TCS34725 found"); }
+  
+  pinMode(BUZZER_PIN, OUTPUT); pinMode(START_BTN, INPUT); 
+  pinMode(SENSOR_R1, INPUT); pinMode(SENSOR_L1, INPUT); pinMode(SENSOR_R2, INPUT);
+  
+  for(int i = 4; i <= 11; i++) pinMode(i, OUTPUT);
+  servo1.attach(SERVO_PIN1); servo2.attach(SERVO_PIN2); servo1.write(45); servo2.write(45); 
+
+  RobotSettings settings; EEPROM.get(800, settings);
+  if (settings.magic == 0xAA) { defaultSpeed = constrain(settings.speed, 10, 100); motorLeftRatio = constrain(settings.ml, 50, 100); motorRightRatio = constrain(settings.mr, 50, 100); }
+  EEPROM.get(0, cmdCount); if (cmdCount == 255 || cmdCount > MAX_CMDS) cmdCount = 0;
+  for(int i = 0; i < cmdCount; i++) EEPROM.get(1 + i * sizeof(Command), cmdQueue[i]);
+
+  playTone(523, 100); delay(120); playTone(659, 100); delay(120); playTone(784, 200); delay(200); 
+  Serial.println("Arduino Ready. Stored Commands: " + String(cmdCount));
+}
+
+void loop() {
+  unsigned long currentTime = millis();
+  if (Serial.available() > 0) {
+    String data = Serial.readStringUntil('\\n'); data.trim(); 
+    if (data.length() > 0) {
+      if (data.startsWith("?SENS")) {
+        delay(2);
+        Serial.print("SENS:"); Serial.print(analogRead(SENSOR_R1)); Serial.print(","); Serial.print(analogRead(SENSOR_L1)); Serial.print(",");
+        Serial.print(analogRead(SENSOR_R2)); Serial.print(",0,0"); Serial.println(); return;
+      }
+      if (!isReceivingBatch) { cmdCount = 0; EEPROM.update(0, 0); isReceivingBatch = true; }
+      lastReceiveTime = currentTime; String actionStr = ""; float val = 0; int ex1 = 0; int ex2 = 0;
+      if (data.startsWith("SP")) { defaultSpeed = constrain(data.substring(2).toInt(), 10, 100); saveSettingsToEEPROM(); return; }
+      else if (data.startsWith("ML")) { motorLeftRatio = constrain(data.substring(2).toInt(), 50, 100); saveSettingsToEEPROM(); return; }
+      else if (data.startsWith("MR")) { motorRightRatio = constrain(data.substring(2).toInt(), 50, 100); saveSettingsToEEPROM(); return; }
+      else if (data.startsWith("SL") || data.startsWith("SR") || data.startsWith("PL") || data.startsWith("PR") || data.startsWith("F") || data.startsWith("B") || data.startsWith("L") || data.startsWith("R")) { 
+        if (data.startsWith("SL")) actionStr = "SL"; else if (data.startsWith("SR")) actionStr = "SR"; else if (data.startsWith("PL")) actionStr = "PL"; else if (data.startsWith("PR")) actionStr = "PR"; else if (data.startsWith("F")) actionStr = "F"; else if (data.startsWith("B")) actionStr = "B"; else if (data.startsWith("L")) actionStr = "L"; else if (data.startsWith("R")) actionStr = "R";
+        int startIdx = actionStr.length(); int c = data.indexOf(',');
+        if (c != -1) { val = data.substring(startIdx, c).toFloat(); ex1 = data.substring(c + 1).toInt(); } else { val = data.substring(startIdx).toFloat(); ex1 = defaultSpeed; }
+      }
+      else if (data.startsWith("CW")) { 
+        actionStr = "CW"; int c1 = data.indexOf(','); int c2 = data.indexOf(',', c1 + 1);
+        if (c1 != -1 && c2 != -1) { val = data.substring(2, c1).toFloat(); ex1 = data.substring(c1 + 1, c2).toInt(); ex2 = data.substring(c2 + 1).toInt(); } else { val = data.substring(2).toFloat(); ex1 = 600; ex2 = 1; }
+      }
+      else if (data.startsWith("D1:")) { actionStr = "D1"; ex1 = data.substring(3).toInt(); }
+      else if (data.startsWith("D2:")) { actionStr = "D2"; ex1 = data.substring(3).toInt(); }
+
+      if (actionStr != "" && cmdCount < MAX_CMDS) {
+        actionStr.toCharArray(cmdQueue[cmdCount].action, 4); cmdQueue[cmdCount].value = val; cmdQueue[cmdCount].extra1 = ex1; cmdQueue[cmdCount].extra2 = ex2;
+        EEPROM.put(1 + cmdCount * sizeof(Command), cmdQueue[cmdCount]); cmdCount++; EEPROM.put(0, cmdCount); playTone(2000, 30); 
+      }
+    }
+  }
+  if (isReceivingBatch && (currentTime - lastReceiveTime > FINISH_TRANSFER_TIMEOUT)) { playTone(1500, 800); delay(1000); isReceivingBatch = false; }
+  
+  // เช็คปุ่ม A0 (ดักปุ่มติด/ดับ ด้วย State Change Detection)
+  currentButtonState = digitalRead(START_BTN);
+  if (lastButtonState == LOW && currentButtonState == HIGH) {
+    delay(50); // Debounce
+    if (digitalRead(START_BTN) == HIGH) {
+      if (cmdCount > 0) { 
+        playTone(1047, 1000); delay(1000); executeAllStoredCommands(); playTone(784, 200); delay(200); 
+      }
+      while(digitalRead(START_BTN) == HIGH); // รอจนกว่าจะปล่อยปุ่ม
+    }
+  }
+  lastButtonState = currentButtonState;
+}
+
+void executeAllStoredCommands() {
+  for(int i = 0; i < cmdCount; i++) {
+    String act = String(cmdQueue[i].action);
+    float val = cmdQueue[i].value; int ex1 = cmdQueue[i].extra1; int ex2 = cmdQueue[i].extra2;
+    float baseDelayTime = (act == "L" || act == "R" || act == "PL" || act == "PR") ? (val / 80.0) * 250.0 : val * 5.0;
+    int currentSpeed = (ex1 <= 0) ? defaultSpeed : ex1;
+    float speedRatio = 100.0 / (float)currentSpeed;
+    float frictionBoost = (act == "L" || act == "R" || act == "PL" || act == "PR") ? (1.0 + ((100.0 - currentSpeed) / 100.0) * 0.08) : ((currentSpeed < 80) ? 1.04 : 1.0);
+    int compensatedDelay = (int)(baseDelayTime * speedRatio * frictionBoost);
+    
+    if (act == "F") movePulsed(1, 1, 1, 1, compensatedDelay, currentSpeed);
+    else if (act == "B") movePulsed(-1, -1, -1, -1, compensatedDelay, currentSpeed);
+    else if (act == "L") movePulsed(-1, -1, 1, 1, compensatedDelay, currentSpeed); 
+    else if (act == "R") movePulsed(1, 1, -1, -1, compensatedDelay, currentSpeed); 
+    else if (act == "SL") movePulsed(1, -1, 1, -1, compensatedDelay, currentSpeed);
+    else if (act == "SR") movePulsed(-1, 1, -1, 1, compensatedDelay, currentSpeed);
+    else if (act == "PL") movePulsed(0, 0, 1, 1, compensatedDelay, currentSpeed); 
+    else if (act == "PR") movePulsed(1, 1, 0, 0, compensatedDelay, currentSpeed); 
+    else if (act == "D1") { servo1.write(ex1); delay(600); servo1.write(45); delay(400); }
+    else if (act == "D2") { servo2.write(ex1); delay(600); servo2.write(45); delay(400); }
+    else if (act == "CW") checkWallSequence(ex1, ex2);
+    stopMotors(); delay(300); 
+  }
+}
+
+void movePulsed(int m1, int m2, int m3, int m4, int totalDelay, int speedPercent) {
+  if (speedPercent == 0) { stopMotors(); delay(totalDelay); return; }
+  int effectiveSpeedL = (speedPercent * motorLeftRatio) / 100;
+  int effectiveSpeedR = (speedPercent * motorRightRatio) / 100;
+  int onTime = 20; 
+  int offTimeL = max(0L, map(effectiveSpeedL, 10, 100, 50, 0));
+  int offTimeR = max(0L, map(effectiveSpeedR, 10, 100, 50, 0));
+
+  unsigned long startTime = millis();
+  while (millis() - startTime < (unsigned long)totalDelay) {
+    unsigned long cycleStart = millis();
+    bool leftDone = false; bool rightDone = false;
+    setMotors(m1, m2, m3, m4);
+    while (!leftDone || !rightDone) {
+      unsigned long elapsed = millis() - cycleStart;
+      if (elapsed >= (unsigned long)(onTime + offTimeL)) { 
+        leftDone = true; 
+        digitalWrite(M1_IN1, LOW); digitalWrite(M1_IN2, LOW); 
+        digitalWrite(M2_IN1, LOW); digitalWrite(M2_IN2, LOW); 
+      }
+      if (elapsed >= (unsigned long)(onTime + offTimeR)) { 
+        rightDone = true; 
+        digitalWrite(M3_IN1, LOW); digitalWrite(M3_IN2, LOW); 
+        digitalWrite(M4_IN1, LOW); digitalWrite(M4_IN2, LOW); 
+      }
+      if (millis() - startTime >= (unsigned long)totalDelay) break;
+    }
+  }
+  stopMotors();
+}
+
+void checkWallSequence(int threshold, int logic) {
+  while (true) {
+    int valL1 = analogRead(SENSOR_L1);
+    int valR1 = analogRead(SENSOR_R1); 
+    bool leftHit = (logic == 0) ? (valL1 < threshold) : (valL1 > threshold);
+    bool rightHit = (logic == 0) ? (valR1 < threshold) : (valR1 > threshold);
+
+    if (leftHit && rightHit) { stopMotors(); delay(300); break; }
+    else if (leftHit) { setMotors(1, 1, -1, -1); delay(15); stopMotors(); delay(40); }
+    else if (rightHit) { setMotors(-1, -1, 1, 1); delay(15); stopMotors(); delay(40); }
+    else { setMotors(-1, -1, -1, -1); delay(15); stopMotors(); delay(40); }
+  }
+  setMotors(1, 1, 1, 1); delay(100); stopMotors();
+}
+
+void setMotors(int m1, int m2, int m3, int m4) {
+  digitalWrite(M1_IN1, m1 == 1 ? HIGH : LOW); digitalWrite(M1_IN2, m1 == -1 ? HIGH : LOW);
+  digitalWrite(M2_IN1, m2 == 1 ? HIGH : LOW); digitalWrite(M2_IN2, m2 == -1 ? HIGH : LOW);
+  digitalWrite(M3_IN1, m3 == 1 ? HIGH : LOW); digitalWrite(M3_IN2, m3 == -1 ? HIGH : LOW);
+  digitalWrite(M4_IN1, m4 == 1 ? HIGH : LOW); digitalWrite(M4_IN2, m4 == -1 ? HIGH : LOW);
+}
+void stopMotors() { setMotors(0, 0, 0, 0); }
+void playTone(int freq, int duration) { tone(BUZZER_PIN, freq, duration); }`;
+            } else {
+                titleEl.innerHTML = `<i class="fas fa-microchip"></i> Arduino Firmware Code (รุ่นมือคีบ Gripper + TCS34725 V4.12)`;
+                codeEl.innerText = `#include <EEPROM.h>
+#include <Servo.h>
+#include <Wire.h>
+#include "Adafruit_TCS34725.h"
+
+Adafruit_TCS34725 tcs = Adafruit_TCS34725(TCS34725_INTEGRATIONTIME_50MS, TCS34725_GAIN_4X);
+bool tcsFound = false;
+
+const int BUZZER_PIN = 13; const int START_BTN = A0;  
+const int GRIPPER_PIN = 2;  
+const int SENSOR_R1 = A1; const int SENSOR_L1 = A2; const int SENSOR_R2 = A3; 
+const int M1_IN1 = 8; const int M1_IN2 = 9; const int M2_IN1 = 10; const int M2_IN2 = 11;
+const int M3_IN1 = 4; const int M3_IN2 = 5; const int M4_IN1 = 6;  const int M4_IN2 = 7;
+
+int defaultSpeed = 100; int motorLeftRatio = 100; int motorRightRatio = 100; 
+struct Command { char action[4]; float value; int extra1; int extra2; };
+struct RobotSettings { uint8_t magic; int speed; int ml; int mr; };
+
+const int MAX_CMDS = 50; Command cmdQueue[MAX_CMDS]; uint8_t cmdCount = 0;
+unsigned long lastReceiveTime = 0; const unsigned long FINISH_TRANSFER_TIMEOUT = 1000; bool isReceivingBatch = false; 
+Servo gripperServo;
+
+bool toggleState = false;  
+int lastButtonState = LOW;
+int currentButtonState = LOW;
+
+void saveSettingsToEEPROM() {
+  RobotSettings settings = {0xAA, defaultSpeed, motorLeftRatio, motorRightRatio}; EEPROM.put(800, settings);
+}
+
+void setup() {
+  Serial.begin(115200); 
+  Serial.setTimeout(50);
+  
+  if (tcs.begin()) { tcsFound = true; } else { Serial.println("No TCS34725 found"); }
+  
+  pinMode(BUZZER_PIN, OUTPUT); pinMode(START_BTN, INPUT); 
+  pinMode(SENSOR_R1, INPUT); pinMode(SENSOR_L1, INPUT); pinMode(SENSOR_R2, INPUT); 
+  
+  for(int i = 4; i <= 11; i++) pinMode(i, OUTPUT);
+  
+  gripperServo.attach(GRIPPER_PIN); 
+  gripperServo.write(90); 
+
+  RobotSettings settings; EEPROM.get(800, settings);
+  if (settings.magic == 0xAA) { defaultSpeed = constrain(settings.speed, 10, 100); motorLeftRatio = constrain(settings.ml, 50, 100); motorRightRatio = constrain(settings.mr, 50, 100); }
+  EEPROM.get(0, cmdCount); if (cmdCount == 255 || cmdCount > MAX_CMDS) cmdCount = 0;
+  for(int i = 0; i < cmdCount; i++) EEPROM.get(1 + i * sizeof(Command), cmdQueue[i]);
+
+  playTone(523, 100); delay(120); playTone(659, 100); delay(120); playTone(784, 200); delay(200); 
+  Serial.println("Arduino Gripper Edition Ready. Stored Commands: " + String(cmdCount));
+}
+
+void loop() {
+  unsigned long currentTime = millis();
+  
+  if (Serial.available() > 0) {
+    String data = Serial.readStringUntil('\\n'); data.trim(); 
+    if (data.length() > 0) {
+      if (data.startsWith("?SENS")) {
+        delay(2);
+        Serial.print("SENS:"); Serial.print(analogRead(SENSOR_R1)); Serial.print(","); Serial.print(analogRead(SENSOR_L1)); Serial.print(",");
+        Serial.print(analogRead(SENSOR_R2)); Serial.print(",0,0"); Serial.println(); return;
+      }
+      if (!isReceivingBatch) { cmdCount = 0; EEPROM.update(0, 0); isReceivingBatch = true; }
+      lastReceiveTime = currentTime; String actionStr = ""; float val = 0; int ex1 = 0; int ex2 = 0;
+      if (data.startsWith("SP")) { defaultSpeed = constrain(data.substring(2).toInt(), 10, 100); saveSettingsToEEPROM(); return; }
+      else if (data.startsWith("ML")) { motorLeftRatio = constrain(data.substring(2).toInt(), 50, 100); saveSettingsToEEPROM(); return; }
+      else if (data.startsWith("MR")) { motorRightRatio = constrain(data.substring(2).toInt(), 50, 100); saveSettingsToEEPROM(); return; }
+      else if (data.startsWith("SL") || data.startsWith("SR") || data.startsWith("PL") || data.startsWith("PR") || data.startsWith("F") || data.startsWith("B") || data.startsWith("L") || data.startsWith("R")) { 
+        if (data.startsWith("SL")) actionStr = "SL"; else if (data.startsWith("SR")) actionStr = "SR"; else if (data.startsWith("PL")) actionStr = "PL"; else if (data.startsWith("PR")) actionStr = "PR"; else if (data.startsWith("F")) actionStr = "F"; else if (data.startsWith("B")) actionStr = "B"; else if (data.startsWith("L")) actionStr = "L"; else if (data.startsWith("R")) actionStr = "R";
+        int startIdx = actionStr.length(); int c = data.indexOf(',');
+        if (c != -1) { val = data.substring(startIdx, c).toFloat(); ex1 = data.substring(c + 1).toInt(); } else { val = data.substring(startIdx).toFloat(); ex1 = defaultSpeed; }
+      }
+      else if (data.startsWith("CW")) { 
+        actionStr = "CW"; int c1 = data.indexOf(','); int c2 = data.indexOf(',', c1 + 1);
+        if (c1 != -1 && c2 != -1) { val = data.substring(2, c1).toFloat(); ex1 = data.substring(c1 + 1, c2).toInt(); ex2 = data.substring(c2 + 1).toInt(); } else { val = data.substring(2).toFloat(); ex1 = 600; ex2 = 1; }
+      }
+      else if (data.startsWith("G1")) { actionStr = "G1"; } 
+      else if (data.startsWith("G2")) { actionStr = "G2"; } 
+
+      if (actionStr != "" && cmdCount < MAX_CMDS) {
+        actionStr.toCharArray(cmdQueue[cmdCount].action, 4); cmdQueue[cmdCount].value = val; cmdQueue[cmdCount].extra1 = ex1; cmdQueue[cmdCount].extra2 = ex2;
+        EEPROM.put(1 + cmdCount * sizeof(Command), cmdQueue[cmdCount]); cmdCount++; EEPROM.put(0, cmdCount); playTone(2000, 30); 
+      }
+    }
+  }
+  
+  if (isReceivingBatch && (currentTime - lastReceiveTime > FINISH_TRANSFER_TIMEOUT)) { playTone(1500, 800); delay(1000); isReceivingBatch = false; }
+  
+  // เช็คปุ่ม A0 (ดักปุ่มติด/ดับ ด้วย State Change Detection)
+  currentButtonState = digitalRead(START_BTN);
+  if (lastButtonState == LOW && currentButtonState == HIGH) {
+    delay(50); // Debounce
+    if (digitalRead(START_BTN) == HIGH) {
+      if (cmdCount > 0) { 
+        playTone(1047, 1000); delay(1000); executeAllStoredCommands(); playTone(784, 200); delay(200); 
+      } else {
+        if (!toggleState) {
+          gripperServo.write(45);  
+          delay(1000);             
+          gripperServo.write(90);  
+        } else {
+          gripperServo.write(135); 
+          delay(1000);             
+          gripperServo.write(90);  
+        }
+        toggleState = !toggleState;
+      }
+      while(digitalRead(START_BTN) == HIGH); // รอจนกว่าจะปล่อยปุ่ม
+    }
+  }
+  lastButtonState = currentButtonState;
+}
+
+void executeAllStoredCommands() {
+  for(int i = 0; i < cmdCount; i++) {
+    String act = String(cmdQueue[i].action);
+    float val = cmdQueue[i].value; int ex1 = cmdQueue[i].extra1; int ex2 = cmdQueue[i].extra2;
+    float baseDelayTime = (act == "L" || act == "R" || act == "PL" || act == "PR") ? (val / 80.0) * 250.0 : val * 5.0;
+    int currentSpeed = (ex1 <= 0) ? defaultSpeed : ex1;
+    float speedRatio = 100.0 / (float)currentSpeed;
+    float frictionBoost = (act == "L" || act == "R" || act == "PL" || act == "PR") ? (1.0 + ((100.0 - currentSpeed) / 100.0) * 0.08) : ((currentSpeed < 80) ? 1.04 : 1.0);
+    int compensatedDelay = (int)(baseDelayTime * speedRatio * frictionBoost);
+    
+    if (act == "F") movePulsed(1, 1, 1, 1, compensatedDelay, currentSpeed);
+    else if (act == "B") movePulsed(-1, -1, -1, -1, compensatedDelay, currentSpeed);
+    else if (act == "L") movePulsed(-1, -1, 1, 1, compensatedDelay, currentSpeed); 
+    else if (act == "R") movePulsed(1, 1, -1, -1, compensatedDelay, currentSpeed); 
+    else if (act == "SL") movePulsed(1, -1, 1, -1, compensatedDelay, currentSpeed);
+    else if (act == "SR") movePulsed(-1, 1, -1, 1, compensatedDelay, currentSpeed);
+    else if (act == "PL") movePulsed(0, 0, 1, 1, compensatedDelay, currentSpeed); 
+    else if (act == "PR") movePulsed(1, 1, 0, 0, compensatedDelay, currentSpeed); 
+    else if (act == "G1") { 
+      gripperServo.write(45); delay(1000); gripperServo.write(90); delay(400); 
+    }
+    else if (act == "G2") { 
+      gripperServo.write(135); delay(1000); gripperServo.write(90); delay(400); 
+    }
+    else if (act == "CW") checkWallSequence(ex1, ex2);
+    stopMotors(); delay(300); 
+  }
+}
+
+void movePulsed(int m1, int m2, int m3, int m4, int totalDelay, int speedPercent) {
+  if (speedPercent == 0) { stopMotors(); delay(totalDelay); return; }
+  int effectiveSpeedL = (speedPercent * motorLeftRatio) / 100;
+  int effectiveSpeedR = (speedPercent * motorRightRatio) / 100;
+  int onTime = 20; 
+  int offTimeL = max(0L, map(effectiveSpeedL, 10, 100, 50, 0));
+  int offTimeR = max(0L, map(effectiveSpeedR, 10, 100, 50, 0));
+
+  unsigned long startTime = millis();
+  while (millis() - startTime < (unsigned long)totalDelay) {
+    unsigned long cycleStart = millis();
+    bool leftDone = false; bool rightDone = false;
+    setMotors(m1, m2, m3, m4);
+    while (!leftDone || !rightDone) {
+      unsigned long elapsed = millis() - cycleStart;
+      if (elapsed >= (unsigned long)(onTime + offTimeL)) { 
+        leftDone = true; 
+        digitalWrite(M1_IN1, LOW); digitalWrite(M1_IN2, LOW); 
+        digitalWrite(M2_IN1, LOW); digitalWrite(M2_IN2, LOW); 
+      }
+      if (elapsed >= (unsigned long)(onTime + offTimeR)) { 
+        rightDone = true; 
+        digitalWrite(M3_IN1, LOW); digitalWrite(M3_IN2, LOW); 
+        digitalWrite(M4_IN1, LOW); digitalWrite(M4_IN2, LOW); 
+      }
+      if (millis() - startTime >= (unsigned long)totalDelay) break;
+    }
+  }
+  stopMotors();
+}
+
+void checkWallSequence(int threshold, int logic) {
+  while (true) {
+    int valL1 = analogRead(SENSOR_L1); 
+    int valR1 = analogRead(SENSOR_R1); 
+    bool leftHit = (logic == 0) ? (valL1 < threshold) : (valL1 > threshold);
+    bool rightHit = (logic == 0) ? (valR1 < threshold) : (valR1 > threshold);
+
+    if (leftHit && rightHit) { stopMotors(); delay(300); break; }
+    else if (leftHit) { setMotors(1, 1, -1, -1); delay(15); stopMotors(); delay(40); }
+    else if (rightHit) { setMotors(-1, -1, 1, 1); delay(15); stopMotors(); delay(40); }
+    else { setMotors(-1, -1, -1, -1); delay(15); stopMotors(); delay(40); }
+  }
+  setMotors(1, 1, 1, 1); delay(100); stopMotors();
+}
+
+void setMotors(int m1, int m2, int m3, int m4) {
+  digitalWrite(M1_IN1, m1 == 1 ? HIGH : LOW); digitalWrite(M1_IN2, m1 == -1 ? HIGH : LOW);
+  digitalWrite(M2_IN1, m2 == 1 ? HIGH : LOW); digitalWrite(M2_IN2, m2 == -1 ? HIGH : LOW);
+  digitalWrite(M3_IN1, m3 == 1 ? HIGH : LOW); digitalWrite(M3_IN2, m3 == -1 ? HIGH : LOW);
+  digitalWrite(M4_IN1, m4 == 1 ? HIGH : LOW); digitalWrite(M4_IN2, m4 == -1 ? HIGH : LOW);
+}
+void stopMotors() { setMotors(0, 0, 0, 0); }
+void playTone(int freq, int duration) { tone(BUZZER_PIN, freq, duration); }`;
+            }
         }
 
         render();
