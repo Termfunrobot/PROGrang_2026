@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ระบบเขียนคำสั่งควบคุมหุ่นยนต์ PRO V4.12 (TCS34725 & Dynamic Sub-Functions)</title>
+    <title>ระบบเขียนคำสั่งควบคุมหุ่นยนต์ PRO V4.12 (TCS34725 Conditional Logic)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <script>
@@ -99,7 +99,7 @@
                 <i id="start-mode-icon" class="fas fa-robot"></i>
             </div>
             <h2 class="text-3xl sm:text-4xl font-black text-red-700 mb-1">Robot Controller</h2>
-            <p class="text-red-500 font-bold text-sm sm:text-base mb-6">PRO V4.12 <span class="text-xs text-slate-500 font-normal">(TCS34725 Color & Dynamic Sub-Functions)</span></p>
+            <p class="text-red-500 font-bold text-sm sm:text-base mb-6">PRO V4.12 <span class="text-xs text-slate-500 font-normal">(Conditional Logic Edition)</span></p>
             
             <div class="bg-red-50 p-3 rounded-2xl border-2 border-red-100 mb-6 text-left">
                 <label class="block text-xs font-extrabold text-red-600 uppercase tracking-wider mb-2 text-center">⚙️ กรุณาเลือกรูปแบบหุ่นยนต์ของคุณ</label>
@@ -191,8 +191,8 @@
                 </span>
 
                 <span id="toolbox-call-functions-group" class="inline-flex items-center gap-1.5 pl-2 border-l-2 border-red-200 dark:border-red-800">
-                    <button draggable="true" ondragstart="handleToolboxDragStart(event, 'CHECK_COLOR_TCS')" ondragend="removeIndicator()" onclick="addBlock('CHECK_COLOR_TCS')" class="pressable-btn toolbox-btn flex items-center gap-1 px-3 py-1.5 bg-amber-100 hover:bg-amber-200 text-amber-900 dark:bg-amber-950 dark:text-amber-100 border-2 border-b-[3px] border-amber-400 dark:border-amber-700 rounded-xl shadow-sm text-xs font-extrabold"><span class="p-1 bg-gradient-to-r from-red-500 via-green-500 to-blue-500 text-white rounded text-xs"><i class="fas fa-eye"></i></span> เช็คสี TCS34725</button>
-                    <button draggable="true" ondragstart="handleToolboxDragStart(event, 'CALL_SUB')" ondragend="removeIndicator()" onclick="addBlock('CALL_SUB')" class="pressable-btn toolbox-btn flex items-center gap-1 px-3 py-1.5 bg-rose-100 hover:bg-rose-200 text-rose-900 dark:bg-rose-950 dark:text-rose-100 border-2 border-b-[3px] border-rose-400 dark:border-rose-700 rounded-xl shadow-sm text-xs font-extrabold"><span class="p-1 bg-rose-600 text-white rounded text-xs"><i class="fas fa-layer-group"></i></span> เรียกใช้ฟังก์ชันรอง</button>
+                    <button draggable="true" ondragstart="handleToolboxDragStart(event, 'CHECK_COLOR_TCS')" ondragend="removeIndicator()" onclick="addBlock('CHECK_COLOR_TCS')" class="pressable-btn toolbox-btn flex items-center gap-1 px-3 py-1.5 bg-amber-100 hover:bg-amber-200 text-amber-900 dark:bg-amber-950 dark:text-amber-100 border-2 border-b-[3px] border-amber-400 dark:border-amber-700 rounded-xl shadow-sm text-xs font-extrabold"><span class="p-1 bg-gradient-to-r from-red-500 via-green-500 to-blue-500 text-white rounded text-xs"><i class="fas fa-code-branch"></i></span> เช็คเงื่อนไขสี TCS</button>
+                    <button draggable="true" ondragstart="handleToolboxDragStart(event, 'CALL_SUB')" ondragend="removeIndicator()" onclick="addBlock('CALL_SUB')" class="pressable-btn toolbox-btn flex items-center gap-1 px-3 py-1.5 bg-rose-100 hover:bg-rose-200 text-rose-900 dark:bg-rose-950 dark:text-rose-100 border-2 border-b-[3px] border-rose-400 dark:border-rose-700 rounded-xl shadow-sm text-xs font-extrabold"><span class="p-1 bg-rose-600 text-white rounded text-xs"><i class="fas fa-layer-group"></i></span> เรียกฟังก์ชัน (ปกติ)</button>
                 </span>
             </div>
         </header>
@@ -290,6 +290,7 @@
                                 </button>
                             </div>
                         </div>
+                        
                         <div class="grid grid-cols-2 md:grid-cols-5 gap-4 text-center">
                             <div class="p-4 bg-red-50 dark:bg-red-950/50 border-2 border-red-100 dark:border-red-800 rounded-2xl shadow-inner">
                                 <div class="text-sm font-bold text-red-400 dark:text-red-500 mb-1">A1 (หน้าขวา)</div>
@@ -300,18 +301,19 @@
                                 <div id="val-a2" class="text-2xl font-mono font-extrabold text-red-600 dark:text-red-400">-</div>
                             </div>
                             <div class="p-4 bg-red-50 dark:bg-red-950/50 border-2 border-red-100 dark:border-red-800 rounded-2xl shadow-inner">
-                                <div class="text-sm font-bold text-red-400 dark:text-red-500 mb-1">A3 (หลังขวา)</div>
+                                <div class="text-sm font-bold text-red-400 dark:text-red-500 mb-1">A3 (หลัง)</div>
                                 <div id="val-a3" class="text-2xl font-mono font-extrabold text-red-600 dark:text-red-400">-</div>
                             </div>
-                            <div class="p-4 bg-red-50 dark:bg-red-950/50 border-2 border-red-100 dark:border-red-800 rounded-2xl shadow-inner">
-                                <div class="text-sm font-bold text-red-400 dark:text-red-500 mb-1">A4 (หลังซ้าย)</div>
-                                <div id="val-a4" class="text-2xl font-mono font-extrabold text-red-600 dark:text-red-400">-</div>
+                            <div class="p-4 bg-red-50 dark:bg-red-950/50 border-2 border-red-100 dark:border-red-800 rounded-2xl shadow-inner flex flex-col justify-center">
+                                <div class="text-[11px] font-bold text-red-400 dark:text-red-500 mb-1">ค่า RGB (TCS34725)</div>
+                                <div id="val-rgb" class="text-sm font-mono font-extrabold text-red-600 dark:text-red-400 leading-tight">-</div>
                             </div>
-                            <div class="p-4 bg-red-50 dark:bg-red-950/50 border-2 border-red-100 dark:border-red-800 rounded-2xl shadow-inner">
-                                <div class="text-sm font-bold text-red-400 dark:text-red-500 mb-1">A5</div>
-                                <div id="val-a5" class="text-2xl font-mono font-extrabold text-red-600 dark:text-red-400">-</div>
+                            <div class="p-4 bg-red-50 dark:bg-red-950/50 border-2 border-red-100 dark:border-red-800 rounded-2xl shadow-inner flex flex-col justify-center">
+                                <div class="text-[11px] font-bold text-red-400 dark:text-red-500 mb-1">สีที่ตรวจพบ</div>
+                                <div id="val-color" class="text-sm font-black text-slate-700 dark:text-slate-200">-</div>
                             </div>
                         </div>
+
                     </div>
 
                     <div id="param-settings-section" class="bg-white dark:bg-red-900/80 p-6 rounded-3xl shadow-xl border-2 border-red-100 dark:border-red-800 transition-colors">
@@ -382,7 +384,7 @@
             { target: 'connect-btn', title: 'บทที่ 1: การเชื่อมต่อ', content: 'เสียบสาย USB จากหุ่นยนต์เข้ากับคอมพิวเตอร์ของคุณ จากนั้นกดปุ่ม <b>"เชื่อมต่อ"</b>' },
             { target: 'connect-btn', title: 'บทที่ 2: เลือกพอร์ต (Port)', content: 'เมื่อกดเชื่อมต่อ บราวเซอร์จะแสดงหน้าต่างเล็กๆ ขึ้นมามุมซ้ายบน <b>ให้คุณคลิกเลือกชื่อพอร์ต</b> แล้วกดปุ่ม Connect' },
             { target: 'tab-btn-main', title: 'บทที่ 3: ระบบ 2 หน้ากระดานใหม่', content: 'สลับการเขียนโปรแกรมระหว่าง <b>"🚀 ฟังก์ชันหลัก"</b> และ <b>"🧩 ฟังก์ชันรอง"</b> (สำหรับสร้างคำสั่งย่อย เช่น สีแดง1, สีแดง2, เก็บของ)' },
-            { target: 'toolbox-call-functions-group', title: 'บทที่ 4: บล็อกเช็คสี TCS34725', content: 'เมื่ออยู่ในฟังก์ชันหลัก คุณสามารถลากบล็อก <b>"เช็คสี TCS34725"</b> มาวาง และกำหนดให้หุ่นยนต์รันฟังก์ชันรองที่สร้างไว้ได้ตามสีที่เซ็นเซอร์อ่านเจอ!' },
+            { target: 'toolbox-call-functions-group', title: 'บทที่ 4: บล็อกเช็คสีเป็นเงื่อนไข', content: 'เมื่อลากบล็อก <b>"เช็คเงื่อนไขสี TCS"</b> มาวาง หุ่นยนต์จะอ่านสีจริงบนสนาม ถ้าสีตรงกับที่ตั้งไว้จะทำงานตามฟังก์ชันรองที่เลือก ถ้าไม่ตรงจะข้ามไปทำคำสั่งถัดไปทันที' },
             { target: 'param-settings-section', title: 'บทที่ 5: ตั้งค่าพารามิเตอร์', content: 'ตั้งค่าการเดินพื้นฐาน เช่น ความเร็ว, เกณฑ์เซ็นเซอร์ หรือแก้หุ่นเดินเอียง (ชดเชยซ้าย/ขวา)' },
             { target: 'send-btn', title: 'บทที่ 6: อัปโหลดคำสั่ง', content: 'หลังจากแต่งคำสั่งเสร็จเรียบร้อย ให้กดปุ่ม <b>"ส่งให้หุ่นยนต์ (ด่วน!)"</b> โค้ดจะถูกส่งเข้าหุ่นยนต์ทันที!' }
         ];
@@ -628,6 +630,7 @@
             'GRIP_GRAB': { text: 'คีบวัตถุ (Grab)', colorClass: 'bg-indigo-600 text-white border-indigo-800', defaultParams: {}, renderControls: () => `<div class="flex items-center gap-1 ml-1 font-extrabold text-xs bg-black/20 px-3 py-1.5 rounded-lg"><i class="fas fa-hand-rock"></i> หมุน 45° ➔ ค้าง 1 วิ ➔ กลับ 90°</div>` },
             'GRIP_RELEASE': { text: 'ปล่อยวัตถุ (Release)', colorClass: 'bg-sky-600 text-white border-sky-800', defaultParams: {}, renderControls: () => `<div class="flex items-center gap-1 ml-1 font-extrabold text-xs bg-black/20 px-3 py-1.5 rounded-lg"><i class="fas fa-hand-paper"></i> หมุน 135° ➔ ค้าง 1 วิ ➔ กลับ 90°</div>` },
             
+            // บล็อกคำสั่งเช็คสีแบบเป็นเงื่อนไข IF-ELSE (Skip Logic)
             'CHECK_COLOR_TCS': { 
                 text: '🔍 เช็คสี TCS34725', 
                 colorClass: 'bg-amber-600 text-white border-amber-800', 
@@ -648,7 +651,7 @@
                     </div>`
             },
             'CALL_SUB': { 
-                text: '⚡ เรียกใช้ฟังก์ชันรอง', 
+                text: '⚡ เรียกฟังก์ชัน (ปกติ)', 
                 colorClass: 'bg-rose-600 text-white border-rose-800', 
                 defaultParams: { target: 'สีแดง1' }, 
                 renderControls: (id, p) => `
@@ -660,6 +663,81 @@
                     </div>` 
             }
         };
+
+        // --- เพิ่มฟังก์ชันที่หายไปตรงนี้ เพื่อให้เปลี่ยนค่า ลบ และเคลียร์บล็อกได้ ---
+        function updateBlockParam(id, key, value) {
+            const currentList = getActiveWorkspace();
+            const block = currentList.find(b => b.id === id);
+            if (block) {
+                block.params[key] = value;
+            }
+        }
+
+        function removeBlock(id) {
+            const currentList = getActiveWorkspace();
+            const index = currentList.findIndex(b => b.id === id);
+            if (index !== -1) {
+                currentList.splice(index, 1);
+                render();
+            }
+        }
+
+        function clearBlocks() {
+            if (confirm("คุณต้องการล้างคำสั่งทั้งหมดในหน้านี้ใช่หรือไม่?")) {
+                const currentList = getActiveWorkspace();
+                currentList.length = 0; // ล้างข้อมูลอาเรย์
+                render();
+            }
+        }
+
+        function resetRobot() {
+            robotState = { ...initialSetup, offset: 0 };
+            droppedObjects = [];
+            currentStepId = null;
+            errorMsg = "";
+            successMsg = "";
+            isExecuting = false;
+            render();
+        }
+
+        // เพิ่มฟังก์ชันสำหรับการคลิกที่ปุ่มในกล่องเครื่องมือ (เพิ่มบล็อกโดยไม่ต้องลาก)
+        function addBlock(cmdType) {
+            if (isExecuting) return;
+            
+            // ป้องกันการเรียกฟังก์ชันซ้อนกันในหน้าฟังก์ชันรอง
+            if (activeTab === 'FUNC' && (cmdType === 'CALL_SUB' || cmdType === 'CHECK_COLOR_TCS')) {
+                showError("⚠️ ไม่สามารถใส่คำสั่งเรียกใช้ฟังก์ชันซ้อนกันในหน้าฟังก์ชันย่อยได้");
+                return;
+            }
+            
+            const currentList = getActiveWorkspace();
+            const id = 'b_' + Date.now(); 
+            let params = { ...blockDefinitions[cmdType].defaultParams };
+            
+            if (params.target && subFunctionsList.length > 0) params.target = subFunctionsList[0];
+            if (['FORWARD', 'BACKWARD', 'TURN_LEFT', 'TURN_RIGHT', 'PIVOT_LEFT', 'PIVOT_RIGHT', 'SLIDE_LEFT', 'SLIDE_RIGHT'].includes(cmdType)) params.speed = document.getElementById('param-SPEED').value;
+            if (cmdType === 'FORWARD') params.val = document.getElementById('param-F').value; 
+            if (cmdType === 'BACKWARD') params.val = document.getElementById('param-B').value; 
+            if (cmdType === 'TURN_LEFT') params.val = document.getElementById('param-L').value; 
+            if (cmdType === 'TURN_RIGHT') params.val = document.getElementById('param-R').value; 
+            if (cmdType === 'PIVOT_LEFT') params.val = document.getElementById('param-PL').value; 
+            if (cmdType === 'PIVOT_RIGHT') params.val = document.getElementById('param-PR').value; 
+            if (cmdType === 'SLIDE_LEFT') params.val = document.getElementById('param-SL').value; 
+            if (cmdType === 'SLIDE_RIGHT') params.val = document.getElementById('param-SR').value; 
+            if (cmdType === 'DISPENSE_PIN2') params.angle = document.getElementById('param-D1').value; 
+            if (cmdType === 'DISPENSE_PIN3') params.angle = document.getElementById('param-D2').value; 
+            if (cmdType === 'CHECK_WALL') { params.val = document.getElementById('param-CW').value; params.light = document.getElementById('param-SENSOR').value; params.logic = document.getElementById('param-LOGIC').value; }
+            
+            currentList.push({ id, type: cmdType, params, showNote: false, note: "" }); 
+            render();
+            
+            // เลื่อนกล่องคำสั่งให้ลงมาล่างสุด
+            setTimeout(() => {
+                const container = document.getElementById('workspace-container');
+                container.scrollTop = container.scrollHeight;
+            }, 50);
+        }
+        // -------------------------------------------------------------
 
         function saveFile() {
             const dataToSave = { 
@@ -717,14 +795,15 @@
             if (data.startsWith('new:')) {
                 const cmdType = data.split(':')[1]; 
                 if (activeTab === 'FUNC' && (cmdType === 'CALL_SUB' || cmdType === 'CHECK_COLOR_TCS')) {
-                    showError("⚠️ ไม่สามารถใส่คำสั่งเรียกฟังก์ชันซ้อนกันในหน้าฟังก์ชันย่อยได้");
+                    showError("⚠️ ไม่สามารถใส่คำสั่งเรียกใช้ฟังก์ชันซ้อนกันในหน้าฟังก์ชันย่อยได้");
                     return;
                 }
                 const id = 'b_' + Date.now(); let params = { ...blockDefinitions[cmdType].defaultParams };
                 if (params.target && subFunctionsList.length > 0) params.target = subFunctionsList[0];
                 if (['FORWARD', 'BACKWARD', 'TURN_LEFT', 'TURN_RIGHT', 'PIVOT_LEFT', 'PIVOT_RIGHT', 'SLIDE_LEFT', 'SLIDE_RIGHT'].includes(cmdType)) params.speed = document.getElementById('param-SPEED').value;
                 if (cmdType === 'FORWARD') params.val = document.getElementById('param-F').value; if (cmdType === 'BACKWARD') params.val = document.getElementById('param-B').value; if (cmdType === 'TURN_LEFT') params.val = document.getElementById('param-L').value; if (cmdType === 'TURN_RIGHT') params.val = document.getElementById('param-R').value; if (cmdType === 'PIVOT_LEFT') params.val = document.getElementById('param-PL').value; if (cmdType === 'PIVOT_RIGHT') params.val = document.getElementById('param-PR').value; if (cmdType === 'SLIDE_LEFT') params.val = document.getElementById('param-SL').value; if (cmdType === 'SLIDE_RIGHT') params.val = document.getElementById('param-SR').value; if (cmdType === 'DISPENSE_PIN2') params.angle = document.getElementById('param-D1').value; if (cmdType === 'DISPENSE_PIN3') params.angle = document.getElementById('param-D2').value; if (cmdType === 'CHECK_WALL') { params.val = document.getElementById('param-CW').value; params.light = document.getElementById('param-SENSOR').value; params.logic = document.getElementById('param-LOGIC').value; }
-                currentList.splice(tIdx, 0, { id, type: cmdType, params, showNote: false, note: "" }); render();
+                
+                currentList.splice(tIdx, 0, { id, type: cmdType, params, showNote: false, note: "" }); render(); 
             } else { 
                 const sIdx = currentList.findIndex(b => b.id === data); 
                 if (sIdx !== -1) { 
@@ -773,12 +852,27 @@
                                     
                                     if (text.startsWith("SENS:")) {
                                         const vals = text.substring(5).split(',');
-                                        if (vals.length >= 5) {
+                                        if (vals.length >= 6) {
                                             document.getElementById('val-a1').innerText = vals[0];
                                             document.getElementById('val-a2').innerText = vals[1];
                                             document.getElementById('val-a3').innerText = vals[2];
-                                            document.getElementById('val-a4').innerText = vals[3];
-                                            document.getElementById('val-a5').innerText = vals[4];
+                                            
+                                            const r = parseInt(vals[3]);
+                                            const g = parseInt(vals[4]);
+                                            const b = parseInt(vals[5]);
+                                            document.getElementById('val-rgb').innerHTML = `R:${r}<br>G:${g}<br>B:${b}`;
+                                            
+                                            let colorName = "ไม่พบ";
+                                            let colorDot = "⚪";
+                                            
+                                            if (r > 50 || g > 50 || b > 50) {
+                                                if (r > g * 1.5 && r > b * 1.5) { colorName = "แดง (Red)"; colorDot = "🔴"; }
+                                                else if (g > r * 1.2 && g > b * 1.2) { colorName = "เขียว (Green)"; colorDot = "🟢"; }
+                                                else if (b > r * 1.2 && b > g * 1.2) { colorName = "น้ำเงิน (Blue)"; colorDot = "🔵"; }
+                                                else if (r > b * 1.2 && g > b * 1.2 && Math.abs(r-g) < (r*0.4)) { colorName = "เหลือง (Yellow)"; colorDot = "🟡"; }
+                                                else { colorName = "ไม่ชัดเจน"; colorDot = "⚪"; }
+                                            }
+                                            document.getElementById('val-color').innerHTML = `<span class="flex items-center justify-center gap-1">${colorDot} ${colorName}</span>`;
                                         }
                                     }
                                 }
@@ -812,27 +906,7 @@
         function showError(msg) { errorMsg = msg; successMsg = ""; render(); setTimeout(() => { if(errorMsg === msg) { errorMsg = ""; render(); } }, 5000); }
         function showSuccess(msg) { const box = document.getElementById('messageBox'); box.innerText = msg; box.style.display = 'block'; box.style.backgroundColor = '#10B981'; setTimeout(() => box.style.display = 'none', 3000); }
         
-        function addBlock(cmdType) { 
-            if (isExecuting) return; 
-            if (activeTab === 'FUNC' && (cmdType === 'CALL_SUB' || cmdType === 'CHECK_COLOR_TCS')) {
-                showError("⚠️ ไม่สามารถใส่คำสั่งเรียกใช้ฟังก์ชันซ้อนกันในหน้าฟังก์ชันย่อยได้");
-                return;
-            }
-            const id = 'b_' + Date.now(); let params = { ...blockDefinitions[cmdType].defaultParams };
-            if (params.target && subFunctionsList.length > 0) params.target = subFunctionsList[0];
-            if (['FORWARD', 'BACKWARD', 'TURN_LEFT', 'TURN_RIGHT', 'PIVOT_LEFT', 'PIVOT_RIGHT', 'SLIDE_LEFT', 'SLIDE_RIGHT'].includes(cmdType)) params.speed = document.getElementById('param-SPEED').value;
-            if (cmdType === 'FORWARD') params.val = document.getElementById('param-F').value; if (cmdType === 'BACKWARD') params.val = document.getElementById('param-B').value; if (cmdType === 'TURN_LEFT') params.val = document.getElementById('param-L').value; if (cmdType === 'TURN_RIGHT') params.val = document.getElementById('param-R').value; if (cmdType === 'PIVOT_LEFT') params.val = document.getElementById('param-PL').value; if (cmdType === 'PIVOT_RIGHT') params.val = document.getElementById('param-PR').value; if (cmdType === 'SLIDE_LEFT') params.val = document.getElementById('param-SL').value; if (cmdType === 'SLIDE_RIGHT') params.val = document.getElementById('param-SR').value; if (cmdType === 'DISPENSE_PIN2') params.angle = document.getElementById('param-D1').value; if (cmdType === 'DISPENSE_PIN3') params.angle = document.getElementById('param-D2').value; if (cmdType === 'CHECK_WALL') { params.val = document.getElementById('param-CW').value; params.light = document.getElementById('param-SENSOR').value; params.logic = document.getElementById('param-LOGIC').value; }
-            
-            let currentList = getActiveWorkspace();
-            currentList.push({ id, type: cmdType, params, showNote: false, note: "" }); render(); 
-            setTimeout(() => { const ws = document.getElementById('workspace-container'); ws.scrollTop = ws.scrollHeight; }, 50); 
-        }
-
-        function updateBlockParam(id, param, val) { const currentList = getActiveWorkspace(); const b = currentList.find(b => b.id === id); if (b) b.params[param] = val; }
-        function removeBlock(id) { if (isExecuting) return; let currentList = getActiveWorkspace(); const idx = currentList.findIndex(b => b.id === id); if(idx !== -1) currentList.splice(idx, 1); render(); }
-        function clearBlocks() { if (isExecuting) return; if(activeTab === 'MAIN') workspaces['MAIN'] = []; else workspaces[activeSubFunc] = []; currentStepId = null; droppedObjects = []; render(); }
-        function resetRobot() { if (isExecuting) return; robotState = { ...initialSetup, offset: 0 }; currentStepId = null; droppedObjects = []; render(); }
-
+        // สำหรับอัปเดตกระดานจำลอง
         function render() {
             const gridEl = document.getElementById('grid-container'); gridEl.style.gridTemplateColumns = `repeat(${GRID_COLS}, minmax(0, 1fr))`; gridEl.innerHTML = '';
             for (let row = 0; row < GRID_ROWS; row++) {
@@ -884,14 +958,31 @@
 
         const sleep = ms => new Promise(res => setTimeout(res, ms));
 
+        // แปลงฟังก์ชันหลักและรองให้กลายเป็น Linear Array (แปลง IF เป็นชุดเงื่อนไขสำหรับส่งให้ Arduino)
         function getExpandedBlocks(sourceList) {
             let expanded = [];
             for (let b of sourceList) {
-                if (b.type === 'CALL_SUB' || b.type === 'CHECK_COLOR_TCS') {
+                if (b.type === 'CALL_SUB') {
                     const targetName = b.params.target;
                     if (workspaces[targetName]) {
-                        expanded.push(...workspaces[targetName]);
+                        expanded.push(...getExpandedBlocks(workspaces[targetName]));
                     }
+                } else if (b.type === 'CHECK_COLOR_TCS') {
+                    const targetName = b.params.target;
+                    let subBlocks = workspaces[targetName] ? getExpandedBlocks(workspaces[targetName]) : [];
+                    
+                    // แทรกบล็อกพิเศษ IF_COLOR ที่จะทำหน้าที่เป็นคำสั่งข้าม (Skip logic)
+                    expanded.push({
+                        id: b.id, // ใช้ ID เดิมเพื่อให้ Highlight ถูกตัวตอนจำลองการทำงาน
+                        type: 'IF_COLOR',
+                        params: {
+                            color: b.params.color,
+                            skipCount: subBlocks.length, // จำนวนบล็อกที่จะต้องข้ามถ้าเงื่อนไขเป็นเท็จ
+                            target: targetName
+                        }
+                    });
+                    // ตามด้วยชุดคำสั่งที่จะถูกทำถ้าเงื่อนไขเป็นจริง
+                    expanded.push(...subBlocks);
                 } else {
                     expanded.push(b);
                 }
@@ -907,7 +998,21 @@
 
             if (isAutoSensor) toggleAutoSensor(); isExecuting = true; currentStepId = null; droppedObjects = []; render();
             for (let i = 0; i < executionQueue.length; i++) {
-                const b = executionQueue[i]; currentStepId = b.id; render(); let { x, y, dir } = robotState;
+                const b = executionQueue[i]; currentStepId = b.id; render(); 
+                
+                // ระบบถามตอบจำลองเงื่อนไขสี
+                if (b.type === 'IF_COLOR') {
+                    let cName = b.params.color === 'RED' ? '🔴 สีแดง' : b.params.color === 'GREEN' ? '🟢 สีเขียว' : b.params.color === 'BLUE' ? '🔵 สีน้ำเงิน' : '🟡 สีเหลือง';
+                    let isMatch = confirm(`[กระดานจำลอง]\nระบบกำลังเช็คเซ็นเซอร์สีเพื่อประมวลผลเงื่อนไข...\n\nสมมติว่าเซ็นเซอร์ตอนนี้ เจอกับ "${cName}" หรือไม่?\n\n(กด OK = เจอสีนี้, กด Cancel = ไม่เจอสีนี้)`);
+                    
+                    if (!isMatch) {
+                        i += b.params.skipCount; // ข้ามคำสั่งย่อยถ้าไม่เจอสี
+                    }
+                    await sleep(400); 
+                    continue; // ผ่านไปยังรอบลูปต่อไปทันที
+                }
+
+                let { x, y, dir } = robotState;
                 if (b.type === 'FORWARD') { if (dir === 0) y--; else if (dir === 90) x++; else if (dir === 180) y++; else x--; } else if (b.type === 'BACKWARD') { if (dir === 0) y++; else if (dir === 90) x--; else if (dir === 180) y--; else x++; } else if (b.type === 'TURN_LEFT' || b.type === 'PIVOT_LEFT') dir = (dir - 90 + 360) % 360; else if (b.type === 'TURN_RIGHT' || b.type === 'PIVOT_RIGHT') dir = (dir + 90) % 360; else if (b.type === 'SLIDE_LEFT') { if (dir === 0) x--; else if (dir === 90) y--; else if (dir === 180) x++; else y++; } else if (b.type === 'SLIDE_RIGHT') { if (dir === 0) x++; else if (dir === 90) y++; else if (dir === 180) x--; else y--; } else if (b.type === 'DISPENSE_PIN2' || b.type === 'DISPENSE_PIN3' || b.type === 'GRIP_GRAB' || b.type === 'GRIP_RELEASE') droppedObjects.push({ x, y, dir, type: b.type }); else if (b.type === 'CHECK_WALL') { robotState.offset = 40; render(); await sleep(DELAY_MS); robotState.offset = 0; }
                 if (x < 0 || x >= GRID_COLS || y < 0 || y >= GRID_ROWS) { showError("ระวัง! หุ่นยนต์ชนขอบพื้นที่"); isExecuting = false; currentStepId = null; render(); return; }
                 robotState = { x, y, dir, offset: 0 }; render(); await sleep(DELAY_MS);
@@ -932,15 +1037,22 @@
                     else if (b.type === 'DISPENSE_PIN3') { cmd = `D2:${p.angle || 90}\n`; droppedObjects.push({ x: robotState.x, y: robotState.y, dir: robotState.dir, type: b.type }); }
                     else if (b.type === 'GRIP_GRAB') { cmd = `G1\n`; droppedObjects.push({ x: robotState.x, y: robotState.y, dir: robotState.dir, type: b.type }); }
                     else if (b.type === 'GRIP_RELEASE') { cmd = `G2\n`; droppedObjects.push({ x: robotState.x, y: robotState.y, dir: robotState.dir, type: b.type }); }
+                    else if (b.type === 'IF_COLOR') { 
+                        let colorCode = 0;
+                        if (p.color === 'GREEN') colorCode = 1;
+                        if (p.color === 'BLUE') colorCode = 2;
+                        if (p.color === 'YELLOW') colorCode = 3;
+                        cmd = `IFC${colorCode},${p.skipCount}\n`; 
+                    }
                     
-                    if (b.type !== 'DISPENSE_PIN2' && b.type !== 'DISPENSE_PIN3' && b.type !== 'GRIP_GRAB' && b.type !== 'GRIP_RELEASE' && b.type !== 'CHECK_WALL') {
+                    if (b.type !== 'DISPENSE_PIN2' && b.type !== 'DISPENSE_PIN3' && b.type !== 'GRIP_GRAB' && b.type !== 'GRIP_RELEASE' && b.type !== 'CHECK_WALL' && b.type !== 'IF_COLOR') {
                         let { x, y, dir } = robotState;
                         if (b.type === 'FORWARD') { if (dir === 0) y--; else if (dir === 90) x++; else if (dir === 180) y++; else x--; } else if (b.type === 'BACKWARD') { if (dir === 0) y++; else if (dir === 90) x--; else if (dir === 180) y--; else x++; } else if (b.type === 'TURN_LEFT' || b.type === 'PIVOT_LEFT') dir = (dir - 90 + 360) % 360; else if (b.type === 'TURN_RIGHT' || b.type === 'PIVOT_RIGHT') dir = (dir + 90) % 360; else if (b.type === 'SLIDE_LEFT') { if (dir === 0) x--; else if (dir === 90) y--; else if (dir === 180) x++; else y++; } else if (b.type === 'SLIDE_RIGHT') { if (dir === 0) x++; else if (dir === 90) y++; else if (dir === 180) x--; else y--; }
                         robotState = { x, y, dir, offset: 0 };
                     }
                     render(); await serialWriter.write(enc.encode(cmd)); await sleep(60);
                 }
-                showSuccess("⚡ อัปโหลดข้อมูลด่วนพร้อมฟังก์ชันรองเสร็จสมบูรณ์!");
+                showSuccess("⚡ อัปโหลดข้อมูลด่วนพร้อมฟังก์ชันเงื่อนไขเสร็จสมบูรณ์!");
             } catch (error) { showError("เกิดข้อผิดพลาดในการส่งข้อมูล"); isConnected = false; } finally { currentStepId = null; isExecuting = false; render(); }
         }
 
@@ -970,7 +1082,7 @@ int defaultSpeed = 100; int motorLeftRatio = 100; int motorRightRatio = 100;
 struct Command { char action[4]; float value; int extra1; int extra2; };
 struct RobotSettings { uint8_t magic; int speed; int ml; int mr; };
 
-const int MAX_CMDS = 50; Command cmdQueue[MAX_CMDS]; uint8_t cmdCount = 0;
+const int MAX_CMDS = 70; Command cmdQueue[MAX_CMDS]; uint8_t cmdCount = 0;
 unsigned long lastReceiveTime = 0; const unsigned long FINISH_TRANSFER_TIMEOUT = 1000; bool isReceivingBatch = false; 
 Servo servo1; Servo servo2;
 
@@ -1009,8 +1121,14 @@ void loop() {
     if (data.length() > 0) {
       if (data.startsWith("?SENS")) {
         delay(2);
-        Serial.print("SENS:"); Serial.print(analogRead(SENSOR_R1)); Serial.print(","); Serial.print(analogRead(SENSOR_L1)); Serial.print(",");
-        Serial.print(analogRead(SENSOR_R2)); Serial.print(",0,0"); Serial.println(); return;
+        uint16_t r = 0, g = 0, b = 0, c = 0;
+        if (!tcsFound) { tcsFound = tcs.begin(); } // พยายามเชื่อมต่อใหม่
+        if (tcsFound) tcs.getRawData(&r, &g, &b, &c);
+        Serial.print("SENS:"); Serial.print(analogRead(SENSOR_R1)); Serial.print(","); 
+        Serial.print(analogRead(SENSOR_L1)); Serial.print(",");
+        Serial.print(analogRead(SENSOR_R2)); Serial.print(",");
+        Serial.print(r); Serial.print(","); Serial.print(g); Serial.print(","); Serial.println(b);
+        return;
       }
       if (!isReceivingBatch) { cmdCount = 0; EEPROM.update(0, 0); isReceivingBatch = true; }
       lastReceiveTime = currentTime; String actionStr = ""; float val = 0; int ex1 = 0; int ex2 = 0;
@@ -1026,6 +1144,10 @@ void loop() {
         actionStr = "CW"; int c1 = data.indexOf(','); int c2 = data.indexOf(',', c1 + 1);
         if (c1 != -1 && c2 != -1) { val = data.substring(2, c1).toFloat(); ex1 = data.substring(c1 + 1, c2).toInt(); ex2 = data.substring(c2 + 1).toInt(); } else { val = data.substring(2).toFloat(); ex1 = 600; ex2 = 1; }
       }
+      else if (data.startsWith("IFC")) { 
+        actionStr = "IFC"; int c = data.indexOf(',');
+        if (c != -1) { val = data.substring(3, c).toFloat(); ex1 = data.substring(c + 1).toInt(); } 
+      }
       else if (data.startsWith("D1:")) { actionStr = "D1"; ex1 = data.substring(3).toInt(); }
       else if (data.startsWith("D2:")) { actionStr = "D2"; ex1 = data.substring(3).toInt(); }
 
@@ -1037,7 +1159,6 @@ void loop() {
   }
   if (isReceivingBatch && (currentTime - lastReceiveTime > FINISH_TRANSFER_TIMEOUT)) { playTone(1500, 800); delay(1000); isReceivingBatch = false; }
   
-  // เช็คปุ่ม A0 (ดักปุ่มติด/ดับ ด้วย State Change Detection)
   currentButtonState = digitalRead(START_BTN);
   if (lastButtonState == LOW && currentButtonState == HIGH) {
     delay(50); // Debounce
@@ -1072,7 +1193,26 @@ void executeAllStoredCommands() {
     else if (act == "D1") { servo1.write(ex1); delay(600); servo1.write(45); delay(400); }
     else if (act == "D2") { servo2.write(ex1); delay(600); servo2.write(45); delay(400); }
     else if (act == "CW") checkWallSequence(ex1, ex2);
-    stopMotors(); delay(300); 
+    else if (act == "IFC") {
+      uint16_t r = 0, g = 0, b = 0, c = 0;
+      if (!tcsFound) { tcsFound = tcs.begin(); } // พยายามเชื่อมต่อใหม่
+      if (tcsFound) tcs.getRawData(&r, &g, &b, &c);
+      int detectedColor = -1;
+      if (r > 50 || g > 50 || b > 50) {
+        if (r > g * 1.5 && r > b * 1.5) detectedColor = 0;
+        else if (g > r * 1.2 && g > b * 1.2) detectedColor = 1;
+        else if (b > r * 1.2 && b > g * 1.2) detectedColor = 2;
+        else if (r > b * 1.2 && g > b * 1.2 && abs(r-g) < (r*0.4)) detectedColor = 3;
+      }
+      if (detectedColor != (int)val) { 
+        i += ex1; // Skip the sub-function blocks
+      } else {
+        playTone(1500, 100); // Beep: Color Matched!
+      }
+      delay(100); 
+    }
+    
+    if (act != "IFC") { stopMotors(); delay(300); }
   }
 }
 
@@ -1080,24 +1220,21 @@ void movePulsed(int m1, int m2, int m3, int m4, int totalDelay, int speedPercent
   if (speedPercent == 0) { stopMotors(); delay(totalDelay); return; }
   int effectiveSpeedL = (speedPercent * motorLeftRatio) / 100;
   int effectiveSpeedR = (speedPercent * motorRightRatio) / 100;
-  int onTime = 20; 
-  int offTimeL = max(0L, map(effectiveSpeedL, 10, 100, 50, 0));
-  int offTimeR = max(0L, map(effectiveSpeedR, 10, 100, 50, 0));
+  int cycleTime = 20; 
+  int onTimeL = map(effectiveSpeedL, 0, 100, 0, cycleTime);
+  int onTimeR = map(effectiveSpeedR, 0, 100, 0, cycleTime);
 
   unsigned long startTime = millis();
   while (millis() - startTime < (unsigned long)totalDelay) {
     unsigned long cycleStart = millis();
-    bool leftDone = false; bool rightDone = false;
     setMotors(m1, m2, m3, m4);
-    while (!leftDone || !rightDone) {
+    while (millis() - cycleStart < (unsigned long)cycleTime) {
       unsigned long elapsed = millis() - cycleStart;
-      if (elapsed >= (unsigned long)(onTime + offTimeL)) { 
-        leftDone = true; 
+      if (elapsed >= (unsigned long)onTimeL) { 
         digitalWrite(M1_IN1, LOW); digitalWrite(M1_IN2, LOW); 
         digitalWrite(M2_IN1, LOW); digitalWrite(M2_IN2, LOW); 
       }
-      if (elapsed >= (unsigned long)(onTime + offTimeR)) { 
-        rightDone = true; 
+      if (elapsed >= (unsigned long)onTimeR) { 
         digitalWrite(M3_IN1, LOW); digitalWrite(M3_IN2, LOW); 
         digitalWrite(M4_IN1, LOW); digitalWrite(M4_IN2, LOW); 
       }
@@ -1150,7 +1287,7 @@ int defaultSpeed = 100; int motorLeftRatio = 100; int motorRightRatio = 100;
 struct Command { char action[4]; float value; int extra1; int extra2; };
 struct RobotSettings { uint8_t magic; int speed; int ml; int mr; };
 
-const int MAX_CMDS = 50; Command cmdQueue[MAX_CMDS]; uint8_t cmdCount = 0;
+const int MAX_CMDS = 70; Command cmdQueue[MAX_CMDS]; uint8_t cmdCount = 0;
 unsigned long lastReceiveTime = 0; const unsigned long FINISH_TRANSFER_TIMEOUT = 1000; bool isReceivingBatch = false; 
 Servo gripperServo;
 
@@ -1193,8 +1330,14 @@ void loop() {
     if (data.length() > 0) {
       if (data.startsWith("?SENS")) {
         delay(2);
-        Serial.print("SENS:"); Serial.print(analogRead(SENSOR_R1)); Serial.print(","); Serial.print(analogRead(SENSOR_L1)); Serial.print(",");
-        Serial.print(analogRead(SENSOR_R2)); Serial.print(",0,0"); Serial.println(); return;
+        uint16_t r = 0, g = 0, b = 0, c = 0;
+        if (!tcsFound) { tcsFound = tcs.begin(); } // พยายามเชื่อมต่อใหม่
+        if (tcsFound) tcs.getRawData(&r, &g, &b, &c);
+        Serial.print("SENS:"); Serial.print(analogRead(SENSOR_R1)); Serial.print(","); 
+        Serial.print(analogRead(SENSOR_L1)); Serial.print(",");
+        Serial.print(analogRead(SENSOR_R2)); Serial.print(",");
+        Serial.print(r); Serial.print(","); Serial.print(g); Serial.print(","); Serial.println(b);
+        return;
       }
       if (!isReceivingBatch) { cmdCount = 0; EEPROM.update(0, 0); isReceivingBatch = true; }
       lastReceiveTime = currentTime; String actionStr = ""; float val = 0; int ex1 = 0; int ex2 = 0;
@@ -1210,6 +1353,10 @@ void loop() {
         actionStr = "CW"; int c1 = data.indexOf(','); int c2 = data.indexOf(',', c1 + 1);
         if (c1 != -1 && c2 != -1) { val = data.substring(2, c1).toFloat(); ex1 = data.substring(c1 + 1, c2).toInt(); ex2 = data.substring(c2 + 1).toInt(); } else { val = data.substring(2).toFloat(); ex1 = 600; ex2 = 1; }
       }
+      else if (data.startsWith("IFC")) { 
+        actionStr = "IFC"; int c = data.indexOf(',');
+        if (c != -1) { val = data.substring(3, c).toFloat(); ex1 = data.substring(c + 1).toInt(); } 
+      }
       else if (data.startsWith("G1")) { actionStr = "G1"; } 
       else if (data.startsWith("G2")) { actionStr = "G2"; } 
 
@@ -1222,7 +1369,6 @@ void loop() {
   
   if (isReceivingBatch && (currentTime - lastReceiveTime > FINISH_TRANSFER_TIMEOUT)) { playTone(1500, 800); delay(1000); isReceivingBatch = false; }
   
-  // เช็คปุ่ม A0 (ดักปุ่มติด/ดับ ด้วย State Change Detection)
   currentButtonState = digitalRead(START_BTN);
   if (lastButtonState == LOW && currentButtonState == HIGH) {
     delay(50); // Debounce
@@ -1272,7 +1418,26 @@ void executeAllStoredCommands() {
       gripperServo.write(135); delay(1000); gripperServo.write(90); delay(400); 
     }
     else if (act == "CW") checkWallSequence(ex1, ex2);
-    stopMotors(); delay(300); 
+    else if (act == "IFC") {
+      uint16_t r = 0, g = 0, b = 0, c = 0;
+      if (!tcsFound) { tcsFound = tcs.begin(); } // พยายามเชื่อมต่อใหม่
+      if (tcsFound) tcs.getRawData(&r, &g, &b, &c);
+      int detectedColor = -1;
+      if (r > 50 || g > 50 || b > 50) {
+        if (r > g * 1.5 && r > b * 1.5) detectedColor = 0;
+        else if (g > r * 1.2 && g > b * 1.2) detectedColor = 1;
+        else if (b > r * 1.2 && b > g * 1.2) detectedColor = 2;
+        else if (r > b * 1.2 && g > b * 1.2 && abs(r-g) < (r*0.4)) detectedColor = 3;
+      }
+      if (detectedColor != (int)val) { 
+        i += ex1; // Skip the sub-function blocks
+      } else {
+        playTone(1500, 100); // Beep: Color Matched!
+      }
+      delay(100); 
+    }
+    
+    if (act != "IFC") { stopMotors(); delay(300); }
   }
 }
 
@@ -1280,24 +1445,21 @@ void movePulsed(int m1, int m2, int m3, int m4, int totalDelay, int speedPercent
   if (speedPercent == 0) { stopMotors(); delay(totalDelay); return; }
   int effectiveSpeedL = (speedPercent * motorLeftRatio) / 100;
   int effectiveSpeedR = (speedPercent * motorRightRatio) / 100;
-  int onTime = 20; 
-  int offTimeL = max(0L, map(effectiveSpeedL, 10, 100, 50, 0));
-  int offTimeR = max(0L, map(effectiveSpeedR, 10, 100, 50, 0));
+  int cycleTime = 20; 
+  int onTimeL = map(effectiveSpeedL, 0, 100, 0, cycleTime);
+  int onTimeR = map(effectiveSpeedR, 0, 100, 0, cycleTime);
 
   unsigned long startTime = millis();
   while (millis() - startTime < (unsigned long)totalDelay) {
     unsigned long cycleStart = millis();
-    bool leftDone = false; bool rightDone = false;
     setMotors(m1, m2, m3, m4);
-    while (!leftDone || !rightDone) {
+    while (millis() - cycleStart < (unsigned long)cycleTime) {
       unsigned long elapsed = millis() - cycleStart;
-      if (elapsed >= (unsigned long)(onTime + offTimeL)) { 
-        leftDone = true; 
+      if (elapsed >= (unsigned long)onTimeL) { 
         digitalWrite(M1_IN1, LOW); digitalWrite(M1_IN2, LOW); 
         digitalWrite(M2_IN1, LOW); digitalWrite(M2_IN2, LOW); 
       }
-      if (elapsed >= (unsigned long)(onTime + offTimeR)) { 
-        rightDone = true; 
+      if (elapsed >= (unsigned long)onTimeR) { 
         digitalWrite(M3_IN1, LOW); digitalWrite(M3_IN2, LOW); 
         digitalWrite(M4_IN1, LOW); digitalWrite(M4_IN2, LOW); 
       }
