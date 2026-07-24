@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ระบบเขียนคำสั่งควบคุมหุ่นยนต์ PRO V4.12 (TCS34725 Conditional Logic)</title>
+    <title>ระบบเขียนคำสั่งควบคุมหุ่นยนต์ PRO V4.13 (TCS34725 Conditional Logic)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <script>
@@ -99,7 +99,7 @@
                 <i id="start-mode-icon" class="fas fa-robot"></i>
             </div>
             <h2 class="text-3xl sm:text-4xl font-black text-red-700 mb-1">Robot Controller</h2>
-            <p class="text-red-500 font-bold text-sm sm:text-base mb-6">PRO V4.12 <span class="text-xs text-slate-500 font-normal">(Conditional Logic Edition)</span></p>
+            <p class="text-red-500 font-bold text-sm sm:text-base mb-6">PRO V4.13 <span class="text-xs text-slate-500 font-normal">(Conditional Logic Edition)</span></p>
             
             <div class="bg-red-50 p-3 rounded-2xl border-2 border-red-100 mb-6 text-left">
                 <label class="block text-xs font-extrabold text-red-600 uppercase tracking-wider mb-2 text-center">⚙️ กรุณาเลือกรูปแบบหุ่นยนต์ของคุณ</label>
@@ -131,7 +131,7 @@
             <div class="flex flex-col xl:flex-row justify-between items-center gap-3">
                 <div class="flex items-center gap-3">
                     <h1 class="text-xl sm:text-2xl font-black text-red-600 dark:text-white flex items-center gap-2">
-                        <i class="fas fa-rocket"></i> <span class="hidden sm:inline">ROBOT CONTROLLER V4.12</span>
+                        <i class="fas fa-rocket"></i> <span class="hidden sm:inline">ROBOT CONTROLLER V4.13</span>
                     </h1>
                     <button onclick="toggleRobotMode()" class="pressable-btn px-3 py-1 rounded-full text-xs font-extrabold flex items-center gap-1.5 shadow-inner transition-colors bg-red-100 text-red-800 border border-red-300 dark:bg-red-950 dark:text-red-200 dark:border-red-700" title="คลิกเพื่อสลับระหว่าง รุ่นจ่ายวัตถุ / รุ่นมือคีบ">
                         <span id="header-mode-indicator"><i class="fas fa-box text-red-500"></i> โหมด: จ่ายวัตถุ</span>
@@ -178,7 +178,7 @@
                 <button draggable="true" ondragstart="handleToolboxDragStart(event, 'PIVOT_RIGHT')" ondragend="removeIndicator()" onclick="addBlock('PIVOT_RIGHT')" class="pressable-btn toolbox-btn flex items-center gap-1.5 px-3 py-1.5 bg-violet-50 hover:bg-violet-100 dark:bg-slate-800 dark:hover:bg-slate-700 text-violet-700 dark:text-violet-300 border-2 border-b-[3px] border-violet-300 dark:border-violet-700 rounded-xl shadow-sm text-xs sm:text-sm font-extrabold"><span class="p-1 bg-violet-500 text-white rounded text-xs"><i class="fas fa-share"></i></span> ตีวงขวา</button>
                 <button draggable="true" ondragstart="handleToolboxDragStart(event, 'SLIDE_LEFT')" ondragend="removeIndicator()" onclick="addBlock('SLIDE_LEFT')" class="pressable-btn toolbox-btn flex items-center gap-1.5 px-3 py-1.5 bg-teal-50 hover:bg-teal-100 dark:bg-slate-800 dark:hover:bg-slate-700 text-teal-700 dark:text-teal-300 border-2 border-b-[3px] border-teal-300 dark:border-teal-700 rounded-xl shadow-sm text-xs sm:text-sm font-extrabold"><span class="p-1 bg-teal-500 text-white rounded text-xs"><i class="fas fa-angle-double-left"></i></span> สไลด์ซ้าย</button>
                 <button draggable="true" ondragstart="handleToolboxDragStart(event, 'SLIDE_RIGHT')" ondragend="removeIndicator()" onclick="addBlock('SLIDE_RIGHT')" class="pressable-btn toolbox-btn flex items-center gap-1.5 px-3 py-1.5 bg-emerald-50 hover:bg-emerald-100 dark:bg-slate-800 dark:hover:bg-slate-700 text-emerald-700 dark:text-emerald-300 border-2 border-b-[3px] border-emerald-300 dark:border-emerald-700 rounded-xl shadow-sm text-xs sm:text-sm font-extrabold"><span class="p-1 bg-emerald-500 text-white rounded text-xs"><i class="fas fa-angle-double-right"></i></span> สไลด์ขวา</button>
-                <button draggable="true" ondragstart="handleToolboxDragStart(event, 'CHECK_WALL')" ondragend="removeIndicator()" onclick="addBlock('CHECK_WALL')" class="pressable-btn toolbox-btn flex items-center gap-1.5 px-3 py-1.5 bg-amber-50 hover:bg-amber-100 dark:bg-slate-800 dark:hover:bg-slate-700 text-amber-700 dark:text-amber-300 border-2 border-b-[3px] border-amber-300 dark:border-amber-700 rounded-xl shadow-sm text-xs sm:text-sm font-extrabold"><span class="p-1 bg-amber-500 text-white rounded text-xs"><i class="fas fa-shield-alt"></i></span> เช็คหลัง/หน้า</button>
+                <button draggable="true" ondragstart="handleToolboxDragStart(event, 'CHECK_WALL')" ondragend="removeIndicator()" onclick="addBlock('CHECK_WALL')" class="pressable-btn toolbox-btn flex items-center gap-1.5 px-3 py-1.5 bg-amber-50 hover:bg-amber-100 dark:bg-slate-800 dark:hover:bg-slate-700 text-amber-700 dark:text-amber-300 border-2 border-b-[3px] border-amber-300 dark:border-amber-700 rounded-xl shadow-sm text-xs sm:text-sm font-extrabold"><span class="p-1 bg-amber-500 text-white rounded text-xs"><i class="fas fa-shield-alt"></i></span> เช็คตั้งลำ</button>
                 
                 <span id="toolbox-dispenser-group" class="inline-flex gap-2">
                     <button draggable="true" ondragstart="handleToolboxDragStart(event, 'DISPENSE_PIN2')" ondragend="removeIndicator()" onclick="addBlock('DISPENSE_PIN2')" class="pressable-btn toolbox-btn flex items-center gap-1.5 px-3 py-1.5 bg-indigo-50 hover:bg-indigo-100 dark:bg-slate-800 dark:hover:bg-slate-700 text-indigo-700 dark:text-indigo-300 border-2 border-b-[3px] border-indigo-300 dark:border-indigo-700 rounded-xl shadow-sm text-xs sm:text-sm font-extrabold"><span class="p-1 bg-indigo-500 text-white rounded text-xs"><i class="fas fa-box"></i></span> วัตถุ 1 (Pin 2)</button>
@@ -332,7 +332,7 @@
                             <div class="flex flex-col gap-1"><label class="text-[12px] text-red-500 dark:text-red-300 font-bold">ตีวงขวา (PR:รอบ)</label><input type="number" id="param-PR" value="80" step="1" class="px-2.5 py-2 text-sm font-mono rounded-xl border-2 border-red-200 dark:border-red-700 outline-none"></div>
                             <div class="flex flex-col gap-1"><label class="text-[12px] text-red-500 dark:text-red-300 font-bold">สไลด์ซ้าย (SL:รอบ)</label><input type="number" id="param-SL" value="100" step="1" class="px-2.5 py-2 text-sm font-mono rounded-xl border-2 border-red-200 dark:border-red-700 outline-none"></div>
                             <div class="flex flex-col gap-1"><label class="text-[12px] text-red-500 dark:text-red-300 font-bold">สไลด์ขวา (SR:รอบ)</label><input type="number" id="param-SR" value="100" step="1" class="px-2.5 py-2 text-sm font-mono rounded-xl border-2 border-red-200 dark:border-red-700 outline-none"></div>
-                            <div class="flex flex-col gap-1"><label class="text-[12px] text-red-500 dark:text-red-300 font-bold">เช็คหลัง/หน้า (CW)</label><input type="number" id="param-CW" value="100" step="1" class="px-2.5 py-2 text-sm font-mono rounded-xl border-2 border-red-200 dark:border-red-700 outline-none"></div>
+                            <div class="flex flex-col gap-1"><label class="text-[12px] text-red-500 dark:text-red-300 font-bold">เช็คตั้งลำ (CW)</label><input type="number" id="param-CW" value="100" step="1" class="px-2.5 py-2 text-sm font-mono rounded-xl border-2 border-red-200 dark:border-red-700 outline-none"></div>
                             <div class="flex flex-col gap-1"><label class="text-[12px] text-red-500 dark:text-red-300 font-bold">เกณฑ์เซ็นเซอร์</label><input type="number" id="param-SENSOR" value="600" class="px-2.5 py-2 text-sm font-mono rounded-xl border-2 border-red-200 dark:border-red-700 outline-none"></div>
                             <div class="flex flex-col gap-1"><label class="text-[12px] text-red-500 dark:text-red-300 font-bold">ตรรกะ</label><select id="param-LOGIC" class="px-2 py-2 text-xs font-bold rounded-xl border-2 border-red-200 dark:border-red-700 outline-none"><option value="1" selected>&gt; มากกว่า</option><option value="0">&lt; น้อยกว่า</option></select></div>
                             
@@ -366,7 +366,7 @@
     <div id="firmwareModal" class="hidden fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
         <div class="bg-white dark:bg-red-950 rounded-3xl w-full max-w-4xl max-h-[90vh] flex flex-col shadow-2xl overflow-hidden border-4 border-red-600">
             <div class="flex justify-between items-center p-5 border-b-2 border-red-100 dark:border-red-900 bg-red-50 dark:bg-red-950">
-                <h2 id="firmware-title" class="text-2xl font-extrabold text-red-800 dark:text-red-200 flex items-center gap-3"><i class="fas fa-microchip"></i> Arduino Firmware Code (PRO V4.12)</h2>
+                <h2 id="firmware-title" class="text-2xl font-extrabold text-red-800 dark:text-red-200 flex items-center gap-3"><i class="fas fa-microchip"></i> Arduino Firmware Code (PRO V4.13)</h2>
                 <button onclick="closeFirmwareModal()" class="text-red-500 hover:text-red-700 w-10 h-10 rounded-full flex items-center justify-center"><i class="fas fa-times text-xl"></i></button>
             </div>
             <div class="p-5 flex-1 overflow-auto bg-red-50/50 dark:bg-red-950/80 text-left">
@@ -624,7 +624,23 @@
             'PIVOT_RIGHT': { text: 'ตีวงขวา', colorClass: 'bg-violet-500 text-white border-violet-700', defaultParams: { val: '80', speed: '100' }, renderControls: renderMovementControls },
             'SLIDE_LEFT': { text: 'สไลด์ซ้าย', colorClass: 'bg-teal-500 text-white border-teal-700', defaultParams: { val: '100', speed: '100' }, renderControls: renderMovementControls },
             'SLIDE_RIGHT': { text: 'สไลด์ขวา', colorClass: 'bg-emerald-500 text-white border-emerald-700', defaultParams: { val: '100', speed: '100' }, renderControls: renderMovementControls },
-            'CHECK_WALL': { text: 'เช็คหลัง/หน้า', colorClass: 'bg-amber-500 text-white border-amber-700', defaultParams: { val: '100', light: '600', logic: '1' }, renderControls: (id, p) => `<div class="flex flex-col gap-1 ml-1"><div class="flex items-center gap-1"><span class="text-xs">ชนที่:</span><input type="number" value="${p.val}" step="1" onchange="updateBlockParam('${id}', 'val', this.value)" class="w-14 px-1 py-0.5 text-center text-sm font-bold text-slate-800 bg-white/90 rounded border"> <span class="text-xs">รอบ</span></div></div>` },
+            'CHECK_WALL': { 
+                text: 'เช็คตั้งลำ', 
+                colorClass: 'bg-amber-500 text-white border-amber-700', 
+                defaultParams: { val: '100', light: '600', logic: '1' }, 
+                renderControls: (id, p) => `
+                    <div class="flex flex-col gap-1 ml-1">
+                        <div class="flex items-center gap-1">
+                            <span class="text-xs">ชนที่:</span>
+                            <input type="number" value="${p.val}" step="1" onchange="updateBlockParam('${id}', 'val', this.value)" class="w-14 px-1 py-0.5 text-center text-sm font-bold text-slate-800 bg-white/90 rounded border"> 
+                            <span class="text-xs">รอบ</span>
+                        </div>
+                        <div class="flex items-center gap-1">
+                            <span class="text-xs">ค่าแสง:</span>
+                            <input type="number" value="${p.light || '600'}" step="1" onchange="updateBlockParam('${id}', 'light', this.value)" class="w-14 px-1 py-0.5 text-center text-sm font-bold text-slate-800 bg-white/90 rounded border">
+                        </div>
+                    </div>` 
+            },
             'DISPENSE_PIN2': { text: 'จ่ายวัตถุ 1 (Pin 2)', colorClass: 'bg-indigo-500 text-white border-indigo-700', defaultParams: { angle: '90' }, renderControls: (id, p) => `<div class="flex items-center gap-1 ml-1"><input type="number" value="${p.angle || '90'}" min="0" max="180" onchange="updateBlockParam('${id}', 'angle', this.value)" class="w-14 px-1 py-1 text-center text-lg text-slate-800 bg-white/90 font-mono rounded outline-none font-extrabold border-2 border-white/50"> <span class="font-bold text-sm">°</span></div>` },
             'DISPENSE_PIN3': { text: 'จ่ายวัตถุ 2 (Pin 3)', colorClass: 'bg-sky-500 text-white border-sky-700', defaultParams: { angle: '90' }, renderControls: (id, p) => `<div class="flex items-center gap-1 ml-1"><input type="number" value="${p.angle || '90'}" min="0" max="180" onchange="updateBlockParam('${id}', 'angle', this.value)" class="w-14 px-1 py-1 text-center text-lg text-slate-800 bg-white/90 font-mono rounded outline-none font-extrabold border-2 border-white/50"> <span class="font-bold text-sm">°</span></div>` },
             'GRIP_GRAB': { text: 'คีบวัตถุ (Grab)', colorClass: 'bg-indigo-600 text-white border-indigo-800', defaultParams: {}, renderControls: () => `<div class="flex items-center gap-1 ml-1 font-extrabold text-xs bg-black/20 px-3 py-1.5 rounded-lg"><i class="fas fa-hand-rock"></i> หมุน 45° ➔ ค้าง 1 วิ ➔ กลับ 90°</div>` },
@@ -1061,7 +1077,7 @@
             const codeEl = document.getElementById('firmwareCodeBlock');
             
             if (currentRobotMode === 'DISPENSER') {
-                titleEl.innerHTML = `<i class="fas fa-microchip"></i> Arduino Firmware Code (รุ่นจ่ายวัตถุ Dispenser + TCS34725 V4.12)`;
+                titleEl.innerHTML = `<i class="fas fa-microchip"></i> Arduino Firmware Code (รุ่นจ่ายวัตถุ Dispenser + TCS34725 V4.13)`;
                 codeEl.innerText = `#include <EEPROM.h>
 #include <Servo.h>
 #include <Wire.h>
@@ -1251,12 +1267,43 @@ void checkWallSequence(int threshold, int logic) {
     bool leftHit = (logic == 0) ? (valL1 < threshold) : (valL1 > threshold);
     bool rightHit = (logic == 0) ? (valR1 < threshold) : (valR1 > threshold);
 
-    if (leftHit && rightHit) { stopMotors(); delay(300); break; }
-    else if (leftHit) { setMotors(1, 1, -1, -1); delay(15); stopMotors(); delay(40); }
-    else if (rightHit) { setMotors(-1, -1, 1, 1); delay(15); stopMotors(); delay(40); }
-    else { setMotors(-1, -1, -1, -1); delay(15); stopMotors(); delay(40); }
+    if (leftHit && rightHit) { 
+      // ชนเส้นดำ/กำแพงทั้งสองข้างแล้ว -> หยุด
+      stopMotors(); 
+      delay(50); 
+      break; 
+    }
+    else if (leftHit) { 
+      // ซ้ายชนแล้ว แต่ขวายังไม่ชน -> หยุดซ้าย ให้ขวาถอยหลังต่อ
+      setMotors(1, 1, -1, -1); 
+      delay(10); 
+      stopMotors(); 
+      delay(40); 
+    }
+    else if (rightHit) { 
+      // ขวาชนแล้ว แต่ซ้ายยังไม่ชน -> หยุดขวา ให้ซ้ายถอยหลังต่อ
+      setMotors(-1, -1, 1, 1); 
+      delay(10); 
+      stopMotors(); 
+      delay(40); 
+    }
+    else { 
+      // ยังไม่ชนทั้งคู่ -> ถอยหลังตรงๆ
+      setMotors(-1, -1, -1, -1); 
+      delay(15); 
+      stopMotors(); 
+      delay(40); 
+    }
   }
-  setMotors(1, 1, 1, 1); delay(100); stopMotors();
+  
+  // --- เพิ่มคำสั่งเดินหน้าช้าๆ ออกจากเส้นดำประมาณ 2 เซนติเมตร ---
+  // รูปแบบ: movePulsed(M1, M2, M3, M4, ระยะเวลา_ms, ความเร็ว_เปอร์เซ็นต์);
+  // ค่าความเร็วตั้งไว้ที่ 40% (ช้าๆ) และระยะเวลา 300ms 
+  movePulsed(1, 1, 1, 1, 200, 40); 
+  
+  // เพื่อความนิ่ง ให้สั่งหยุดอีกครั้งหลังเดินหน้าเสร็จ
+  stopMotors();
+  delay(100);
 }
 
 void setMotors(int m1, int m2, int m3, int m4) {
@@ -1268,7 +1315,7 @@ void setMotors(int m1, int m2, int m3, int m4) {
 void stopMotors() { setMotors(0, 0, 0, 0); }
 void playTone(int freq, int duration) { tone(BUZZER_PIN, freq, duration); }`;
             } else {
-                titleEl.innerHTML = `<i class="fas fa-microchip"></i> Arduino Firmware Code (รุ่นมือคีบ Gripper + TCS34725 V4.12)`;
+                titleEl.innerHTML = `<i class="fas fa-microchip"></i> Arduino Firmware Code (รุ่นมือคีบ Gripper + TCS34725 V4.13)`;
                 codeEl.innerText = `#include <EEPROM.h>
 #include <Servo.h>
 #include <Wire.h>
@@ -1476,12 +1523,43 @@ void checkWallSequence(int threshold, int logic) {
     bool leftHit = (logic == 0) ? (valL1 < threshold) : (valL1 > threshold);
     bool rightHit = (logic == 0) ? (valR1 < threshold) : (valR1 > threshold);
 
-    if (leftHit && rightHit) { stopMotors(); delay(300); break; }
-    else if (leftHit) { setMotors(1, 1, -1, -1); delay(15); stopMotors(); delay(40); }
-    else if (rightHit) { setMotors(-1, -1, 1, 1); delay(15); stopMotors(); delay(40); }
-    else { setMotors(-1, -1, -1, -1); delay(15); stopMotors(); delay(40); }
+    if (leftHit && rightHit) { 
+      // ชนเส้นดำ/กำแพงทั้งสองข้างแล้ว -> หยุด
+      stopMotors(); 
+      delay(50); 
+      break; 
+    }
+    else if (leftHit) { 
+      // ซ้ายชนแล้ว แต่ขวายังไม่ชน -> หยุดซ้าย ให้ขวาถอยหลังต่อ
+      setMotors(1, 1, -1, -1); 
+      delay(10); 
+      stopMotors(); 
+      delay(40); 
+    }
+    else if (rightHit) { 
+      // ขวาชนแล้ว แต่ซ้ายยังไม่ชน -> หยุดขวา ให้ซ้ายถอยหลังต่อ
+      setMotors(-1, -1, 1, 1); 
+      delay(10); 
+      stopMotors(); 
+      delay(40); 
+    }
+    else { 
+      // ยังไม่ชนทั้งคู่ -> ถอยหลังตรงๆ
+      setMotors(-1, -1, -1, -1); 
+      delay(15); 
+      stopMotors(); 
+      delay(40); 
+    }
   }
-  setMotors(1, 1, 1, 1); delay(100); stopMotors();
+  
+  // --- เพิ่มคำสั่งเดินหน้าช้าๆ ออกจากเส้นดำประมาณ 2 เซนติเมตร ---
+  // รูปแบบ: movePulsed(M1, M2, M3, M4, ระยะเวลา_ms, ความเร็ว_เปอร์เซ็นต์);
+  // ค่าความเร็วตั้งไว้ที่ 40% (ช้าๆ) และระยะเวลา 300ms 
+  movePulsed(1, 1, 1, 1, 200, 40); 
+  
+  // เพื่อความนิ่ง ให้สั่งหยุดอีกครั้งหลังเดินหน้าเสร็จ
+  stopMotors();
+  delay(100);
 }
 
 void setMotors(int m1, int m2, int m3, int m4) {
